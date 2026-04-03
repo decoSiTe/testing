@@ -119,10 +119,7 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 /* ══ RESULT PAGE ══ */
 #result-page{display:none;min-height:100vh;background:var(--bg);position:relative;z-index:1;}
 #result-page.show{display:block;}
-.result-nav{padding:20px 28px 0;}
-.back-btn{background:transparent;border:1px solid var(--border);border-radius:8px;padding:9px 16px;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;transition:color .2s,border-color .2s;}
-.back-btn:hover{color:var(--text);border-color:var(--muted);}
-.result-hero{position:relative;width:100%;overflow:hidden;background:#111;min-height:260px;cursor:zoom-in;margin-top:20px;}
+.result-hero{position:relative;width:100%;overflow:hidden;background:#111;min-height:260px;cursor:zoom-in;}
 .result-hero img{width:100%;display:block;object-fit:cover;max-height:72vh;opacity:.92;transition:transform .3s,opacity .3s;}
 .result-hero:hover img{transform:scale(1.02);opacity:1;}
 .hero-overlay{position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to top,rgba(8,12,16,1) 0%,rgba(8,12,16,0.65) 50%,transparent 100%);pointer-events:none;}
@@ -294,9 +291,6 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
      RESULT PAGE
 ══════════════════════════ -->
 <div id="result-page">
-  <div class="result-nav">
-    <button class="back-btn" onclick="goBack()">← Generator</button>
-  </div>
   <div class="result-hero" id="result-hero" onclick="openLightbox()">
     <div class="photo-placeholder" id="photo-placeholder">
       <div class="icon">🖼</div><span>Loading photo…</span>
@@ -523,7 +517,14 @@ async function updatePhoto() {
   try {
     const resp = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ action:'update', id: currentLookup.id, photo: photoUpdate })
+      body: JSON.stringify({
+        action: 'update',
+        id:     currentLookup.id,
+        name:   currentLookup.name,   // pass name so Apps Script validation passes
+        cat:    currentLookup.cat || '',
+        ts:     currentLookup.ts  || '',
+        photo:  photoUpdate
+      })
     });
     const data = await resp.json();
     if(!data.success) throw new Error(data.error || 'Update failed');
@@ -586,8 +587,23 @@ function toDriveDirectUrl(url) {
   const formulaMatch = url.match(/=IMAGE\("([^"]+)"/);
   if(formulaMatch) url = formulaMatch[1];
   const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  if(match) return 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w1200';
+  // Add cache-buster timestamp so updated photos always load fresh
+  if(match) return 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w1200&t=' + Date.now();
   return url;
+}
+
+// Clean timestamp — strips time, timezone, and locale text
+// Accepts: "Mar 26, 2026", "2026-03-26T00:00:00.000Z", "Thu Mar 26 2026 00:00:00 GMT+0400 (...)"
+function cleanDate(ts) {
+  if(!ts) return '';
+  // Already a clean short date like "Mar 26, 2026" or "Mar 26 2026"
+  if(/^[A-Za-z]{3}\s+\d{1,2},?\s+\d{4}$/.test(ts.trim())) return ts.trim();
+  try {
+    const d = new Date(ts);
+    if(!isNaN(d)) return d.toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'});
+  } catch(e){}
+  // Fallback: take only up to first comma or before any time-like pattern
+  return ts.replace(/\s+\d{2}:\d{2}:\d{2}.*$/, '').replace(/\s*\(.*\)/, '').trim();
 }
 
 function showResult(photo, name, cat, ts, id) {
@@ -599,7 +615,7 @@ function showResult(photo, name, cat, ts, id) {
   const catEl = document.getElementById('result-cat');
   catEl.textContent = cat || ''; catEl.style.display = cat ? 'block' : 'none';
   document.getElementById('result-id-label').innerHTML = id ? 'ID: <strong>' + id + '</strong>' : '';
-  document.getElementById('result-ts').textContent = ts ? 'Registered: ' + ts : '';
+  document.getElementById('result-ts').textContent = ts ? 'Registered: ' + cleanDate(ts) : '';
   document.getElementById('result-footer').textContent = name + ' · TOOL ID';
 
   const photoEl     = document.getElementById('result-photo');
