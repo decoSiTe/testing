@@ -7,125 +7,308 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
+:root{
   --bg:#080c10;--surface:#0f1519;--surface2:#161e25;
-  --border:#1e2d38;--accent:#00d4ff;--accent2:#ff6b35;
-  --text:#e8f4f8;--muted:#4a6274;--success:#00e5a0;
+  --border:#1e2d38;--accent:#00d4ff;--accent2:#ff6b35;--accent3:#a78bfa;
+  --text:#e8f4f8;--muted:#4a6274;--success:#00e5a0;--error:#ff4d6d;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,0.01) 2px,rgba(0,212,255,0.01) 4px);pointer-events:none;z-index:0;}
 
+/* ══ TABS ══ */
+.tabs{display:flex;gap:0;background:var(--surface2);border-radius:14px;padding:5px;margin-bottom:32px;width:100%;max-width:500px;}
+.tab-btn{flex:1;padding:11px 10px;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:0.82rem;font-weight:600;letter-spacing:0.04em;cursor:pointer;transition:background 0.2s,color 0.2s;background:transparent;color:var(--muted);}
+.tab-btn.active{background:var(--surface);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.4);}
+.tab-btn.active.create-tab{color:var(--accent);}
+.tab-btn.active.update-tab{color:var(--accent2);}
+
+/* ══ GENERATOR PAGE ══ */
 #gen-page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;}
 .logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,5.5rem);letter-spacing:0.08em;line-height:1;margin-bottom:6px;}
 .logo span{color:var(--accent);}
-.tagline{font-size:0.72rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:52px;}
-.card{width:100%;max-width:500px;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:44px 40px;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.6);}
+.tagline{font-size:0.72rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:40px;}
+.card{width:100%;max-width:500px;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:40px;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.6);}
 .card::before{content:'';position:absolute;top:-1px;left:30px;right:30px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent);border-radius:2px;}
+
+/* CREATE panel */
+#panel-create{display:block;}
+/* UPDATE panel */
+#panel-update{display:none;}
+
 .step{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
 .step-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#000;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-num.orange{background:var(--accent2);}
 .step-label{font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);}
-.field-block{margin-bottom:28px;}
-.upload-zone{border:2px dashed var(--border);border-radius:14px;padding:32px 20px;text-align:center;cursor:pointer;transition:border-color 0.25s,background 0.25s;position:relative;overflow:hidden;background:var(--surface2);}
+.field-block{margin-bottom:26px;}
+
+.upload-zone{border:2px dashed var(--border);border-radius:14px;padding:28px 20px;text-align:center;cursor:pointer;transition:border-color .25s,background .25s;position:relative;overflow:hidden;background:var(--surface2);}
 .upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:rgba(0,212,255,0.04);}
+.upload-zone.orange-hover:hover,.upload-zone.orange-hover.drag{border-color:var(--accent2);background:rgba(255,107,53,0.04);}
 .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.upload-icon{font-size:2.2rem;margin-bottom:10px;}
-.upload-zone p{color:var(--muted);font-size:0.82rem;line-height:1.5;}
+.upload-icon{font-size:2rem;margin-bottom:8px;}
+.upload-zone p{color:var(--muted);font-size:.82rem;line-height:1.5;}
 .upload-zone p strong{color:var(--accent);}
+.upload-zone.orange-hover p strong{color:var(--accent2);}
 .preview-thumb{display:none;width:100%;border-radius:10px;object-fit:cover;max-height:180px;border:1px solid var(--border);}
 .preview-thumb.show{display:block;}
-.change-photo{margin-top:10px;font-size:0.72rem;color:var(--muted);cursor:pointer;text-decoration:underline;text-align:center;display:none;}
+.change-photo{margin-top:8px;font-size:.72rem;color:var(--muted);cursor:pointer;text-decoration:underline;text-align:center;display:none;}
 .change-photo.show{display:block;}
-.text-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;color:var(--text);font-family:'Outfit',sans-serif;font-size:0.92rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+
+.text-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.92rem;outline:none;transition:border-color .2s,box-shadow .2s;}
 .text-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,0.08);}
+.text-input.orange:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(255,107,53,0.08);}
 .text-input::placeholder{color:var(--muted);}
-.gen-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#0099cc);border:none;border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.12em;color:#000;cursor:pointer;transition:transform 0.15s,box-shadow 0.2s,opacity 0.2s;box-shadow:0 8px 32px rgba(0,212,255,0.2);}
+
+/* lookup row */
+.lookup-row{display:flex;gap:8px;}
+.lookup-row .text-input{flex:1;}
+.lookup-btn{padding:14px 18px;background:var(--accent2);border:none;border-radius:12px;color:#000;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;cursor:pointer;transition:opacity .2s,transform .15s;white-space:nowrap;flex-shrink:0;}
+.lookup-btn:hover{opacity:0.85;transform:translateY(-1px);}
+.lookup-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* current record card */
+.current-record{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:24px;display:none;}
+.current-record.show{display:block;}
+.current-record-label{font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:12px;}
+.cr-row{display:flex;gap:14px;align-items:flex-start;}
+.cr-thumb{width:72px;height:72px;border-radius:8px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;background:var(--surface);}
+.cr-info{flex:1;min-width:0;}
+.cr-name{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.04em;line-height:1.1;color:var(--text);word-break:break-word;}
+.cr-cat{font-size:0.76rem;color:var(--muted);margin-top:3px;}
+.cr-id{font-size:0.7rem;color:var(--accent2);margin-top:6px;font-family:'Outfit',sans-serif;}
+
+.gen-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#0099cc);border:none;border-radius:12px;font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.12em;color:#000;cursor:pointer;transition:transform .15s,box-shadow .2s,opacity .2s;box-shadow:0 8px 32px rgba(0,212,255,0.2);}
 .gen-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,212,255,0.35);}
 .gen-btn:disabled{opacity:0.4;cursor:not-allowed;}
-#qr-result{display:none;flex-direction:column;align-items:center;gap:18px;margin-top:36px;animation:rise 0.4s ease both;}
+.gen-btn.orange-btn{background:linear-gradient(135deg,var(--accent2),#cc4400);box-shadow:0 8px 32px rgba(255,107,53,0.25);}
+.gen-btn.orange-btn:hover:not(:disabled){box-shadow:0 12px 40px rgba(255,107,53,0.4);}
+
+.saving-bar{display:none;align-items:center;justify-content:center;gap:10px;margin-top:18px;font-size:.8rem;color:var(--muted);}
+.saving-bar.show{display:flex;}
+.spin{width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+.spin.orange{border-top-color:var(--accent2);}
+@keyframes spin{to{transform:rotate(360deg)}}
+.notice{margin-top:14px;padding:12px 16px;border-radius:10px;font-size:.78rem;display:none;line-height:1.5;}
+.notice.show{display:block;}
+.notice.ok{background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.3);color:var(--success);}
+.notice.err{background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);color:var(--error);}
+.notice.warn{background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.3);color:var(--accent2);}
+
+/* info callout */
+.info-box{background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.18);border-radius:10px;padding:13px 16px;font-size:.76rem;color:rgba(232,244,248,0.7);line-height:1.65;margin-bottom:22px;}
+.info-box.orange-box{background:rgba(255,107,53,0.06);border-color:rgba(255,107,53,0.2);color:rgba(232,244,248,0.7);}
+.info-box strong{color:var(--accent2);}
+
+#qr-result{display:none;flex-direction:column;align-items:center;gap:18px;margin-top:36px;animation:rise .4s ease both;}
 #qr-result.show{display:flex;}
 @keyframes rise{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
 .qr-wrap{background:#fff;padding:16px;border-radius:16px;box-shadow:0 0 0 1px var(--border),0 20px 60px rgba(0,0,0,0.5);}
 #qrcode canvas,#qrcode img{display:block;}
-.qr-caption{text-align:center;font-size:0.74rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);line-height:1.8;}
-.qr-caption span{color:var(--success);font-weight:600;}
+.qr-caption{text-align:center;font-size:.74rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);line-height:1.8;}
+.qr-caption span{font-weight:600;}
+.qr-caption span.green{color:var(--success);}
+.qr-caption span.orange{color:var(--accent2);}
+.qr-note{font-size:.72rem;color:var(--muted);text-align:center;max-width:280px;line-height:1.6;}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
-.ghost-btn{background:transparent;border:1px solid var(--border);border-radius:8px;padding:10px 22px;color:var(--text);font-family:'Outfit',sans-serif;font-size:0.8rem;font-weight:500;cursor:pointer;transition:border-color 0.2s,color 0.2s;}
+.ghost-btn{background:transparent;border:1px solid var(--border);border-radius:8px;padding:10px 22px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;cursor:pointer;transition:border-color .2s,color .2s;}
 .ghost-btn:hover{border-color:var(--accent);color:var(--accent);}
 .ghost-btn.hl{border-color:var(--accent2);color:var(--accent2);}
 .ghost-btn.hl:hover{background:rgba(255,107,53,0.08);}
 
-/* RESULT PAGE */
+/* ══ RESULT PAGE ══ */
 #result-page{display:none;min-height:100vh;background:var(--bg);position:relative;z-index:1;}
 #result-page.show{display:block;}
-.result-hero{position:relative;width:100%;overflow:hidden;background:#000;max-height:72vh;}
-.result-hero img{width:100%;display:block;object-fit:cover;max-height:72vh;opacity:0.9;}
-.hero-overlay{position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to top,rgba(8,12,16,1) 0%,rgba(8,12,16,0.65) 50%,transparent 100%);}
-.hero-badge{position:absolute;bottom:0;left:0;right:0;padding:28px 28px 32px;}
-.owner-label{font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;display:block;}
+.result-nav{padding:20px 28px 0;}
+.back-btn{background:transparent;border:1px solid var(--border);border-radius:8px;padding:9px 16px;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.78rem;cursor:pointer;transition:color .2s,border-color .2s;}
+.back-btn:hover{color:var(--text);border-color:var(--muted);}
+.result-hero{position:relative;width:100%;overflow:hidden;background:#111;min-height:260px;cursor:zoom-in;margin-top:20px;}
+.result-hero img{width:100%;display:block;object-fit:cover;max-height:72vh;opacity:.92;transition:transform .3s,opacity .3s;}
+.result-hero:hover img{transform:scale(1.02);opacity:1;}
+.hero-overlay{position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to top,rgba(8,12,16,1) 0%,rgba(8,12,16,0.65) 50%,transparent 100%);pointer-events:none;}
+.hero-badge{position:absolute;bottom:0;left:0;right:0;padding:28px 28px 32px;pointer-events:none;}
+.owner-label{font-size:.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;display:block;}
 .owner-name{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,8vw,4rem);letter-spacing:0.04em;line-height:1;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,0.8);}
-.owner-cat{font-size:0.78rem;color:rgba(255,255,255,0.5);margin-top:5px;letter-spacing:0.08em;}
+.owner-cat{font-size:.78rem;color:rgba(255,255,255,0.5);margin-top:5px;letter-spacing:0.08em;}
+.zoom-hint{position:absolute;top:14px;right:14px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:5px 11px;font-size:.68rem;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:5px;pointer-events:none;backdrop-filter:blur(6px);}
+.photo-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:260px;gap:12px;color:var(--muted);font-size:.8rem;}
+.photo-placeholder .icon{font-size:2.4rem;opacity:0.4;}
 .id-strip{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);gap:16px;flex-wrap:wrap;}
-.id-pill{display:flex;align-items:center;gap:8px;font-size:0.74rem;color:var(--muted);}
+.id-pill{display:flex;align-items:center;gap:8px;font-size:.74rem;color:var(--muted);}
 .pip{width:7px;height:7px;border-radius:50%;background:var(--success);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .id-pill strong{color:var(--text);font-weight:600;}
-.result-nav{padding:20px 28px 0;}
-.back-btn{background:transparent;border:1px solid var(--border);border-radius:8px;padding:9px 16px;color:var(--muted);font-family:'Outfit',sans-serif;font-size:0.78rem;cursor:pointer;transition:color 0.2s,border-color 0.2s;}
-.back-btn:hover{color:var(--text);border-color:var(--muted);}
-.result-footer{text-align:center;padding:36px 24px 48px;color:var(--muted);font-size:0.68rem;letter-spacing:0.1em;}
+.result-footer{text-align:center;padding:36px 24px 48px;color:var(--muted);font-size:.68rem;letter-spacing:0.1em;}
+
+/* ══ LIGHTBOX ══ */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.96);z-index:200;display:none;align-items:center;justify-content:center;cursor:zoom-out;animation:fadeIn .2s ease;}
+.lightbox.open{display:flex;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.lightbox img{max-width:95vw;max-height:92vh;object-fit:contain;border-radius:6px;animation:zoomIn .25s cubic-bezier(.34,1.56,.64,1);}
+@keyframes zoomIn{from{transform:scale(0.85)}to{transform:scale(1)}}
+.lightbox-close{position:absolute;top:18px;right:22px;font-size:1.8rem;color:rgba(255,255,255,0.6);cursor:pointer;line-height:1;transition:color .15s;}
+.lightbox-close:hover{color:#fff;}
+
+/* ══ LOADING ══ */
+.loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;}
+.loading-overlay .spin{width:36px;height:36px;border-width:3px;}
+.loading-overlay p{color:var(--muted);font-size:.82rem;letter-spacing:0.1em;}
+.loading-overlay.hidden{display:none;}
 </style>
 </head>
 <body>
 
+<div class="loading-overlay hidden" id="loading-overlay">
+  <div class="spin"></div>
+  <p id="loading-msg">Loading tool data…</p>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <span class="lightbox-close" onclick="closeLightbox()">✕</span>
+  <img id="lightbox-img" src="" alt="Tool photo zoomed">
+</div>
+
+<!-- ══════════════════════════
+     GENERATOR PAGE
+══════════════════════════ -->
 <div id="gen-page">
   <div class="logo">TOOL<span>ID</span></div>
   <div class="tagline">Upload · Name · Generate · Scan</div>
-  <div class="card">
-    <div class="field-block">
-      <div class="step"><div class="step-num">1</div><div class="step-label">Upload Tool Photo</div></div>
-      <div class="upload-zone" id="upload-zone">
-        <input type="file" id="photo-input" accept="image/*">
-        <div id="upload-placeholder">
-          <div class="upload-icon">📷</div>
-          <p><strong>Click or drag & drop</strong><br>your tools photo here</p>
-        </div>
-        <img class="preview-thumb" id="preview-thumb" alt="Preview">
-      </div>
-      <div class="change-photo" id="change-photo" onclick="resetPhoto()">↺ Change photo</div>
-    </div>
-    <div class="field-block">
-      <div class="step"><div class="step-num">2</div><div class="step-label">Owner / Tool Name</div></div>
-      <input type="text" class="text-input" id="input-name" placeholder="e.g. Ryan Ynion">
-    </div>
-    <div class="field-block">
-      <div class="step"><div class="step-num">3</div><div class="step-label">Category (optional)</div></div>
-      <input type="text" class="text-input" id="input-cat" placeholder="e.g. Culinary Tools · Baking Kit">
-    </div>
-    <button class="gen-btn" id="gen-btn" onclick="generate()" disabled>GENERATE QR CODE</button>
-    <div id="qr-result">
-      <div class="qr-caption">QR code ready — <span>✓ Scan to view photo</span></div>
-      <div class="qr-wrap"><div id="qrcode"></div></div>
-      <div class="btn-row">
-        <button class="ghost-btn" onclick="downloadQR()">↓ Save QR PNG</button>
-        <button class="ghost-btn hl" onclick="previewResult()">👁 Preview Result</button>
-      </div>
-    </div>
-  </div>
-</div>
 
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn create-tab active" onclick="switchTab('create')">➕ Create New</button>
+    <button class="tab-btn update-tab" onclick="switchTab('update')">🔄 Update Photo</button>
+  </div>
+
+  <div class="card">
+
+    <!-- ══ CREATE PANEL ══ -->
+    <div id="panel-create">
+      <div class="info-box">
+        Upload a photo, enter the owner's name, then generate a QR code. The QR stays the same forever — use <strong>Update Photo</strong> to swap the image anytime.
+      </div>
+
+      <div class="field-block">
+        <div class="step"><div class="step-num">1</div><div class="step-label">Upload Tool Photo</div></div>
+        <div class="upload-zone" id="upload-zone-create">
+          <input type="file" id="photo-input-create" accept="image/*">
+          <div id="upload-placeholder-create">
+            <div class="upload-icon">📷</div>
+            <p><strong>Click or drag & drop</strong><br>your tools photo here</p>
+          </div>
+          <img class="preview-thumb" id="preview-thumb-create" alt="Preview">
+        </div>
+        <div class="change-photo" id="change-photo-create" onclick="resetPhoto('create')">↺ Change photo</div>
+      </div>
+
+      <div class="field-block">
+        <div class="step"><div class="step-num">2</div><div class="step-label">Owner / Tool Name</div></div>
+        <input type="text" class="text-input" id="input-name" placeholder="e.g. Ferlin Mendoza">
+      </div>
+
+      <div class="field-block">
+        <div class="step"><div class="step-num">3</div><div class="step-label">Category (optional)</div></div>
+        <input type="text" class="text-input" id="input-cat" placeholder="e.g. Culinary Tools · Baking Kit">
+      </div>
+
+      <button class="gen-btn" id="gen-btn-create" onclick="createNew()" disabled>GENERATE &amp; SAVE QR CODE</button>
+      <div class="saving-bar" id="saving-bar-create"><div class="spin"></div>&nbsp;Saving…</div>
+      <div class="notice" id="notice-create"></div>
+
+      <div id="qr-result">
+        <div class="qr-caption">QR code ready — <span class="green">✓ Saved to Google Sheets</span></div>
+        <div class="qr-wrap"><div id="qrcode"></div></div>
+        <div class="qr-note">📱 This QR code is permanent. Use <strong>Update Photo</strong> to change the image anytime without reprinting.</div>
+        <div class="btn-row">
+          <button class="ghost-btn" onclick="downloadQR('qrcode')">↓ Save QR PNG</button>
+          <button class="ghost-btn hl" onclick="previewResult()">👁 Preview Result</button>
+        </div>
+      </div>
+    </div><!-- /panel-create -->
+
+    <!-- ══ UPDATE PANEL ══ -->
+    <div id="panel-update">
+      <div class="info-box orange-box">
+        <strong>Update Photo Only</strong> — Enter the Tool ID to look up an existing record, upload a new photo, and save. The QR code link stays exactly the same, so no reprinting needed.
+      </div>
+
+      <!-- Step 1: Look up ID -->
+      <div class="field-block">
+        <div class="step"><div class="step-num orange">1</div><div class="step-label">Enter Tool ID to Update</div></div>
+        <div class="lookup-row">
+          <input type="text" class="text-input orange" id="input-update-id" placeholder="e.g. TID-20260326-NUI7" oninput="onUpdateIdChange()">
+          <button class="lookup-btn" id="lookup-btn" onclick="lookupRecord()" disabled>LOOK UP</button>
+        </div>
+      </div>
+
+      <!-- Current record preview -->
+      <div class="current-record" id="current-record">
+        <div class="current-record-label">Current Record</div>
+        <div class="cr-row">
+          <img class="cr-thumb" id="cr-thumb" src="" alt="Current photo">
+          <div class="cr-info">
+            <div class="cr-name" id="cr-name">—</div>
+            <div class="cr-cat" id="cr-cat"></div>
+            <div class="cr-id" id="cr-id"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: New photo -->
+      <div class="field-block" id="update-photo-block" style="display:none;">
+        <div class="step"><div class="step-num orange">2</div><div class="step-label">Upload New Photo</div></div>
+        <div class="upload-zone orange-hover" id="upload-zone-update">
+          <input type="file" id="photo-input-update" accept="image/*">
+          <div id="upload-placeholder-update">
+            <div class="upload-icon">🔄</div>
+            <p><strong>Click or drag & drop</strong><br>new photo to replace existing</p>
+          </div>
+          <img class="preview-thumb" id="preview-thumb-update" alt="New preview">
+        </div>
+        <div class="change-photo" id="change-photo-update" onclick="resetPhoto('update')">↺ Choose different photo</div>
+      </div>
+
+      <button class="gen-btn orange-btn" id="gen-btn-update" onclick="updatePhoto()" disabled style="display:none;">UPDATE PHOTO &amp; KEEP QR</button>
+      <div class="saving-bar" id="saving-bar-update"><div class="spin orange"></div>&nbsp;Updating…</div>
+      <div class="notice" id="notice-update"></div>
+
+      <!-- QR shown after update -->
+      <div id="qr-result-update" style="display:none;flex-direction:column;align-items:center;gap:18px;margin-top:36px;animation:rise .4s ease both;">
+        <div class="qr-caption">Photo updated — <span class="orange">✓ Same QR code, new photo</span></div>
+        <div class="qr-wrap"><div id="qrcode-update"></div></div>
+        <div class="qr-note">🎉 Your existing printed QR code now shows the new photo automatically!</div>
+        <div class="btn-row">
+          <button class="ghost-btn" onclick="downloadQR('qrcode-update')">↓ Save QR PNG</button>
+          <button class="ghost-btn hl" onclick="previewUpdated()">👁 Preview Result</button>
+        </div>
+      </div>
+
+    </div><!-- /panel-update -->
+
+  </div><!-- /card -->
+</div><!-- /gen-page -->
+
+<!-- ══════════════════════════
+     RESULT PAGE
+══════════════════════════ -->
 <div id="result-page">
   <div class="result-nav">
     <button class="back-btn" onclick="goBack()">← Generator</button>
   </div>
-  <div class="result-hero">
-    <img id="result-photo" src="" alt="Tool photo">
+  <div class="result-hero" id="result-hero" onclick="openLightbox()">
+    <div class="photo-placeholder" id="photo-placeholder">
+      <div class="icon">🖼</div><span>Loading photo…</span>
+    </div>
+    <img id="result-photo" src="" alt="Tool photo" style="display:none;" onload="onPhotoLoaded()" onerror="onPhotoError()">
     <div class="hero-overlay"></div>
     <div class="hero-badge">
       <span class="owner-label">Tool Owner</span>
       <div class="owner-name" id="result-name">—</div>
       <div class="owner-cat" id="result-cat"></div>
     </div>
+    <div class="zoom-hint">🔍 Tap to zoom</div>
   </div>
   <div class="id-strip">
     <div class="id-pill"><div class="pip"></div><span>Status: <strong>Active</strong></span></div>
@@ -136,71 +319,258 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 </div>
 
 <script>
-let photoDataURL = null;
+// ─── CONFIG ───────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxRIsw58wsxfqaZJeFu4c1tGQra6WT2xzWBw8H_TOQWLRzOfZ6AEmk4XkKjapzFapJ1zw/exec';
+// ─────────────────────────────────────────────────
 
-const photoInput = document.getElementById('photo-input');
-const uploadZone = document.getElementById('upload-zone');
-const previewThumb = document.getElementById('preview-thumb');
-const uploadPlaceholder = document.getElementById('upload-placeholder');
-const changePhotoEl = document.getElementById('change-photo');
-const genBtn = document.getElementById('gen-btn');
+let photoCreate     = null; // base64 for create
+let photoUpdate     = null; // base64 for update
+let currentLookup   = null; // { id, name, cat, ts, photo }
+let currentPhotoUrl = null; // for lightbox
+let lastUpdatedData = null; // store after update for preview
 
-photoInput.addEventListener('change', e => { if(e.target.files[0]) readPhoto(e.target.files[0]); });
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
-uploadZone.addEventListener('drop', e => {
-  e.preventDefault(); uploadZone.classList.remove('drag');
-  const f = e.dataTransfer.files[0];
-  if(f && f.type.startsWith('image/')) readPhoto(f);
-});
+// ── TAB SWITCH ─────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.' + tab + '-tab').classList.add('active');
+  document.getElementById('panel-create').style.display = tab === 'create' ? 'block' : 'none';
+  document.getElementById('panel-update').style.display = tab === 'update' ? 'block' : 'none';
+}
 
-function readPhoto(file) {
-  const r = new FileReader();
-  r.onload = ev => {
-    photoDataURL = ev.target.result;
-    previewThumb.src = photoDataURL;
-    previewThumb.classList.add('show');
-    uploadPlaceholder.style.display = 'none';
-    changePhotoEl.classList.add('show');
-    checkReady();
+// ── UPLOAD HELPERS ─────────────────────────────────
+function setupUpload(inputId, zoneId, placeholderId, thumbId, changeId, varKey, readyCb) {
+  const input  = document.getElementById(inputId);
+  const zone   = document.getElementById(zoneId);
+
+  input.addEventListener('change', e => { if(e.target.files[0]) readPhoto(e.target.files[0], thumbId, placeholderId, changeId, varKey, readyCb); });
+  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag');
+    const f = e.dataTransfer.files[0];
+    if(f && f.type.startsWith('image/')) readPhoto(f, thumbId, placeholderId, changeId, varKey, readyCb);
+  });
+}
+
+function readPhoto(file, thumbId, placeholderId, changeId, varKey, readyCb) {
+  const img = new Image(), reader = new FileReader();
+  reader.onload = ev => {
+    img.onload = () => {
+      const MAX = 900, w0 = img.width, h0 = img.height;
+      let w = w0, h = h0;
+      if(w > MAX){ h = Math.round(h * MAX / w); w = MAX; }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      const data = c.toDataURL('image/jpeg', 0.88);
+      if(varKey === 'create') photoCreate = data;
+      else photoUpdate = data;
+      document.getElementById(thumbId).src = data;
+      document.getElementById(thumbId).classList.add('show');
+      document.getElementById(placeholderId).style.display = 'none';
+      document.getElementById(changeId).classList.add('show');
+      if(readyCb) readyCb();
+    };
+    img.src = ev.target.result;
   };
-  r.readAsDataURL(file);
+  reader.readAsDataURL(file);
 }
 
-function resetPhoto() {
-  photoDataURL = null;
-  photoInput.value = '';
-  previewThumb.classList.remove('show');
-  previewThumb.src = '';
-  uploadPlaceholder.style.display = '';
-  changePhotoEl.classList.remove('show');
-  checkReady();
+function resetPhoto(which) {
+  if(which === 'create') {
+    photoCreate = null;
+    document.getElementById('photo-input-create').value = '';
+    document.getElementById('preview-thumb-create').classList.remove('show');
+    document.getElementById('preview-thumb-create').src = '';
+    document.getElementById('upload-placeholder-create').style.display = '';
+    document.getElementById('change-photo-create').classList.remove('show');
+    checkCreateReady();
+  } else {
+    photoUpdate = null;
+    document.getElementById('photo-input-update').value = '';
+    document.getElementById('preview-thumb-update').classList.remove('show');
+    document.getElementById('preview-thumb-update').src = '';
+    document.getElementById('upload-placeholder-update').style.display = '';
+    document.getElementById('change-photo-update').classList.remove('show');
+    checkUpdateReady();
+  }
 }
 
-document.getElementById('input-name').addEventListener('input', checkReady);
-function checkReady() {
-  genBtn.disabled = !(photoDataURL && document.getElementById('input-name').value.trim());
+setupUpload('photo-input-create','upload-zone-create','upload-placeholder-create','preview-thumb-create','change-photo-create','create', checkCreateReady);
+setupUpload('photo-input-update','upload-zone-update','upload-placeholder-update','preview-thumb-update','change-photo-update','update', checkUpdateReady);
+
+document.getElementById('input-name').addEventListener('input', checkCreateReady);
+
+function checkCreateReady() {
+  document.getElementById('gen-btn-create').disabled = !(photoCreate && document.getElementById('input-name').value.trim());
+}
+function checkUpdateReady() {
+  const hasId    = !!(currentLookup && currentLookup.id);
+  const hasPhoto = !!photoUpdate;
+  document.getElementById('gen-btn-update').disabled  = !(hasId && hasPhoto);
+  if(hasId) document.getElementById('gen-btn-update').style.display = 'block';
 }
 
-function generate() {
+// ── NOTICES ────────────────────────────────────────
+function showNotice(id, msg, type) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.className = 'notice show ' + type;
+}
+function hideNotice(id) { document.getElementById(id).className = 'notice'; }
+
+// ── CREATE ─────────────────────────────────────────
+async function createNew() {
   const name = document.getElementById('input-name').value.trim();
   const cat  = document.getElementById('input-cat').value.trim();
   const ts   = new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
-  sessionStorage.setItem('toolid_photo', photoDataURL);
-  sessionStorage.setItem('toolid_name',  name);
-  sessionStorage.setItem('toolid_cat',   cat);
-  sessionStorage.setItem('toolid_ts',    ts);
-  const url = location.origin + location.pathname + '?view=result';
-  const container = document.getElementById('qrcode');
-  container.innerHTML = '';
-  new QRCode(container, {text:url,width:220,height:220,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.H});
-  const res = document.getElementById('qr-result');
-  res.classList.add('show');
-  res.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  document.getElementById('gen-btn-create').disabled = true;
+  document.getElementById('saving-bar-create').classList.add('show');
+  hideNotice('notice-create');
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action:'create', name, cat, ts, photo: photoCreate })
+    });
+    const data = await resp.json();
+    if(!data.success) throw new Error(data.error || 'Unknown error');
+
+    const qrURL = location.origin + location.pathname + '?id=' + encodeURIComponent(data.id);
+    buildQR('qrcode', qrURL);
+
+    // Cache preview
+    sessionStorage.setItem('tip_photo', data.photoUrl || photoCreate);
+    sessionStorage.setItem('tip_name',  name);
+    sessionStorage.setItem('tip_cat',   cat);
+    sessionStorage.setItem('tip_ts',    ts);
+    sessionStorage.setItem('tip_id',    data.id);
+
+    document.getElementById('saving-bar-create').classList.remove('show');
+    showNotice('notice-create', '✓ Saved — ID: ' + data.id, 'ok');
+    const res = document.getElementById('qr-result');
+    res.classList.add('show');
+    res.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  } catch(err) {
+    document.getElementById('saving-bar-create').classList.remove('show');
+    showNotice('notice-create', '❌ ' + err.message, 'err');
+    document.getElementById('gen-btn-create').disabled = false;
+  }
 }
 
-function downloadQR() {
-  const canvas = document.querySelector('#qrcode canvas');
+// ── LOOK UP RECORD ─────────────────────────────────
+function onUpdateIdChange() {
+  const val = document.getElementById('input-update-id').value.trim();
+  document.getElementById('lookup-btn').disabled = val.length < 4;
+  // Reset state when ID changes
+  currentLookup = null;
+  photoUpdate   = null;
+  document.getElementById('current-record').classList.remove('show');
+  document.getElementById('update-photo-block').style.display = 'none';
+  document.getElementById('gen-btn-update').style.display = 'none';
+  document.getElementById('gen-btn-update').disabled = true;
+  resetPhoto('update');
+  hideNotice('notice-update');
+  const upd = document.getElementById('qr-result-update');
+  upd.style.display = 'none';
+}
+
+async function lookupRecord() {
+  const toolId = document.getElementById('input-update-id').value.trim();
+  if(!toolId) return;
+
+  document.getElementById('lookup-btn').disabled = true;
+  showNotice('notice-update', 'Looking up…', 'warn');
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL + '?id=' + encodeURIComponent(toolId));
+    const data = await resp.json();
+    if(!data.success) throw new Error(data.error || 'Record not found');
+
+    currentLookup = data;
+
+    // Show current record card
+    document.getElementById('cr-name').textContent = data.name;
+    document.getElementById('cr-cat').textContent  = data.cat || '';
+    document.getElementById('cr-id').textContent   = 'ID: ' + data.id;
+    const thumb = document.getElementById('cr-thumb');
+    const pUrl  = toDriveDirectUrl(data.photo);
+    thumb.src   = pUrl || '';
+    thumb.style.display = pUrl ? 'block' : 'none';
+    document.getElementById('current-record').classList.add('show');
+
+    // Show photo upload block
+    document.getElementById('update-photo-block').style.display = 'block';
+
+    hideNotice('notice-update');
+    document.getElementById('lookup-btn').disabled = false;
+
+  } catch(err) {
+    showNotice('notice-update', '❌ ' + err.message, 'err');
+    document.getElementById('lookup-btn').disabled = false;
+  }
+}
+
+// ── UPDATE PHOTO ────────────────────────────────────
+async function updatePhoto() {
+  if(!currentLookup || !photoUpdate) return;
+
+  document.getElementById('gen-btn-update').disabled = true;
+  document.getElementById('saving-bar-update').classList.add('show');
+  hideNotice('notice-update');
+
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action:'update', id: currentLookup.id, photo: photoUpdate })
+    });
+    const data = await resp.json();
+    if(!data.success) throw new Error(data.error || 'Update failed');
+
+    // Same QR URL as before — ID hasn't changed
+    const qrURL = location.origin + location.pathname + '?id=' + encodeURIComponent(currentLookup.id);
+    buildQR('qrcode-update', qrURL);
+
+    lastUpdatedData = {
+      photo: data.photoUrl || photoUpdate,
+      name:  currentLookup.name,
+      cat:   currentLookup.cat,
+      ts:    currentLookup.ts,
+      id:    currentLookup.id
+    };
+
+    // Also update session cache if same ID
+    if(sessionStorage.getItem('tip_id') === currentLookup.id) {
+      sessionStorage.setItem('tip_photo', lastUpdatedData.photo);
+    }
+
+    document.getElementById('saving-bar-update').classList.remove('show');
+    showNotice('notice-update', '✓ Photo updated! QR code unchanged — ID: ' + currentLookup.id, 'ok');
+
+    const upd = document.getElementById('qr-result-update');
+    upd.style.display = 'flex';
+    upd.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+    // Update the cr-thumb to show new photo
+    document.getElementById('cr-thumb').src = toDriveDirectUrl(lastUpdatedData.photo) || photoUpdate;
+
+  } catch(err) {
+    document.getElementById('saving-bar-update').classList.remove('show');
+    showNotice('notice-update', '❌ ' + err.message, 'err');
+    document.getElementById('gen-btn-update').disabled = false;
+  }
+}
+
+// ── QR BUILDER ─────────────────────────────────────
+function buildQR(containerId, url) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  new QRCode(container, { text:url, width:220, height:220, colorDark:'#000', colorLight:'#fff', correctLevel:QRCode.CorrectLevel.H });
+}
+
+function downloadQR(containerId) {
+  const canvas = document.querySelector('#' + containerId + ' canvas');
   if(!canvas) return;
   const a = document.createElement('a');
   a.download = 'toolid-qr.png';
@@ -208,42 +578,131 @@ function downloadQR() {
   a.click();
 }
 
-function showResult(photo, name, cat, ts) {
+// ── RESULT PAGE ─────────────────────────────────────
+function toDriveDirectUrl(url) {
+  if(!url || typeof url !== 'string') return '';
+  // already base64
+  if(url.startsWith('data:')) return url;
+  const formulaMatch = url.match(/=IMAGE\("([^"]+)"/);
+  if(formulaMatch) url = formulaMatch[1];
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if(match) return 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w1200';
+  return url;
+}
+
+function showResult(photo, name, cat, ts, id) {
   document.getElementById('gen-page').style.display = 'none';
+  document.getElementById('loading-overlay').classList.add('hidden');
   document.getElementById('result-page').classList.add('show');
-  document.getElementById('result-photo').src = photo;
+
   document.getElementById('result-name').textContent = name;
   const catEl = document.getElementById('result-cat');
-  catEl.textContent = cat || '';
-  catEl.style.display = cat ? 'block' : 'none';
-  document.getElementById('result-id-label').textContent = name;
+  catEl.textContent = cat || ''; catEl.style.display = cat ? 'block' : 'none';
+  document.getElementById('result-id-label').innerHTML = id ? 'ID: <strong>' + id + '</strong>' : '';
   document.getElementById('result-ts').textContent = ts ? 'Registered: ' + ts : '';
   document.getElementById('result-footer').textContent = name + ' · TOOL ID';
+
+  const photoEl     = document.getElementById('result-photo');
+  const placeholder = document.getElementById('photo-placeholder');
+  const directUrl   = toDriveDirectUrl(photo);
+  currentPhotoUrl   = directUrl;
+
+  placeholder.innerHTML = '<div class="icon">🖼</div><span>Loading photo…</span>';
+  placeholder.style.display = 'flex';
+  photoEl.style.display = 'none';
+  photoEl.removeAttribute('data-tried1');
+  photoEl.removeAttribute('data-tried2');
+
+  if(directUrl) { photoEl.src = directUrl; }
+  else { placeholder.innerHTML = '<div class="icon">📷</div><span>No photo available</span>'; }
 }
 
+function onPhotoLoaded() {
+  document.getElementById('photo-placeholder').style.display = 'none';
+  document.getElementById('result-photo').style.display = 'block';
+}
+function onPhotoError() {
+  const el  = document.getElementById('result-photo');
+  const url = el.src;
+  const m   = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if(m && !el.dataset.tried1) {
+    el.dataset.tried1 = '1';
+    el.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w800';
+  } else if(m && !el.dataset.tried2) {
+    el.dataset.tried2 = '1';
+    el.src = 'https://lh3.googleusercontent.com/d/' + m[1];
+  } else {
+    document.getElementById('photo-placeholder').innerHTML = '<div class="icon">🖼</div><span>Photo unavailable</span>';
+    document.getElementById('photo-placeholder').style.display = 'flex';
+  }
+}
+
+// ── LIGHTBOX ────────────────────────────────────────
+function openLightbox() {
+  const photoEl = document.getElementById('result-photo');
+  if(!photoEl || photoEl.style.display === 'none') return;
+  const src = photoEl.currentSrc || photoEl.src;
+  if(!src) return;
+  const m = src.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  const lightboxUrl = m
+    ? 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w2000'
+    : src;
+  document.getElementById('lightbox-img').src = lightboxUrl;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
+
+// ── NAVIGATION ──────────────────────────────────────
 function previewResult() {
-  const name = document.getElementById('input-name').value.trim();
-  const cat  = document.getElementById('input-cat').value.trim();
-  const ts   = new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
-  if(!photoDataURL || !name) return;
-  history.pushState({}, '', '?view=result');
-  showResult(photoDataURL, name, cat, ts);
+  const p = sessionStorage.getItem('tip_photo');
+  const n = sessionStorage.getItem('tip_name');
+  if(!n) return;
+  history.pushState({}, '', '?preview=1');
+  showResult(p, n, sessionStorage.getItem('tip_cat'), sessionStorage.getItem('tip_ts'), sessionStorage.getItem('tip_id'));
 }
-
+function previewUpdated() {
+  if(!lastUpdatedData) return;
+  history.pushState({}, '', '?preview=1');
+  showResult(lastUpdatedData.photo, lastUpdatedData.name, lastUpdatedData.cat, lastUpdatedData.ts, lastUpdatedData.id);
+}
 function goBack() {
   document.getElementById('result-page').classList.remove('show');
   document.getElementById('gen-page').style.display = 'flex';
   history.pushState({}, '', location.pathname);
 }
 
-// Auto-show result if QR was scanned
-const params = new URLSearchParams(location.search);
-if(params.get('view') === 'result') {
-  const photo = sessionStorage.getItem('toolid_photo');
-  const name  = sessionStorage.getItem('toolid_name');
-  const cat   = sessionStorage.getItem('toolid_cat');
-  const ts    = sessionStorage.getItem('toolid_ts');
-  if(photo && name) showResult(photo, name, cat, ts);
+// ── QR SCAN HANDLER ─────────────────────────────────
+async function handleScan(toolId) {
+  document.getElementById('loading-overlay').classList.remove('hidden');
+  document.getElementById('gen-page').style.display = 'none';
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL + '?id=' + encodeURIComponent(toolId));
+    const data = await resp.json();
+    if(!data.success) throw new Error(data.error || 'Record not found');
+    showResult(data.photo, data.name, data.cat, data.ts, data.id);
+  } catch(err) {
+    document.getElementById('loading-overlay').classList.add('hidden');
+    document.getElementById('gen-page').style.display = 'flex';
+    showNotice('notice-create', '❌ Could not load: ' + err.message, 'err');
+  }
+}
+
+// ── ROUTER ──────────────────────────────────────────
+const params   = new URLSearchParams(location.search);
+const scanId   = params.get('id');
+const isPreview = params.get('preview');
+
+if(scanId) {
+  handleScan(scanId);
+} else if(isPreview === '1') {
+  const p = sessionStorage.getItem('tip_photo');
+  const n = sessionStorage.getItem('tip_name');
+  if(p && n) showResult(p, n, sessionStorage.getItem('tip_cat'), sessionStorage.getItem('tip_ts'), sessionStorage.getItem('tip_id'));
 }
 </script>
 </body>
