@@ -482,7 +482,7 @@ async function lookupRecord() {
     const data = await resp.json();
     if(!data.success) throw new Error(data.error || 'Record not found');
 
-    currentLookup = data;
+    currentLookup = data; // includes scanUrl from doGet
 
     // Show current record card
     document.getElementById('cr-name').textContent = data.name;
@@ -529,9 +529,12 @@ async function updatePhoto() {
     const data = await resp.json();
     if(!data.success) throw new Error(data.error || 'Update failed');
 
-    // Same QR URL as before — ID hasn't changed
-    const qrURL = location.origin + location.pathname + '?id=' + encodeURIComponent(currentLookup.id);
-    buildQR('qrcode-update', qrURL);
+    // Use the ORIGINAL scan URL stored in the sheet (column G)
+    // This is the exact URL the first QR code pointed to — guaranteed identical
+    const originalScanUrl = currentLookup.scanUrl
+      || ('https://decosite.github.io/Tools/?id=' + encodeURIComponent(currentLookup.id));
+
+    buildQR('qrcode-update', originalScanUrl);
 
     lastUpdatedData = {
       photo: data.photoUrl || photoUpdate,
@@ -582,14 +585,13 @@ function downloadQR(containerId) {
 // ── RESULT PAGE ─────────────────────────────────────
 function toDriveDirectUrl(url) {
   if(!url || typeof url !== 'string') return '';
-  // already base64
-  if(url.startsWith('data:')) return url;
+  if(url.startsWith('data:')) return url; // already base64, use directly
   const formulaMatch = url.match(/=IMAGE\("([^"]+)"/);
   if(formulaMatch) url = formulaMatch[1];
   const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-  // Add cache-buster timestamp so updated photos always load fresh
-  if(match) return 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w1200&t=' + Date.now();
-  return url;
+  // Use cache-busting timestamp so Drive never serves a stale cached image
+  if(match) return 'https://drive.google.com/thumbnail?id=' + match[1] + '&sz=w1200&nocache=' + Date.now();
+  return url + (url.includes('?') ? '&' : '?') + 'nocache=' + Date.now();
 }
 
 // Clean timestamp — strips time, timezone, and locale text
@@ -620,17 +622,25 @@ function showResult(photo, name, cat, ts, id) {
 
   const photoEl     = document.getElementById('result-photo');
   const placeholder = document.getElementById('photo-placeholder');
-  const directUrl   = toDriveDirectUrl(photo);
-  currentPhotoUrl   = directUrl;
 
   placeholder.innerHTML = '<div class="icon">🖼</div><span>Loading photo…</span>';
   placeholder.style.display = 'flex';
   photoEl.style.display = 'none';
+  // Reset src completely first to prevent browser from showing cached old image
+  photoEl.src = '';
   photoEl.removeAttribute('data-tried1');
   photoEl.removeAttribute('data-tried2');
 
-  if(directUrl) { photoEl.src = directUrl; }
-  else { placeholder.innerHTML = '<div class="icon">📷</div><span>No photo available</span>'; }
+  if(photo && photo.startsWith('data:')) {
+    // Base64 — use directly, no Drive cache issue at all
+    currentPhotoUrl = photo;
+    photoEl.src = photo;
+  } else {
+    const directUrl = toDriveDirectUrl(photo);
+    currentPhotoUrl = directUrl;
+    if(directUrl) { photoEl.src = directUrl; }
+    else { placeholder.innerHTML = '<div class="icon">📷</div><span>No photo available</span>'; }
+  }
 }
 
 function onPhotoLoaded() {
