@@ -85,14 +85,26 @@
     }
     .holidays-list {
       flex: 1; display: flex; align-items: center;
-      flex-wrap: wrap; padding: 8px 12px; gap: 0; overflow: hidden;
+      overflow: hidden; padding: 0; position: relative;
+    }
+    /* marquee track */
+    .marquee-track {
+      display: flex; align-items: center;
+      white-space: nowrap;
+      animation: marquee-scroll 18s linear infinite;
+      will-change: transform;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    @keyframes marquee-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
     .h-item {
-      display: flex; align-items: center; gap: 6px;
-      padding: 4px 14px 4px 0;
-      animation: fadeUp 0.4s ease both;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 28px 4px 0;
+      flex-shrink: 0;
     }
-    .h-bullet { color: var(--pink); font-size: 14px; flex-shrink: 0; }
+    .h-bullet { color: var(--pink); font-size: 16px; flex-shrink: 0; }
     .h-name { font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; }
     .holidays-loading-strip {
       flex: 1; display: flex; align-items: center; gap: 12px; padding: 10px 16px;
@@ -344,11 +356,6 @@
 
   <!-- Main Page -->
   <div class="page">
-    <div class="notice">
-      <strong>⚠ Please Read Before Submitting</strong>
-      Kindly ensure that all missing price tags are properly checked and consolidated before submitting a request. This will enable us to process and dispatch them in one complete batch, rather than receiving repeated requests on a daily or alternate-day basis.
-    </div>
-
     <div id="formWrap">
 
       <!-- Form Card -->
@@ -408,25 +415,19 @@
         </div>
       </div>
 
-      <!-- Photos Card -->
+      <!-- Photos Slideshow (no header, no caption) -->
       <div class="photos-card">
-        <div class="photos-card-header">
-          <h3>📸 Photos</h3>
-          <div class="live-badge"><div class="live-dot"></div> LIVE</div>
-        </div>
         <div class="slideshow" id="slideshow">
           <div class="slide active">
             <div class="slide-placeholder">
               <span>🖼️</span>
-              <p>Photos from Google Drive will appear here once your Apps Script is configured</p>
+              <p>Photos from Google Drive will appear here once configured</p>
             </div>
           </div>
         </div>
-        <div class="photos-caption" id="photoCaption">No photos loaded yet</div>
         <div class="setup-hint" id="photosSetupHint">
           <strong>Setup:</strong> Add <code>action=getPhotos</code> to your Apps Script returning
-          <code>[{ url, caption }]</code>. For each Drive file: Share → Anyone with link →
-          use <code>https://drive.google.com/thumbnail?id=13S8AexYtzBsTDsxrtMBRJ7Fk4R815dB1&sz=w800</code>
+          <code>[{ url, caption }]</code>. Use <code>https://drive.google.com/thumbnail?id=FILE_ID&amp;sz=w800</code>
         </div>
       </div>
 
@@ -476,11 +477,7 @@
     Optional hardcoded fallback photos (Drive thumbnail URLs):
     { url: 'https://drive.google.com/thumbnail?id=FILE_ID&sz=w800', caption: 'Label' }
   */
-  const FALLBACK_PHOTOS = [
-     { url: 'https://drive.google.com/thumbnail?id=13S8AexYtzBsTDsxrtMBRJ7Fk4R815dB1&sz=w800' },
-    { url: 'https://drive.google.com/thumbnail?id=1cmknJgx3RmJimzmpLWav6yI7ErlFx5LD&sz=w800' },
-    { url: 'https://drive.google.com/thumbnail?id=10p3gWu86QXSGeO_WmqfkJGndAagpSBOh&sz=w800' }
-  ];
+  const FALLBACK_PHOTOS = [];
 
   /* ══ MODAL ══════════════════════════════════════════════════════════ */
   function closeReminder() {
@@ -728,11 +725,14 @@
   }
 
   function renderHolidays(holidays) {
-    document.getElementById('holidaysList').innerHTML = holidays.map((h, i) => `
-      <div class="h-item" style="animation-delay:${i*0.08}s">
+    const items = holidays.map(h => `
+      <div class="h-item">
         <span class="h-bullet">•</span>
         <span class="h-name">${h.emoji ? h.emoji + '\u00A0' : ''}${h.name}</span>
       </div>`).join('');
+    // Duplicate items for seamless infinite scroll
+    document.getElementById('holidaysList').innerHTML =
+      `<div class="marquee-track">${items}${items}${items}</div>`;
   }
 
   /* ══ PHOTOS ══════════════════════════════════════════════════════════
