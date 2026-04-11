@@ -5,14 +5,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Price Tag Request Form</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Outfit:wght@300;400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --forest:    #1a2a1f;
       --pink:      #e91e8c;
+      --pink-dark: #c4007a;
       --pink-lt:   #fce4f3;
+      --forest:    #1a2a1f;
+      --green:     #2d5a3d;
       --sage:      #74463a;
       --cream:     #faf8f3;
       --parchment: #f2ece0;
@@ -22,7 +24,6 @@
       --muted:     #7a7570;
       --border:    #ddd6c8;
       --error:     #b84040;
-      --radius:    10px;
     }
 
     body {
@@ -30,15 +31,12 @@
       background: var(--cream);
       color: var(--ink);
       min-height: 100vh;
-      background-image:
-        radial-gradient(ellipse at 5% 10%, rgba(26,42,31,0.05) 0%, transparent 55%),
-        radial-gradient(ellipse at 95% 90%, rgba(200,149,74,0.07) 0%, transparent 55%);
     }
 
-    /* ── Banner ── */
+    /* ── Top Banner ── */
     .banner {
-      width: 100%; height: 130px;
-      background: linear-gradient(135deg, #e91e8c 0%, #2d5a3d 60%, #4a7a5e 100%);
+      width: 100%; height: 120px;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--green) 60%, #4a7a5e 100%);
       position: relative; overflow: hidden;
       display: flex; align-items: center; justify-content: center;
     }
@@ -48,44 +46,85 @@
         rgba(255,255,255,0.8) 20px, rgba(255,255,255,0.8) 21px);
     }
     .banner-content { position: relative; text-align: center; }
-    .banner-label { font-size: 10px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: rgba(240,230,200,0.65); margin-bottom: 6px; }
-    .banner-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 700; color: #fff; }
+    .banner-label { font-size: 10px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: rgba(240,230,200,0.65); margin-bottom: 5px; }
+    .banner-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: #fff; }
     .banner-title span { color: var(--gold-lt); }
 
-    /* ── Layout ── */
-    .layout {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px 80px;
-      display: grid;
-      grid-template-columns: 1fr 280px;
-      gap: 24px;
-      align-items: start;
+    /* ══ HOLIDAYS STRIP ══ */
+    .holidays-strip {
+      width: 100%;
+      background: #fff;
+      border-top: 2px solid var(--pink);
+      border-bottom: 2px solid var(--pink);
     }
-    @media (max-width: 900px) {
-      .layout { grid-template-columns: 1fr; }
-      .sidebar { order: -1; }
+    .holidays-strip-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      align-items: stretch;
+      min-height: 60px;
+    }
+    .holidays-label-col {
+      display: flex; align-items: center; justify-content: center;
+      padding: 8px 20px 8px 20px;
+      border-right: 2px dashed rgba(233,30,140,0.3);
+      flex-shrink: 0;
+    }
+    .holidays-label-col span {
+      font-family: 'Caveat', cursive;
+      font-size: 22px; color: var(--pink); white-space: nowrap;
+    }
+    .holidays-list {
+      flex: 1; display: flex; align-items: center;
+      flex-wrap: wrap; padding: 8px 12px; gap: 0; overflow: hidden;
+    }
+    .h-item {
+      display: flex; align-items: center; gap: 6px;
+      padding: 4px 14px 4px 0;
+      animation: fadeUp 0.4s ease both;
+    }
+    .h-bullet { color: var(--pink); font-size: 14px; flex-shrink: 0; }
+    .h-name { font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+    .holidays-loading-strip {
+      flex: 1; display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+    }
+    .h-skel {
+      height: 20px; width: 110px; border-radius: 4px; flex-shrink: 0;
+      background: linear-gradient(90deg, #f5e8f0 25%, #ead0e4 50%, #f5e8f0 75%);
+      background-size: 200% 100%; animation: shimmer 1.2s infinite;
     }
 
-    /* ── Notice ── */
+    /* ══ PAGE ══ */
+    .page { max-width: 780px; margin: 0 auto; padding: 0 16px 80px; }
+
     .notice {
       background: #fff8ec; border: 1.5px solid #f0d080;
-      border-radius: var(--radius); padding: 13px 16px;
-      margin: 24px 0 20px; font-size: 13px; color: #6b4f00; line-height: 1.6;
+      border-radius: 10px; padding: 13px 16px;
+      margin: 22px 0 18px; font-size: 13px; color: #6b4f00; line-height: 1.6;
     }
     .notice strong { display: block; margin-bottom: 2px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #8a6500; }
 
     /* ── Cards ── */
     .card {
       background: #fff; border: 1px solid var(--border); border-radius: 14px;
-      padding: 32px 32px 28px;
-      box-shadow: 0 4px 28px rgba(26,42,31,0.07), 0 1px 4px rgba(0,0,0,0.04);
+      padding: 28px 28px 24px;
+      box-shadow: 0 4px 24px rgba(26,42,31,0.07), 0 1px 4px rgba(0,0,0,0.04);
       margin-bottom: 16px; animation: fadeUp 0.45s ease both;
     }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes pulse-green {
+      0%   { box-shadow: 0 0 0 0 rgba(76,175,80,0.6); }
+      70%  { box-shadow: 0 0 0 6px rgba(76,175,80,0); }
+      100% { box-shadow: 0 0 0 0 rgba(76,175,80,0); }
+    }
 
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    .form-group { margin-bottom: 20px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+    .form-group { margin-bottom: 18px; }
     .form-group:last-child { margin-bottom: 0; }
 
     label { display: block; font-size: 10.5px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--sage); margin-bottom: 7px; }
@@ -98,8 +137,10 @@
       transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
       -webkit-appearance: none; appearance: none;
     }
-    input:focus, select:focus, textarea:focus { border-color: var(--pink); background: #fff; box-shadow: 0 0 0 3px rgba(233,30,140,0.08); }
-
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--pink); background: #fff;
+      box-shadow: 0 0 0 3px rgba(233,30,140,0.08);
+    }
     .select-wrap { position: relative; }
     .select-wrap::after {
       content: ''; position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
@@ -108,12 +149,34 @@
     }
     select { cursor: pointer; padding-right: 34px; }
     textarea { resize: vertical; min-height: 76px; line-height: 1.6; font-size: 13.5px; }
+    .section-div { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
+    .required-note { font-size: 11px; color: var(--muted); margin-bottom: 18px; }
+    .required-note span { color: var(--gold); }
 
+    .alert { border-radius: 8px; padding: 12px 15px; font-size: 13px; margin-bottom: 18px; display: none; }
+    .alert-error { background: #fdf0f0; border: 1.5px solid #f0b8b8; color: var(--error); }
+
+    .btn-submit {
+      width: 100%; padding: 14px; background: var(--pink); color: #fff;
+      border: none; border-radius: 8px; font-family: 'Outfit', sans-serif;
+      font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-submit:hover:not(:disabled) { background: var(--pink-dark); box-shadow: 0 4px 18px rgba(233,30,140,0.3); transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      vertical-align: middle; margin-right: 8px;
+    }
+
+    /* ── Product section ── */
     .card-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--pink); margin-bottom: 4px; }
-    .card-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+    .card-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 18px; }
 
-    /* ── Product Search ── */
-    .product-search-wrap { position: relative; margin-bottom: 18px; }
+    .product-search-wrap { position: relative; margin-bottom: 16px; }
     .product-search-wrap svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
     .product-search {
       width: 100%; padding: 10px 14px 10px 34px; border: 1.5px solid var(--border); border-radius: 8px;
@@ -123,321 +186,113 @@
     .product-search:focus { border-color: var(--pink); background: #fff; box-shadow: 0 0 0 3px rgba(233,30,140,0.08); }
     .product-search::placeholder { color: var(--muted); }
 
-    .selection-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .selected-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--pink); color: #fff; font-size: 12px; font-weight: 600;
-      padding: 6px 14px; border-radius: 20px; transition: background 0.2s, color 0.2s;
-    }
+    .selection-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+    .selected-badge { display: inline-flex; align-items: center; background: var(--pink); color: #fff; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; }
     .selected-badge.zero { background: var(--border); color: var(--muted); }
     .selection-actions { display: flex; gap: 12px; }
-    .select-action-btn {
-      background: none; border: none; color: var(--sage); font-size: 13px; font-weight: 600;
-      cursor: pointer; text-decoration: underline; padding: 0; font-family: 'Outfit', sans-serif;
-    }
+    .select-action-btn { background: none; border: none; color: var(--sage); font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: underline; padding: 0; font-family: 'Outfit', sans-serif; }
     .select-action-btn:hover { color: var(--pink); }
 
-    .category-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-    .cat-tab {
-      padding: 10px 20px; background: #fff; border: 1px solid #ddd; border-radius: 20px;
-      font-size: 13px; font-weight: 600; color: #333; cursor: pointer;
-      transition: all 0.15s; text-transform: uppercase; font-family: 'Outfit', sans-serif;
-    }
-    .cat-tab:hover { border-color: #999; }
+    .category-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .cat-tab { padding: 8px 18px; background: #fff; border: 1px solid #ddd; border-radius: 20px; font-size: 12px; font-weight: 600; color: #333; cursor: pointer; transition: all 0.15s; text-transform: uppercase; font-family: 'Outfit', sans-serif; }
     .cat-tab.active { background: var(--pink); border-color: var(--pink); color: #fff; }
 
-    .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-    @media (max-width: 700px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
+    .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+    @media (max-width: 600px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 380px) { .product-grid { grid-template-columns: 1fr; } }
 
-    .check-item {
-      display: flex; align-items: center; gap: 8px; padding: 9px 12px;
-      border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer;
-      transition: border-color 0.15s, background 0.15s; background: var(--cream);
-    }
+    .check-item { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer; transition: border-color 0.15s, background 0.15s; background: var(--cream); }
     .check-item:hover { border-color: var(--sage); background: #fff; }
     .check-item.checked { border-color: var(--pink); background: rgba(233,30,140,0.04); }
-
-    .check-box {
-      width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-      transition: border-color 0.15s, background 0.15s; background: #fff;
-    }
+    .check-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: border-color 0.15s, background 0.15s; background: #fff; }
     .check-item.checked .check-box { background: var(--pink); border-color: var(--pink); }
     .check-box svg { display: none; }
     .check-item.checked .check-box svg { display: block; }
-
-    .check-name { font-size: 13px; font-weight: 500; color: var(--ink); line-height: 1.3; flex: 1; min-width: 0; }
+    .check-name { font-size: 12.5px; font-weight: 500; color: var(--ink); line-height: 1.3; flex: 1; min-width: 0; }
     .check-price { display: flex; align-items: center; gap: 3px; flex-shrink: 0; white-space: nowrap; margin-left: auto; }
-    .dirham-symbol { width: 14px; height: 14px; display: inline-block; vertical-align: middle; }
-    .price-num { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1; }
+    .dirham-symbol { width: 13px; height: 13px; display: inline-block; vertical-align: middle; }
+    .price-num { font-size: 12px; font-weight: 600; color: var(--ink); }
 
-    .alert { border-radius: 8px; padding: 12px 15px; font-size: 13px; margin-bottom: 18px; display: none; }
-    .alert-error { background: #fdf0f0; border: 1.5px solid #f0b8b8; color: var(--error); }
+    .skeleton-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+    .skeleton-item { height: 40px; border-radius: 8px; background: linear-gradient(90deg, var(--parchment) 25%, #e8e0d0 50%, var(--parchment) 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite; }
 
-    .btn-submit {
-      width: 100%; padding: 14px; background: var(--pink); color: #fff;
-      border: none; border-radius: 8px; font-family: 'Outfit', sans-serif;
-      font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-      cursor: pointer; margin-top: 10px;
-      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    /* ══ PHOTOS CARD ══ */
+    .photos-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 14px;
+      overflow: hidden; margin-bottom: 16px;
+      box-shadow: 0 4px 24px rgba(26,42,31,0.07);
+      animation: fadeUp 0.5s ease both;
     }
-    .btn-submit:hover:not(:disabled) { background: #c4007a; box-shadow: 0 4px 18px rgba(233,30,140,0.3); transform: translateY(-1px); }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    .spinner {
-      display: inline-block; width: 14px; height: 14px;
-      border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff;
-      border-radius: 50%; animation: spin 0.7s linear infinite;
-      vertical-align: middle; margin-right: 8px;
+    .photos-card-header {
+      background: linear-gradient(135deg, var(--forest) 0%, var(--green) 100%);
+      padding: 14px 22px;
+      display: flex; align-items: center; gap: 10px;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .photos-card-header h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 21px; font-weight: 700; color: #fff; margin: 0; flex: 1;
+    }
+    .live-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.12); border-radius: 20px;
+      padding: 4px 10px; font-size: 11px; font-weight: 600; color: #fff; letter-spacing: 0.5px;
+    }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #4caf50; animation: pulse-green 1.5s infinite; }
 
-    .required-note { font-size: 11px; color: var(--muted); margin-bottom: 20px; }
-    .required-note span { color: var(--gold); }
-    .section-div { border: none; border-top: 1px dashed var(--border); margin: 22px 0; }
+    .slideshow {
+      position: relative; width: 100%; aspect-ratio: 16/7;
+      background: #f0ebe5; overflow: hidden;
+    }
+    @media (max-width: 500px) { .slideshow { aspect-ratio: 4/3; } }
 
+    .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.7s ease; }
+    .slide.active { opacity: 1; }
+    .slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .slide-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--muted); }
+    .slide-placeholder span { font-size: 36px; }
+    .slide-placeholder p { font-size: 12px; text-align: center; padding: 0 24px; line-height: 1.6; }
+
+    .slide-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: #fff; border: none; cursor: pointer; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: background 0.2s; z-index: 2; }
+    .slide-nav:hover { background: rgba(0,0,0,0.6); }
+    .slide-nav.prev { left: 10px; }
+    .slide-nav.next { right: 10px; }
+
+    .slideshow-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 2; }
+    .s-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.2s; }
+    .s-dot.active { background: #fff; transform: scale(1.3); }
+
+    .photos-caption { padding: 9px 20px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); }
+
+    .setup-hint { background: var(--parchment); padding: 11px 20px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--muted); line-height: 1.7; }
+    .setup-hint strong { color: var(--ink); }
+    .setup-hint code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 10.5px; }
+
+    /* ── Success ── */
     .success-screen { display: none; text-align: center; padding: 52px 20px; animation: fadeUp 0.4s ease; }
-    .success-icon { font-size: 52px; margin-bottom: 16px; }
     .success-screen h2 { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--pink); margin-bottom: 10px; }
     .success-screen p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
-    .status-pill {
-      display: inline-block; background: #fff3cd; color: #856404;
-      border: 1px solid #f0d080; padding: 5px 18px; border-radius: 20px;
-      font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-    }
-    .btn-new {
-      display: inline-block; margin-top: 20px; padding: 11px 28px;
-      background: var(--pink); color: #fff; border: none; border-radius: 8px;
-      font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500;
-      cursor: pointer; transition: background 0.2s;
-    }
-    .btn-new:hover { background: #c4007a; }
+    .status-pill { display: inline-block; background: #fff3cd; color: #856404; border: 1px solid #f0d080; padding: 5px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+    .btn-new { display: inline-block; margin-top: 20px; padding: 11px 28px; background: var(--pink); color: #fff; border: none; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .btn-new:hover { background: var(--pink-dark); }
 
-    .skeleton-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; }
-    .skeleton-item {
-      height: 40px; border-radius: 8px;
-      background: linear-gradient(90deg, var(--parchment) 25%, #e8e0d0 50%, var(--parchment) 75%);
-      background-size: 200% 100%; animation: shimmer 1.2s infinite;
-    }
-    @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-
-    /* ── Reminder Modal ── */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 1000;
-      background: rgba(0,0,0,0.55);
-      display: flex; align-items: center; justify-content: center;
-      padding: 20px; animation: fadeIn 0.25s ease;
-    }
-    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-    .modal-box {
-      background: #fff; border-radius: 16px;
-      max-width: 480px; width: 100%;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-      overflow: hidden; animation: slideUp 0.3s ease;
-    }
-    @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-    .modal-header {
-      background: linear-gradient(135deg, #1a2a1f 0%, #2d5a3d 60%, #4a7a5e 100%);
-      padding: 22px 28px 18px; text-align: center;
-    }
+    /* ── Modal ── */
+    .modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.25s ease; }
+    .modal-box { background: #fff; border-radius: 16px; max-width: 460px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.25); overflow: hidden; animation: slideUp 0.3s ease; }
+    .modal-header { background: linear-gradient(135deg, var(--forest) 0%, var(--green) 60%); padding: 20px 28px 16px; text-align: center; }
     .modal-header-label { font-size: 10px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: rgba(240,230,200,0.65); margin-bottom: 4px; }
     .modal-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: #fff; margin: 0; }
-    .modal-body { padding: 24px 28px; background: #fff8ec; border-bottom: 1.5px solid #f0d080; }
+    .modal-body { padding: 22px 28px; background: #fff8ec; border-bottom: 1.5px solid #f0d080; }
     .modal-icon { font-size: 28px; margin-bottom: 10px; }
     .modal-body p { font-size: 13.5px; color: #6b4f00; line-height: 1.7; margin: 0; }
     .modal-body strong { display: block; margin-bottom: 6px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #8a6500; }
-    .modal-footer { padding: 18px 28px; background: #fff; text-align: center; }
-    .modal-btn {
-      background: var(--pink); color: #fff; border: none; border-radius: 8px;
-      padding: 12px 28px; font-family: 'Outfit', sans-serif;
-      font-size: 13px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
-      cursor: pointer; transition: background 0.2s, transform 0.15s;
-    }
-    .modal-btn:hover { background: #c4007a; transform: translateY(-1px); }
-
-    /* ════════════════════════════════════════
-       SIDEBAR
-    ════════════════════════════════════════ */
-    .sidebar {
-      position: sticky;
-      top: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      padding-top: 24px;
-    }
-
-    /* ── Holidays Panel ── */
-    .holidays-panel {
-      background: #fff;
-      border: 2px solid var(--pink);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(233,30,140,0.10);
-      animation: fadeUp 0.5s ease both;
-    }
-    .holidays-header {
-      background: linear-gradient(135deg, var(--pink) 0%, #c4007a 100%);
-      padding: 14px 18px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .holidays-header-icon { font-size: 18px; }
-    .holidays-header h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px; font-weight: 700; color: #fff; margin: 0;
-    }
-    .holidays-body { padding: 16px 18px; }
-
-    .holiday-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 10px 0;
-      border-bottom: 1px dashed var(--border);
-      animation: fadeUp 0.3s ease both;
-    }
-    .holiday-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .holiday-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--pink); flex-shrink: 0; margin-top: 5px;
-    }
-    .holiday-info { flex: 1; min-width: 0; }
-    .holiday-name {
-      font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.3;
-    }
-    .holiday-date {
-      font-size: 11px; color: var(--muted); margin-top: 2px;
-    }
-    .holiday-badge {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
-      padding: 2px 8px; border-radius: 10px; flex-shrink: 0; margin-top: 2px;
-      text-transform: uppercase;
-    }
-    .holiday-badge.upcoming { background: #e8f5e9; color: #2e7d32; }
-    .holiday-badge.today    { background: #fce4f3; color: var(--pink); }
-    .holiday-badge.past     { background: #f5f5f5; color: #999; }
-
-    .holidays-empty {
-      text-align: center; padding: 20px 0;
-      color: var(--muted); font-size: 13px;
-    }
-    .holidays-loading {
-      display: flex; flex-direction: column; gap: 10px; padding: 8px 0;
-    }
-    .h-skeleton {
-      height: 36px; border-radius: 6px;
-      background: linear-gradient(90deg, #f5f0f0 25%, #ede0e0 50%, #f5f0f0 75%);
-      background-size: 200% 100%; animation: shimmer 1.2s infinite;
-    }
-
-    /* ── Live Photos Panel ── */
-    .photos-panel {
-      background: #fff;
-      border: 2px solid var(--pink);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(233,30,140,0.10);
-      animation: fadeUp 0.6s ease both;
-    }
-    .photos-header {
-      background: linear-gradient(135deg, #1a2a1f 0%, #2d5a3d 100%);
-      padding: 14px 18px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .photos-header-icon { font-size: 18px; }
-    .photos-header h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px; font-weight: 700; color: #fff; margin: 0;
-    }
-    .live-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #4caf50;
-      box-shadow: 0 0 0 0 rgba(76,175,80,0.6);
-      animation: pulse-green 1.5s infinite;
-      margin-left: auto; flex-shrink: 0;
-    }
-    @keyframes pulse-green {
-      0%   { box-shadow: 0 0 0 0 rgba(76,175,80,0.6); }
-      70%  { box-shadow: 0 0 0 6px rgba(76,175,80,0); }
-      100% { box-shadow: 0 0 0 0 rgba(76,175,80,0); }
-    }
-
-    /* Slideshow */
-    .slideshow {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 4/3;
-      background: #f0ebe5;
-      overflow: hidden;
-    }
-    .slide {
-      position: absolute; inset: 0;
-      opacity: 0; transition: opacity 0.7s ease;
-    }
-    .slide.active { opacity: 1; }
-    .slide img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .slide-placeholder {
-      width: 100%; height: 100%;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 8px; color: var(--muted);
-    }
-    .slide-placeholder span { font-size: 32px; }
-    .slide-placeholder p { font-size: 11px; text-align: center; padding: 0 16px; line-height: 1.5; }
-
-    .slideshow-controls {
-      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-      display: flex; gap: 6px; z-index: 2;
-    }
-    .slide-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: rgba(255,255,255,0.5); cursor: pointer;
-      transition: background 0.2s, transform 0.2s;
-    }
-    .slide-dot.active { background: #fff; transform: scale(1.3); }
-
-    .slide-nav {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      background: rgba(0,0,0,0.35); color: #fff;
-      border: none; cursor: pointer; font-size: 18px;
-      width: 30px; height: 30px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s; z-index: 2;
-    }
-    .slide-nav:hover { background: rgba(0,0,0,0.6); }
-    .slide-nav.prev { left: 8px; }
-    .slide-nav.next { right: 8px; }
-
-    .photos-caption {
-      padding: 10px 14px;
-      font-size: 11px; color: var(--muted);
-      border-top: 1px solid var(--border);
-      display: flex; align-items: center; gap: 6px;
-    }
-    .photos-caption .caption-text { flex: 1; }
-
-    /* Setup guide */
-    .setup-hint {
-      padding: 12px 16px;
-      background: var(--parchment);
-      border-top: 1px solid var(--border);
-      font-size: 11px; color: var(--muted); line-height: 1.6;
-    }
-    .setup-hint strong { color: var(--ink); display: block; margin-bottom: 2px; }
-    .setup-hint code {
-      background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px;
-      font-family: monospace; font-size: 10px;
-    }
+    .modal-footer { padding: 16px 28px; background: #fff; text-align: center; }
+    .modal-btn { background: var(--pink); color: #fff; border: none; border-radius: 8px; padding: 12px 28px; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+    .modal-btn:hover { background: var(--pink-dark); }
   </style>
-  <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body>
 
-  <!-- ── Reminder Modal ── -->
+  <!-- Modal -->
   <div class="modal-overlay" id="reminderModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -455,6 +310,7 @@
     </div>
   </div>
 
+  <!-- Top Banner -->
   <div class="banner">
     <div class="banner-pattern"></div>
     <div class="banner-content">
@@ -463,603 +319,513 @@
     </div>
   </div>
 
-  <div class="layout">
-
-    <!-- ════ MAIN FORM COLUMN ════ -->
-    <div class="main-col">
-      <div class="notice">
-        <strong>⚠ Please Read Before Submitting</strong>
-        Kindly ensure that all missing price tags are properly checked and consolidated before submitting a request. This will enable us to process and dispatch them in one complete batch, rather than receiving repeated requests on a daily or alternate-day basis.
+  <!-- Holidays Strip -->
+  <div class="holidays-strip">
+    <div class="holidays-strip-inner">
+      <div class="holidays-label-col">
+        <span>Holidays!</span>
       </div>
-
-      <div id="formWrap">
-        <div class="card">
-          <div class="required-note"><span>*</span> Indicates required field</div>
-          <div class="alert alert-error" id="errorAlert"></div>
-
-          <div class="form-group">
-            <label for="emailField">Email <span class="req">*</span></label>
-            <input type="email" id="emailField" placeholder="your@email.com">
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="dateField">Date Requested <span class="req">*</span></label>
-              <input type="date" id="dateField">
-            </div>
-            <div class="form-group">
-              <label for="branchField">Branch <span class="req">*</span></label>
-              <div class="select-wrap">
-                <select id="branchField">
-                  <option value="">— Choose branch —</option>
-                  <option>UPTOWN MIRDIF</option><option>AL BARSHA</option><option>BIN SOUGAT</option>
-                  <option>SUSTAINABLE CITY</option><option>DIFC</option><option>MEGA MALL</option>
-                  <option>ZAWAYA</option><option>VILLANOVA</option><option>LAMCY</option>
-                  <option>DUBAI HILLS</option><option>JVC/KCC</option><option>BUSINESS BAY</option>
-                  <option>MAMSHA</option><option>DISCOVERY GARDEN</option><option>MOTOR CITY</option>
-                  <option>DHCC</option><option>SUNSET MALL</option><option>ENOC 1025</option>
-                  <option>NASHMA</option><option>MARKET MALL</option><option>LOGGIA PLAZA</option>
-                  <option>ARJAN KCC</option><option>NOOR 3</option><option>ENOC 1005</option>
-                  <option>AL GHURAIR</option><option>MIRDIF</option><option>MUWAELIH</option>
-                  <option>MEDIA CITY</option><option>AL GARHOUD S7</option><option>ELEGANZA</option>
-                  <option>MAMZAR</option><option>J ONE</option><option>AL MUTTENA</option>
-                  <option>NBQ</option><option>AL NAHDA</option><option>ANDALUSIA</option>
-                  <option>SATWA</option><option>AL FURJAN</option><option>TULIP MAJAN</option>
-                  <option>YAS MALL</option><option>KHALIDIYAH</option><option>BAWABAT</option>
-                  <option>ABU DHABI MALL</option><option>ARJAN -S7</option><option>JVC- S7</option>
-                  <option>FESTIVAL CITY</option><option>AVENUE - S7</option><option>RAMANIA</option>
-                  <option>EMERALD JADDAF</option><option>KCC LULU</option><option>KCC SPORTS SOCIETY</option>
-                  <option>KARAMA - S7</option><option>RIMAL - S7</option><option>KCC INTERNATIONAL CITY</option>
-                  <option>ARENCO</option><option>AJMAN</option><option>AL QASBA</option>
-                  <option>SHAMS BOUTIK</option><option>RIGGAT AL BUTEEN</option><option>JAFZA</option>
-                  <option>MANKHOOL</option><option>UM AL QUAIN</option><option>MANAR MALL</option>
-                  <option>SAHARA MALL</option><option>RAK MALL</option><option>JLT</option>
-                  <option>BURJUMAN</option><option>BUSINESS VILLAGE</option><option>ENOC 1096</option>
-                  <option>KCC DAMAC HILLS 2</option><option>KCC UNA APARTMENT</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <hr class="section-div">
-
-          <div class="form-group" style="margin-bottom:0;">
-            <label for="notesField">Notes / Special Instructions</label>
-            <textarea id="notesField" placeholder="Any urgency, special context, or additional instructions…"></textarea>
-          </div>
+      <div class="holidays-list" id="holidaysList">
+        <div class="holidays-loading-strip">
+          <div class="h-skel"></div><div class="h-skel"></div><div class="h-skel"></div>
         </div>
-
-        <div class="card">
-          <div class="card-title">Select Price Tags</div>
-          <div class="card-subtitle">Tick all items you need price tags for. Items are grouped by category.</div>
-
-          <div class="product-search-wrap">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-            </svg>
-            <input class="product-search" id="productSearch" type="text" placeholder="Search products…">
-          </div>
-
-          <div id="loadingState">
-            <div class="skeleton-list">
-              <div class="skeleton-item"></div><div class="skeleton-item"></div>
-              <div class="skeleton-item"></div><div class="skeleton-item"></div>
-              <div class="skeleton-item"></div><div class="skeleton-item"></div>
-            </div>
-          </div>
-
-          <div id="productGroups" style="display:none;"></div>
-        </div>
-
-        <div class="card" style="padding:24px 32px;">
-          <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">Submit Request</button>
-        </div>
-      </div>
-
-      <div class="card success-screen" id="successScreen">
-        <div class="success-icon">✅</div>
-        <h2>Request Submitted!</h2>
-        <p>Your price tag request has been received and is now queued for processing.<br>A confirmation has been sent to your email.</p>
-        <div class="status-pill">● Pending</div><br>
-        <button class="btn-new" onclick="resetForm()">Submit Another Request</button>
       </div>
     </div>
+  </div>
 
-    <!-- ════ SIDEBAR ════ -->
-    <div class="sidebar">
+  <!-- Main Page -->
+  <div class="page">
+    <div class="notice">
+      <strong>⚠ Please Read Before Submitting</strong>
+      Kindly ensure that all missing price tags are properly checked and consolidated before submitting a request. This will enable us to process and dispatch them in one complete batch, rather than receiving repeated requests on a daily or alternate-day basis.
+    </div>
 
-      <!-- Holidays Panel -->
-      <div class="holidays-panel">
-        <div class="holidays-header">
-          <span class="holidays-header-icon">🎉</span>
-          <h3>Holidays</h3>
+    <div id="formWrap">
+
+      <!-- Form Card -->
+      <div class="card">
+        <div class="required-note"><span>*</span> Indicates required field</div>
+        <div class="alert alert-error" id="errorAlert"></div>
+
+        <div class="form-group">
+          <label for="emailField">Email <span class="req">*</span></label>
+          <input type="email" id="emailField" placeholder="your@email.com">
         </div>
-        <div class="holidays-body" id="holidaysBody">
-          <div class="holidays-loading">
-            <div class="h-skeleton"></div>
-            <div class="h-skeleton"></div>
-            <div class="h-skeleton"></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dateField">Date Requested <span class="req">*</span></label>
+            <input type="date" id="dateField">
           </div>
+          <div class="form-group">
+            <label for="branchField">Branch <span class="req">*</span></label>
+            <div class="select-wrap">
+              <select id="branchField">
+                <option value="">— Choose branch —</option>
+                <option>UPTOWN MIRDIF</option><option>AL BARSHA</option><option>BIN SOUGAT</option>
+                <option>SUSTAINABLE CITY</option><option>DIFC</option><option>MEGA MALL</option>
+                <option>ZAWAYA</option><option>VILLANOVA</option><option>LAMCY</option>
+                <option>DUBAI HILLS</option><option>JVC/KCC</option><option>BUSINESS BAY</option>
+                <option>MAMSHA</option><option>DISCOVERY GARDEN</option><option>MOTOR CITY</option>
+                <option>DHCC</option><option>SUNSET MALL</option><option>ENOC 1025</option>
+                <option>NASHMA</option><option>MARKET MALL</option><option>LOGGIA PLAZA</option>
+                <option>ARJAN KCC</option><option>NOOR 3</option><option>ENOC 1005</option>
+                <option>AL GHURAIR</option><option>MIRDIF</option><option>MUWAELIH</option>
+                <option>MEDIA CITY</option><option>AL GARHOUD S7</option><option>ELEGANZA</option>
+                <option>MAMZAR</option><option>J ONE</option><option>AL MUTTENA</option>
+                <option>NBQ</option><option>AL NAHDA</option><option>ANDALUSIA</option>
+                <option>SATWA</option><option>AL FURJAN</option><option>TULIP MAJAN</option>
+                <option>YAS MALL</option><option>KHALIDIYAH</option><option>BAWABAT</option>
+                <option>ABU DHABI MALL</option><option>ARJAN -S7</option><option>JVC- S7</option>
+                <option>FESTIVAL CITY</option><option>AVENUE - S7</option><option>RAMANIA</option>
+                <option>EMERALD JADDAF</option><option>KCC LULU</option><option>KCC SPORTS SOCIETY</option>
+                <option>KARAMA - S7</option><option>RIMAL - S7</option><option>KCC INTERNATIONAL CITY</option>
+                <option>ARENCO</option><option>AJMAN</option><option>AL QASBA</option>
+                <option>SHAMS BOUTIK</option><option>RIGGAT AL BUTEEN</option><option>JAFZA</option>
+                <option>MANKHOOL</option><option>UM AL QUAIN</option><option>MANAR MALL</option>
+                <option>SAHARA MALL</option><option>RAK MALL</option><option>JLT</option>
+                <option>BURJUMAN</option><option>BUSINESS VILLAGE</option><option>ENOC 1096</option>
+                <option>KCC DAMAC HILLS 2</option><option>KCC UNA APARTMENT</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <hr class="section-div">
+
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="notesField">Notes / Special Instructions</label>
+          <textarea id="notesField" placeholder="Any urgency, special context, or additional instructions…"></textarea>
         </div>
       </div>
 
-      <!-- Live Photos Panel -->
-      <div class="photos-panel">
-        <div class="photos-header">
-          <span class="photos-header-icon">📸</span>
-          <h3>Live Photos</h3>
-          <div class="live-dot" title="Live"></div>
+      <!-- Photos Card -->
+      <div class="photos-card">
+        <div class="photos-card-header">
+          <h3>📸 Photos</h3>
+          <div class="live-badge"><div class="live-dot"></div> LIVE</div>
         </div>
-
         <div class="slideshow" id="slideshow">
-          <!-- Slides injected by JS -->
           <div class="slide active">
             <div class="slide-placeholder">
               <span>🖼️</span>
-              <p>Photos from Google Drive will appear here once configured</p>
+              <p>Photos from Google Drive will appear here once your Apps Script is configured</p>
             </div>
           </div>
         </div>
-
-        <div class="photos-caption">
-          <span class="caption-text" id="photoCaption">Awaiting photos…</span>
-        </div>
-
+        <div class="photos-caption" id="photoCaption">No photos loaded yet</div>
         <div class="setup-hint" id="photosSetupHint">
-          <strong>Setup required</strong>
-          Add Google Drive photo URLs via your Apps Script using <code>action=getPhotos</code>. 
-          Share each image publicly and use its direct link.
+          <strong>Setup:</strong> Add <code>action=getPhotos</code> to your Apps Script returning
+          <code>[{ url, caption }]</code>. For each Drive file: Share → Anyone with link →
+          use <code>https://drive.google.com/thumbnail?id=FILE_ID&sz=w800</code>
         </div>
       </div>
 
-    </div>
-    <!-- end sidebar -->
+      <!-- Products Card -->
+      <div class="card">
+        <div class="card-title">Select Price Tags</div>
+        <div class="card-subtitle">Tick all items you need price tags for. Items are grouped by category.</div>
 
-  </div><!-- end layout -->
+        <div class="product-search-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input class="product-search" id="productSearch" type="text" placeholder="Search products…">
+        </div>
 
-  <script>
-    /* ══════════════════════════════════════════════════════════════════
-       CONFIGURATION — update these values
-    ══════════════════════════════════════════════════════════════════ */
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1Hksx6CnvQfASieOKyaUmae5LewOFsKjR4JqWVs4O9F5BxEIXbQ3aCkpOI27XcGHIrw/exec';
-
-    /*
-      GOOGLE DRIVE PHOTOS:
-      For each photo in Drive → Share → "Anyone with link" → Copy link
-      Transform: https://drive.google.com/file/d/FILE_ID/view?usp=sharing
-           →     https://drive.google.com/thumbnail?id=FILE_ID&sz=w600
-
-      Add your photo objects below:  { url: '...', caption: '...' }
-      Leave empty [] and the panel will prompt you to configure.
-    */
-    const DRIVE_PHOTOS = [
-      // Example — replace FILE_ID with your real Google Drive file IDs:
-      // { url: 'https://drive.google.com/thumbnail?id=1Isow1zsX2sfYWcXYD2NljJNi8fl4NiAw_lide1=w600', caption: 'Eid al Adha Display' },
-      // { url: 'https://drive.google.com/thumbnail?id=lide2=w600', caption: 'Ramadan Promotion' },
-       { url: 'https://drive.google.com/thumbnail?id=1Isow1zsX2sfYWcXYD2NljJNi8fl4NiAw&sz=w600' },
-      { url: 'https://drive.google.com/thumbnail?id=1AfaAFhzO6P8ATMrIdS3aKUG1bL7-gMR9&sz=w600'},
-      { url: 'https://drive.google.com/thumbnail?id=128TcObhya-0HBt5rdM2_4u1TP5yC_4pO&sz=w600' },
-      { url: 'https://drive.google.com/thumbnail?id=1KuyvK1NQng5hLhUYoLzSFIvJvlmWHUrh&sz=w600' },
-    ];
-
-    /* ══════════════════════════════════════════════════════════════════
-       MODAL
-    ══════════════════════════════════════════════════════════════════ */
-    function closeReminder() {
-      const modal = document.getElementById('reminderModal');
-      modal.style.animation = 'fadeIn 0.2s ease reverse';
-      setTimeout(() => modal.style.display = 'none', 180);
-    }
-
-    /* ══════════════════════════════════════════════════════════════════
-       PRODUCTS (existing logic)
-    ══════════════════════════════════════════════════════════════════ */
-    const CATEGORIES = ['CAKE', 'PASTRY', 'BAKERY', 'SSMM', 'DRINKS', 'SANDWICH'];
-    let checked = {};
-    let allProducts = [];
-    let productGroups = {};
-    let activeCategory = '';
-
-    document.getElementById('dateField').valueAsDate = new Date();
-
-    window.addEventListener('DOMContentLoaded', () => {
-      // Load products via JSONP
-      window._jsonpCallback = function(res) {
-        if (res.success) onProductsLoaded(res.data);
-        else showLoadError('Failed to load products: ' + (res.error || 'Unknown error'));
-      };
-      const script = document.createElement('script');
-      script.onerror = () => showLoadError('Could not reach the server.');
-      script.src = APPS_SCRIPT_URL + '?action=getProducts&callback=_jsonpCallback';
-      document.head.appendChild(script);
-
-      document.getElementById('productSearch').addEventListener('input', filterProducts);
-
-      // Load holidays
-      loadHolidays();
-
-      // Init photos
-      initPhotos();
-    });
-
-    function showLoadError(msg) {
-      document.getElementById('loadingState').innerHTML =
-        `<p style="color:#b84040;font-size:13px;">⚠ ${msg}</p>`;
-    }
-
-    function onProductsLoaded(products) {
-      allProducts = products;
-      document.getElementById('loadingState').style.display = 'none';
-      renderGroups(products);
-      document.getElementById('productGroups').style.display = 'block';
-    }
-
-    function renderGroups(products) {
-      const container = document.getElementById('productGroups');
-      productGroups = {};
-      CATEGORIES.forEach(c => productGroups[c] = []);
-      productGroups['OTHER'] = [];
-      products.forEach(p => {
-        const cat = p.category && CATEGORIES.includes(p.category) ? p.category : 'OTHER';
-        productGroups[cat].push(p);
-      });
-
-      const activeCats = CATEGORIES.filter(cat => productGroups[cat].length > 0)
-        .concat(productGroups['OTHER'].length > 0 ? ['OTHER'] : []);
-
-      container.innerHTML = `
-        <div class="selection-controls">
-          <div id="selectedBadge" class="selected-badge zero">0 items selected</div>
-          <div class="selection-actions">
-            <button class="select-action-btn" onclick="selectAllVisible()">Select All</button>
-            <button class="select-action-btn" onclick="deselectAllVisible()">Deselect All</button>
+        <div id="loadingState">
+          <div class="skeleton-list">
+            <div class="skeleton-item"></div><div class="skeleton-item"></div>
+            <div class="skeleton-item"></div><div class="skeleton-item"></div>
+            <div class="skeleton-item"></div><div class="skeleton-item"></div>
           </div>
         </div>
-        <div class="category-tabs">
-          ${activeCats.map((cat, idx) =>
-            `<div class="cat-tab ${idx === 0 ? 'active' : ''}" onclick="filterByCategory('${cat}')">${cat}</div>`
-          ).join('')}
+        <div id="productGroups" style="display:none;"></div>
+      </div>
+
+      <!-- Submit Card -->
+      <div class="card" style="padding:20px 28px;">
+        <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">Submit Request</button>
+      </div>
+
+    </div>
+
+    <div class="card success-screen" id="successScreen">
+      <div style="font-size:52px;margin-bottom:16px;">✅</div>
+      <h2>Request Submitted!</h2>
+      <p>Your price tag request has been received and is now queued for processing.<br>A confirmation has been sent to your email.</p>
+      <div class="status-pill">● Pending</div><br>
+      <button class="btn-new" onclick="resetForm()">Submit Another Request</button>
+    </div>
+  </div>
+
+<script>
+  /* ══ CONFIG ══════════════════════════════════════════════════════════ */
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1Hksx6CnvQfASieOKyaUmae5LewOFsKjR4JqWVs4O9F5BxEIXbQ3aCkpOI27XcGHIrw/exec';
+
+  /*
+    Optional hardcoded fallback photos (Drive thumbnail URLs):
+    { url: 'https://drive.google.com/thumbnail?id=FILE_ID&sz=w800', caption: 'Label' }
+  */
+  const FALLBACK_PHOTOS = [];
+
+  /* ══ MODAL ══════════════════════════════════════════════════════════ */
+  function closeReminder() {
+    const m = document.getElementById('reminderModal');
+    m.style.animation = 'fadeIn 0.2s ease reverse';
+    setTimeout(() => m.style.display = 'none', 180);
+  }
+
+  /* ══ INIT ════════════════════════════════════════════════════════════ */
+  const CATEGORIES = ['CAKE', 'PASTRY', 'BAKERY', 'SSMM', 'DRINKS', 'SANDWICH'];
+  let checked = {}, allProducts = [], productGroups = {}, activeCategory = '';
+  let currentSlide = 0, slides = [], slideTimer = null;
+
+  document.getElementById('dateField').valueAsDate = new Date();
+
+  window.addEventListener('DOMContentLoaded', () => {
+    loadProducts();
+    loadHolidays();
+    loadPhotos();
+    document.getElementById('productSearch').addEventListener('input', filterProducts);
+  });
+
+  /* ══ PRODUCTS ════════════════════════════════════════════════════════ */
+  function loadProducts() {
+    window._prodCb = function(res) {
+      if (res.success) onProductsLoaded(res.data);
+      else showLoadError('Failed to load products: ' + (res.error || 'Unknown'));
+    };
+    const s = document.createElement('script');
+    s.onerror = () => showLoadError('Could not reach server.');
+    s.src = APPS_SCRIPT_URL + '?action=getProducts&callback=_prodCb';
+    document.head.appendChild(s);
+  }
+
+  function showLoadError(msg) {
+    document.getElementById('loadingState').innerHTML =
+      `<p style="color:#b84040;font-size:13px;padding:10px 0;">⚠ ${msg}</p>`;
+  }
+
+  function onProductsLoaded(products) {
+    allProducts = products;
+    document.getElementById('loadingState').style.display = 'none';
+    renderGroups(products);
+    document.getElementById('productGroups').style.display = 'block';
+  }
+
+  function renderGroups(products) {
+    const container = document.getElementById('productGroups');
+    productGroups = {};
+    CATEGORIES.forEach(c => productGroups[c] = []);
+    productGroups['OTHER'] = [];
+    products.forEach(p => {
+      const cat = p.category && CATEGORIES.includes(p.category) ? p.category : 'OTHER';
+      productGroups[cat].push(p);
+    });
+    const activeCats = CATEGORIES.filter(c => productGroups[c].length > 0)
+      .concat(productGroups['OTHER'].length > 0 ? ['OTHER'] : []);
+
+    container.innerHTML = `
+      <div class="selection-controls">
+        <div id="selectedBadge" class="selected-badge zero">0 items selected</div>
+        <div class="selection-actions">
+          <button class="select-action-btn" onclick="selectAllVisible()">Select All</button>
+          <button class="select-action-btn" onclick="deselectAllVisible()">Deselect All</button>
         </div>
-        <div class="product-grid" id="productGrid"></div>
-      `;
+      </div>
+      <div class="category-tabs">
+        ${activeCats.map((cat, i) =>
+          `<div class="cat-tab ${i===0?'active':''}" onclick="filterByCategory('${cat}')">${cat}</div>`
+        ).join('')}
+      </div>
+      <div class="product-grid" id="productGrid"></div>`;
 
-      activeCategory = activeCats[0] || 'CAKE';
-      filterByCategory(activeCategory);
-    }
+    activeCategory = activeCats[0] || 'CAKE';
+    filterByCategory(activeCategory);
+  }
 
-    function filterByCategory(cat) {
-      activeCategory = cat;
-      document.querySelectorAll('.cat-tab').forEach(tab => {
-        tab.classList.toggle('active', tab.textContent === cat);
-      });
-      renderGrid(productGroups[cat] || []);
-    }
+  function filterByCategory(cat) {
+    activeCategory = cat;
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('active', t.textContent === cat));
+    renderGrid(productGroups[cat] || []);
+  }
 
-    function renderGrid(products) {
-      const grid = document.getElementById('productGrid');
-      if (!grid) return;
-      grid.innerHTML = products.map(p => buildProductHTML(p)).join('');
-      grid.querySelectorAll('.check-item').forEach(el => {
-        const name = el.getAttribute('data-name');
-        if (name && checked[name]) el.classList.add('checked');
-      });
-    }
+  function renderGrid(products) {
+    const grid = document.getElementById('productGrid');
+    if (!grid) return;
+    grid.innerHTML = products.map(p => {
+      const safe = p.name.replace(/"/g, '&quot;');
+      return `<div class="check-item" data-name="${safe}" onclick="toggleItem(this)">
+        <span class="check-box">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+            <path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="check-name">${p.name}</span>
+        <span class="check-price">
+          <img src="https://cdn.iconscout.com/icon/free/png-256/free-uae-dirham-icon-svg-download-png-11698521.png" class="dirham-symbol" alt="AED">
+          <span class="price-num">${p.price || ''}</span>
+        </span>
+      </div>`;
+    }).join('');
+    grid.querySelectorAll('.check-item').forEach(el => {
+      if (checked[el.getAttribute('data-name')]) el.classList.add('checked');
+    });
+  }
 
-    function buildProductHTML(p) {
-      const safeName = p.name.replace(/"/g, '&quot;');
-      return `
-        <div class="check-item" data-name="${safeName}" onclick="toggleItem(this)">
-          <span class="check-box">
-            <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-              <path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span class="check-name">${p.name}</span>
-          <span class="check-price">
-            <img src="https://cdn.iconscout.com/icon/free/png-256/free-uae-dirham-icon-svg-download-png-11698521.png"
-                 class="dirham-symbol" alt="Dh">
-            <span class="price-num">${p.price || ''}</span>
-          </span>
+  function toggleItem(el) {
+    const name = el.getAttribute('data-name');
+    if (checked[name]) { delete checked[name]; el.classList.remove('checked'); }
+    else               { checked[name] = true;  el.classList.add('checked'); }
+    updateBadge();
+  }
+  function selectAllVisible() {
+    document.querySelectorAll('#productGrid .check-item').forEach(el => {
+      const n = el.getAttribute('data-name'); if (n) { checked[n] = true; el.classList.add('checked'); }
+    }); updateBadge();
+  }
+  function deselectAllVisible() {
+    document.querySelectorAll('#productGrid .check-item').forEach(el => {
+      const n = el.getAttribute('data-name'); if (n) { delete checked[n]; el.classList.remove('checked'); }
+    }); updateBadge();
+  }
+  function filterProducts() {
+    const q = document.getElementById('productSearch').value.trim().toLowerCase();
+    if (!q) { filterByCategory(activeCategory); return; }
+    const m = allProducts.filter(p => p.name.toLowerCase().includes(q));
+    if (!m.length) {
+      document.getElementById('productGrid').innerHTML =
+        '<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted);">No products found</div>';
+    } else renderGrid(m);
+  }
+  function updateBadge() {
+    const b = document.getElementById('selectedBadge'); if (!b) return;
+    const n = Object.keys(checked).length;
+    b.textContent = n === 0 ? '0 items selected' : `${n} item${n!==1?'s':''} selected`;
+    b.classList.toggle('zero', n === 0);
+  }
+
+  /* ══ SUBMIT ══════════════════════════════════════════════════════════ */
+  function handleSubmit() {
+    const email  = document.getElementById('emailField').value.trim();
+    const date   = document.getElementById('dateField').value;
+    const branch = document.getElementById('branchField').value;
+    const notes  = document.getElementById('notesField').value.trim();
+    document.getElementById('errorAlert').style.display = 'none';
+
+    if (!email || !email.includes('@')) return showError('Please enter a valid email address.');
+    if (!date)   return showError('Please select a date.');
+    if (!branch) return showError('Please select your branch.');
+    if (!Object.keys(checked).length) return showError('Please select at least one product.');
+
+    const priceTagList = Object.keys(checked).map((n, i) => `${i+1}. ${n}`).join('\n');
+    const payload = { email, dateRequested: date, branch, priceTagList, notes };
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Submitting…';
+
+    const cbName = '_submitCb_' + Date.now();
+    window[cbName] = function(res) {
+      delete window[cbName];
+      btn.disabled = false; btn.innerHTML = 'Submit Request';
+      if (res && res.success) {
+        document.getElementById('formWrap').style.display = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else showError('Submission failed: ' + (res.error || 'Unknown error'));
+    };
+    const s = document.createElement('script');
+    s.onerror = () => {
+      delete window[cbName];
+      btn.disabled = false; btn.innerHTML = 'Submit Request';
+      showError('Network error. Please try again.');
+    };
+    s.src = APPS_SCRIPT_URL + '?action=submitRequest&callback=' + cbName +
+            '&payload=' + encodeURIComponent(JSON.stringify(payload));
+    document.head.appendChild(s);
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorAlert');
+    el.textContent = '⚠ ' + msg; el.style.display = 'block';
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function resetForm() {
+    document.getElementById('emailField').value = '';
+    document.getElementById('dateField').valueAsDate = new Date();
+    document.getElementById('branchField').value = '';
+    document.getElementById('notesField').value = '';
+    document.getElementById('productSearch').value = '';
+    checked = {}; updateBadge(); filterByCategory(activeCategory);
+    document.getElementById('formWrap').style.display = 'block';
+    document.getElementById('successScreen').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ══ HOLIDAYS ════════════════════════════════════════════════════════
+     Google Sheet columns: Name | Date (YYYY-MM-DD) | Emoji
+     Apps Script must handle: action=getHolidays
+     Returns: { success: true, data: [ { name, date, emoji } ] }
+
+     Sample Apps Script handler:
+     ─────────────────────────────────────────────────────────────
+     if (action === 'getHolidays') {
+       var sheet = SpreadsheetApp.openById('SHEET_ID').getSheetByName('Holidays');
+       var rows  = sheet.getDataRange().getValues().slice(1);
+       var data  = rows
+         .filter(function(r){ return r[0]; })
+         .map(function(r) {
+           return {
+             name:  r[0],
+             date:  r[1] ? Utilities.formatDate(new Date(r[1]), 'UTC', 'yyyy-MM-dd') : '',
+             emoji: r[2] || ''
+           };
+         });
+       return makeJsonpResponse(callback, { success: true, data: data });
+     }
+     ─────────────────────────────────────────────────────────────
+  ═════════════════════════════════════════════════════════════════ */
+  function loadHolidays() {
+    const cbName = '_holCb_' + Date.now();
+    window[cbName] = function(res) {
+      delete window[cbName];
+      if (res && res.success && res.data && res.data.length > 0) {
+        renderHolidays(res.data);
+      } else {
+        renderHolidays([
+          { name: 'Eid al Adha',        emoji: '🌙' },
+          { name: 'Islamic New Year',    emoji: '🎆' },
+          { name: "Prophet's Birthday",  emoji: '⭐' },
+        ]);
+      }
+    };
+    const s = document.createElement('script');
+    s.onerror = function() {
+      delete window[cbName];
+      renderHolidays([
+        { name: 'Eid al Adha',        emoji: '🌙' },
+        { name: 'Islamic New Year',    emoji: '🎆' },
+        { name: "Prophet's Birthday",  emoji: '⭐' },
+      ]);
+    };
+    s.src = APPS_SCRIPT_URL + '?action=getHolidays&callback=' + cbName;
+    document.head.appendChild(s);
+  }
+
+  function renderHolidays(holidays) {
+    document.getElementById('holidaysList').innerHTML = holidays.map((h, i) => `
+      <div class="h-item" style="animation-delay:${i*0.08}s">
+        <span class="h-bullet">•</span>
+        <span class="h-name">${h.emoji ? h.emoji + '\u00A0' : ''}${h.name}</span>
+      </div>`).join('');
+  }
+
+  /* ══ PHOTOS ══════════════════════════════════════════════════════════
+     Google Drive photos stored in a Sheet tab: "Photos"
+     Sheet columns: Caption | Drive File ID
+     Apps Script must handle: action=getPhotos
+     Returns: { success: true, data: [ { url, caption } ] }
+
+     Sample Apps Script handler:
+     ─────────────────────────────────────────────────────────────
+     if (action === 'getPhotos') {
+       var sheet = SpreadsheetApp.openById('SHEET_ID').getSheetByName('Photos');
+       var rows  = sheet.getDataRange().getValues().slice(1);
+       var data  = rows
+         .filter(function(r){ return r[1]; })
+         .map(function(r) {
+           return {
+             caption: r[0] || '',
+             url: 'https://drive.google.com/thumbnail?id=' + r[1] + '&sz=w800'
+           };
+         });
+       return makeJsonpResponse(callback, { success: true, data: data });
+     }
+     ─────────────────────────────────────────────────────────────
+
+     OR: paste file IDs directly in FALLBACK_PHOTOS array at top of script.
+  ═════════════════════════════════════════════════════════════════ */
+  function loadPhotos() {
+    const cbName = '_photoCb_' + Date.now();
+    window[cbName] = function(res) {
+      delete window[cbName];
+      if (res && res.success && res.data && res.data.length > 0) buildSlideshow(res.data);
+      else if (FALLBACK_PHOTOS.length > 0) buildSlideshow(FALLBACK_PHOTOS);
+    };
+    const s = document.createElement('script');
+    s.onerror = function() {
+      delete window[cbName];
+      if (FALLBACK_PHOTOS.length > 0) buildSlideshow(FALLBACK_PHOTOS);
+    };
+    s.src = APPS_SCRIPT_URL + '?action=getPhotos&callback=' + cbName;
+    document.head.appendChild(s);
+  }
+
+  function buildSlideshow(photos) {
+    slides = photos; currentSlide = 0;
+    const box = document.getElementById('slideshow');
+
+    let html = photos.map((p, i) => `
+      <div class="slide ${i===0?'active':''}">
+        <img src="${p.url}" alt="${p.caption||'Photo '+(i+1)}"
+             onerror="this.parentElement.innerHTML='<div class=slide-placeholder><span>🖼️</span><p>Image unavailable</p></div>'">
+      </div>`).join('');
+
+    if (photos.length > 1) {
+      html += `
+        <button class="slide-nav prev" onclick="changeSlide(-1)">&#8249;</button>
+        <button class="slide-nav next" onclick="changeSlide(1)">&#8250;</button>
+        <div class="slideshow-dots">
+          ${photos.map((_, i) => `<div class="s-dot ${i===0?'active':''}" onclick="goSlide(${i})"></div>`).join('')}
         </div>`;
     }
 
-    function toggleItem(el) {
-      const name = el.getAttribute('data-name');
-      if (checked[name]) { delete checked[name]; el.classList.remove('checked'); }
-      else               { checked[name] = true;  el.classList.add('checked'); }
-      updateBadge();
+    box.innerHTML = html;
+    updateCaption();
+    const hint = document.getElementById('photosSetupHint');
+    if (hint) hint.style.display = 'none';
+    if (photos.length > 1) {
+      clearInterval(slideTimer);
+      slideTimer = setInterval(() => changeSlide(1), 4500);
     }
+  }
 
-    function selectAllVisible() {
-      document.querySelectorAll('#productGrid .check-item').forEach(el => {
-        const name = el.getAttribute('data-name');
-        if (name) { checked[name] = true; el.classList.add('checked'); }
-      });
-      updateBadge();
-    }
+  function changeSlide(dir) {
+    clearInterval(slideTimer);
+    const all = document.querySelectorAll('.slideshow .slide');
+    const dots = document.querySelectorAll('.s-dot');
+    if (!all.length) return;
+    all[currentSlide].classList.remove('active');
+    if (dots.length) dots[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + dir + all.length) % all.length;
+    all[currentSlide].classList.add('active');
+    if (dots.length) dots[currentSlide].classList.add('active');
+    updateCaption();
+    slideTimer = setInterval(() => changeSlide(1), 4500);
+  }
 
-    function deselectAllVisible() {
-      document.querySelectorAll('#productGrid .check-item').forEach(el => {
-        const name = el.getAttribute('data-name');
-        if (name) { delete checked[name]; el.classList.remove('checked'); }
-      });
-      updateBadge();
-    }
+  function goSlide(idx) {
+    clearInterval(slideTimer);
+    const all = document.querySelectorAll('.slideshow .slide');
+    const dots = document.querySelectorAll('.s-dot');
+    all[currentSlide].classList.remove('active');
+    if (dots.length) dots[currentSlide].classList.remove('active');
+    currentSlide = idx;
+    all[currentSlide].classList.add('active');
+    if (dots.length) dots[currentSlide].classList.add('active');
+    updateCaption();
+    slideTimer = setInterval(() => changeSlide(1), 4500);
+  }
 
-    function filterProducts() {
-      const q = document.getElementById('productSearch').value.trim().toLowerCase();
-      if (!q) { filterByCategory(activeCategory); return; }
-      const matches = allProducts.filter(p => p.name.toLowerCase().includes(q));
-      if (matches.length === 0) {
-        document.getElementById('productGrid').innerHTML =
-          '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">No products found</div>';
-      } else {
-        renderGrid(matches);
-      }
-    }
-
-    function updateBadge() {
-      const badge = document.getElementById('selectedBadge');
-      if (!badge) return;
-      const n = Object.keys(checked).length;
-      badge.textContent = n === 0 ? '0 items selected' : `${n} item${n !== 1 ? 's' : ''} selected`;
-      badge.classList.toggle('zero', n === 0);
-    }
-
-    function handleSubmit() {
-      const email   = document.getElementById('emailField').value.trim();
-      const date    = document.getElementById('dateField').value;
-      const branch  = document.getElementById('branchField').value;
-      const notes   = document.getElementById('notesField').value.trim();
-      const errorEl = document.getElementById('errorAlert');
-      errorEl.style.display = 'none';
-
-      if (!email || !email.includes('@')) return showError('Please enter a valid email address.');
-      if (!date)   return showError('Please select a date.');
-      if (!branch) return showError('Please select your branch.');
-      if (Object.keys(checked).length === 0) return showError('Please select at least one product.');
-
-      const selectedNames = Object.keys(checked);
-      const priceTagList  = selectedNames.map((n, i) => `${i + 1}. ${n}`).join('\n');
-      const payload       = { email, dateRequested: date, branch, priceTagList, notes };
-
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span>Submitting…';
-
-      const cbName = '_submitCb_' + Date.now();
-      window[cbName] = function(res) {
-        delete window[cbName];
-        btn.disabled = false; btn.innerHTML = 'Submit Request';
-        if (res && res.success) {
-          document.getElementById('formWrap').style.display = 'none';
-          document.getElementById('successScreen').style.display = 'block';
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          showError('Submission failed: ' + (res.error || 'Unknown error'));
-        }
-      };
-      const s = document.createElement('script');
-      s.onerror = () => {
-        delete window[cbName];
-        btn.disabled = false; btn.innerHTML = 'Submit Request';
-        showError('Network error. Please try again.');
-      };
-      s.src = APPS_SCRIPT_URL + '?action=submitRequest&callback=' + cbName +
-              '&payload=' + encodeURIComponent(JSON.stringify(payload));
-      document.head.appendChild(s);
-    }
-
-    function showError(msg) {
-      const el = document.getElementById('errorAlert');
-      el.textContent = '⚠ ' + msg;
-      el.style.display = 'block';
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-
-    function resetForm() {
-      document.getElementById('emailField').value  = '';
-      document.getElementById('dateField').valueAsDate = new Date();
-      document.getElementById('branchField').value = '';
-      document.getElementById('notesField').value  = '';
-      document.getElementById('productSearch').value = '';
-      checked = {};
-      updateBadge();
-      filterByCategory(activeCategory);
-      document.getElementById('formWrap').style.display      = 'block';
-      document.getElementById('successScreen').style.display = 'none';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    /* ══════════════════════════════════════════════════════════════════
-       HOLIDAYS — loaded via JSONP from Apps Script
-       Your Apps Script should handle action=getHolidays and return:
-       { success: true, data: [ { name, date, emoji }, ... ] }
-
-       Excel sheet columns: Name | Date (YYYY-MM-DD) | Emoji (optional)
-    ══════════════════════════════════════════════════════════════════ */
-    function loadHolidays() {
-      const cbName = '_holidaysCb_' + Date.now();
-      window[cbName] = function(res) {
-        delete window[cbName];
-        if (res && res.success && res.data) {
-          renderHolidays(res.data);
-        } else {
-          // Fallback: show the items visible in the screenshot
-          renderHolidays([
-            { name: 'Eid al Adha',     date: '', emoji: '🌙' },
-            { name: 'Islamic New Year', date: '', emoji: '🎆' },
-            { name: 'Fathers Day',     date: '', emoji: '👨‍👧' },
-          ]);
-        }
-      };
-      const s = document.createElement('script');
-      s.onerror = function() {
-        delete window[cbName];
-        // Fallback data on error
-        renderHolidays([
-          { name: 'Eid al Adha',     date: '', emoji: '🌙' },
-          { name: 'Islamic New Year', date: '', emoji: '🎆' },
-          { name: 'Fathers Day',     date: '', emoji: '👨‍👧' },
-        ]);
-      };
-      s.src = APPS_SCRIPT_URL + '?action=getHolidays&callback=' + cbName;
-      document.head.appendChild(s);
-    }
-
-    function renderHolidays(holidays) {
-      const body = document.getElementById('holidaysBody');
-      if (!holidays || holidays.length === 0) {
-        body.innerHTML = '<div class="holidays-empty">No upcoming holidays found.</div>';
-        return;
-      }
-
-      const today = new Date();
-      today.setHours(0,0,0,0);
-
-      body.innerHTML = holidays.map((h, i) => {
-        let badge = '';
-        let dateStr = '';
-        if (h.date) {
-          const d = new Date(h.date + 'T00:00:00');
-          const diff = Math.round((d - today) / 86400000);
-          if (diff === 0)       { badge = '<span class="holiday-badge today">Today</span>'; }
-          else if (diff > 0)    { badge = `<span class="holiday-badge upcoming">In ${diff}d</span>`; }
-          else                  { badge = '<span class="holiday-badge past">Passed</span>'; }
-          dateStr = d.toLocaleDateString('en-AE', { day: 'numeric', month: 'short', year: 'numeric' });
-        } else {
-          badge = '<span class="holiday-badge upcoming">Upcoming</span>';
-        }
-        const emoji = h.emoji || '🎉';
-        const style = `animation-delay: ${i * 0.07}s`;
-        return `
-          <div class="holiday-item" style="${style}">
-            <div style="font-size:18px;flex-shrink:0;margin-top:1px;">${emoji}</div>
-            <div class="holiday-info">
-              <div class="holiday-name">${h.name}</div>
-              ${dateStr ? `<div class="holiday-date">${dateStr}</div>` : ''}
-            </div>
-            ${badge}
-          </div>`;
-      }).join('');
-    }
-
-    /* ══════════════════════════════════════════════════════════════════
-       LIVE PHOTOS SLIDESHOW
-       Reads from DRIVE_PHOTOS array above.
-       OR: load via Apps Script action=getPhotos returning:
-       { success: true, data: [ { url, caption }, ... ] }
-    ══════════════════════════════════════════════════════════════════ */
-    let currentSlide = 0;
-    let slideInterval = null;
-    let slides = [];
-
-    function initPhotos() {
-      // First try Apps Script for photos
-      const cbName = '_photosCb_' + Date.now();
-      window[cbName] = function(res) {
-        delete window[cbName];
-        if (res && res.success && res.data && res.data.length > 0) {
-          buildSlideshow(res.data);
-        } else if (DRIVE_PHOTOS.length > 0) {
-          buildSlideshow(DRIVE_PHOTOS);
-        } else {
-          showPlaceholder();
-        }
-      };
-      const s = document.createElement('script');
-      s.onerror = function() {
-        delete window[cbName];
-        if (DRIVE_PHOTOS.length > 0) {
-          buildSlideshow(DRIVE_PHOTOS);
-        } else {
-          showPlaceholder();
-        }
-      };
-      s.src = APPS_SCRIPT_URL + '?action=getPhotos&callback=' + cbName;
-      document.head.appendChild(s);
-    }
-
-    function showPlaceholder() {
-      document.getElementById('photoCaption').textContent = 'No photos configured yet';
-    }
-
-    function buildSlideshow(photos) {
-      slides = photos;
-      const container = document.getElementById('slideshow');
-
-      // Build slides HTML
-      let html = photos.map((p, i) => `
-        <div class="slide ${i === 0 ? 'active' : ''}">
-          <img src="${p.url}" alt="${p.caption || 'Photo ' + (i+1)}"
-               onerror="this.parentElement.innerHTML='<div class=slide-placeholder><span>🖼️</span><p>Image could not be loaded</p></div>'">
-        </div>
-      `).join('');
-
-      // Nav buttons (only if > 1 photo)
-      if (photos.length > 1) {
-        html += `
-          <button class="slide-nav prev" onclick="changeSlide(-1)">‹</button>
-          <button class="slide-nav next" onclick="changeSlide(1)">›</button>
-          <div class="slideshow-controls">
-            ${photos.map((_, i) => `<div class="slide-dot ${i===0?'active':''}" onclick="goSlide(${i})"></div>`).join('')}
-          </div>`;
-      }
-
-      container.innerHTML = html;
-      updateCaption();
-
-      // Hide setup hint
-      const hint = document.getElementById('photosSetupHint');
-      if (hint) hint.style.display = 'none';
-
-      // Auto-advance
-      if (photos.length > 1) {
-        clearInterval(slideInterval);
-        slideInterval = setInterval(() => changeSlide(1), 4000);
-      }
-    }
-
-    function changeSlide(dir) {
-      clearInterval(slideInterval);
-      const allSlides = document.querySelectorAll('.slideshow .slide');
-      const dots = document.querySelectorAll('.slide-dot');
-      if (!allSlides.length) return;
-
-      allSlides[currentSlide].classList.remove('active');
-      if (dots.length) dots[currentSlide].classList.remove('active');
-
-      currentSlide = (currentSlide + dir + allSlides.length) % allSlides.length;
-      allSlides[currentSlide].classList.add('active');
-      if (dots.length) dots[currentSlide].classList.add('active');
-
-      updateCaption();
-      slideInterval = setInterval(() => changeSlide(1), 4000);
-    }
-
-    function goSlide(idx) {
-      clearInterval(slideInterval);
-      const allSlides = document.querySelectorAll('.slideshow .slide');
-      const dots = document.querySelectorAll('.slide-dot');
-      if (!allSlides.length) return;
-
-      allSlides[currentSlide].classList.remove('active');
-      if (dots.length) dots[currentSlide].classList.remove('active');
-
-      currentSlide = idx;
-      allSlides[currentSlide].classList.add('active');
-      if (dots.length) dots[currentSlide].classList.add('active');
-
-      updateCaption();
-      slideInterval = setInterval(() => changeSlide(1), 4000);
-    }
-
-    function updateCaption() {
-      const caption = document.getElementById('photoCaption');
-      if (!caption || !slides.length) return;
-      const p = slides[currentSlide];
-      caption.textContent = p.caption ? `${p.caption} · ${currentSlide + 1}/${slides.length}` : `Photo ${currentSlide + 1} of ${slides.length}`;
-    }
-  </script>
+  function updateCaption() {
+    const cap = document.getElementById('photoCaption');
+    if (!cap || !slides.length) return;
+    const p = slides[currentSlide];
+    cap.textContent = (p.caption || ('Photo ' + (currentSlide+1)))
+      + (slides.length > 1 ? `  —  ${currentSlide+1} / ${slides.length}` : '');
+  }
+</script>
 </body>
 </html>
