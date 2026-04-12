@@ -851,6 +851,73 @@ Before submitting your request, kindly ensure that you have carefully reviewed a
     if (dots.length) dots[currentSlide].classList.add('active');
     slideTimer = setInterval(() => changeSlide(1), 4500);
   }
+
+  <div id="wa-box">
+  <div class="wa-header">Chat with us</div>
+  <div class="wa-body">
+    <p>Hi 👋 how can we help?</p>
+    <a href="https://wa.me/971522814406" target="_blank">
+      Start Chat on WhatsApp
+    </a>
+  </div>
+</div>
+
+<button onclick="toggleWA()" class="wa-btn">💬</button>
+
+<style>
+.wa-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #25D366;
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 26px;
+  color: white;
+  cursor: pointer;
+}
+
+#wa-box {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 250px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  display: none;
+}
+
+.wa-header {
+  background: #25D366;
+  color: white;
+  padding: 10px;
+  border-radius: 10px 10px 0 0;
+}
+
+.wa-body {
+  padding: 10px;
+}
+
+.wa-body a {
+  display: block;
+  background: #25D366;
+  color: white;
+  text-align: center;
+  padding: 8px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+</style>
+
+<script>
+function toggleWA() {
+  var box = document.getElementById("wa-box");
+  box.style.display = box.style.display === "block" ? "none" : "block";
+}
+</script>
 </script>
 </body>
 </html>
