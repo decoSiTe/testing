@@ -748,12 +748,7 @@ function buildShow(photos){
     </div>`).join('');
   if(photos.length>1){
     html+=`
-    <button class="show-prev" onclick="movSlide(-1)" aria-label="Previous">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
-    </button>
-    <button class="show-next" onclick="movSlide(1)" aria-label="Next">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-    </button>
+    
     <div class="show-dots">${photos.map((_,i)=>`<button class="s-dot${i===0?' on':''}" onclick="goSlide(${i})" aria-label="Slide ${i+1}"></button>`).join('')}</div>`;
   }
   panel.innerHTML=html;
