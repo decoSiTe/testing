@@ -305,45 +305,36 @@
     .modal-btn { background: var(--pink); color: #fff; border: none; border-radius: 8px; padding: 12px 28px; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
     .modal-btn:hover { background: var(--pink-dark); }
 
-    /* ══ FOOTER ══ */
+   /* ══ FOOTER ══ */
     .site-footer {
       background: linear-gradient(135deg, var(--forest) 0%, var(--green) 100%);
-      padding: 32px 20px 24px;
-      text-align: center;
+      padding: 0 32px;
       margin-top: 20px;
-    }
-    .footer-brand {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px; font-weight: 700; color: #fff;
-      margin-bottom: 6px; letter-spacing: 0.5px;
-    }
-    .footer-tagline {
-      font-size: 11px; color: rgba(240,230,200,0.6);
-      letter-spacing: 2px; text-transform: uppercase;
-      margin-bottom: 22px;
+      height: 72px;
+      display: flex; align-items: center; justify-content: space-between;
     }
     .footer-social {
-      display: flex; justify-content: center; align-items: center;
-      gap: 16px; margin-bottom: 22px;
+      display: flex; align-items: center; gap: 12px;
     }
     .social-btn {
       display: flex; align-items: center; justify-content: center;
-      width: 48px; height: 48px; border-radius: 50%;
-      text-decoration: none; transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      width: 46px; height: 46px; border-radius: 50%;
+      text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;
       flex-shrink: 0;
     }
-    .social-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+    .social-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(0,0,0,0.35); }
     .social-btn.facebook { background: #1877F2; }
     .social-btn.instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
     .social-btn.tiktok { background: #010101; border: 1.5px solid rgba(255,255,255,0.15); }
     .social-btn svg { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
-    .footer-divider {
-      border: none; border-top: 1px solid rgba(255,255,255,0.1);
-      margin: 0 auto 16px; max-width: 320px;
-    }
     .footer-copy {
-      font-size: 11px; color: rgba(240,230,200,0.45);
-      letter-spacing: 0.5px;
+      font-size: 12px; color: rgba(240,230,200,0.5);
+      letter-spacing: 0.3px; white-space: nowrap;
+    }
+    @media (max-width: 480px) {
+      .site-footer { padding: 0 18px; height: 64px; }
+      .social-btn { width: 40px; height: 40px; }
+      .footer-copy { font-size: 10px; }
     }
   </style>
   <link rel="icon" type="image/png" href="favicon.png">
@@ -520,47 +511,47 @@ function toggleWA() {
     </div>
   </div>
 
-  <!-- ══ FOOTER ══ -->
+   <!-- ══ FOOTER ══ -->
   <footer class="site-footer">
-    <div class="footer-brand">Karat Café</div>
-    <div class="footer-tagline">Follow Us On Social Media</div>
-
+ 
+    <!-- Social icons — left aligned -->
     <div class="footer-social">
-
+ 
       <!-- Facebook -->
       <a class="social-btn facebook"
-         href="https://www.facebook.com/katrinasweetsuae"
+         href="https://www.facebook.com/YOUR_FACEBOOK_PAGE"
          target="_blank" rel="noopener noreferrer"
          title="Follow us on Facebook">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.971h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
         </svg>
       </a>
-
+ 
       <!-- Instagram -->
       <a class="social-btn instagram"
-         href="https://www.instagram.com/katrinasweetsuae"
+         href="https://www.instagram.com/YOUR_INSTAGRAM_HANDLE"
          target="_blank" rel="noopener noreferrer"
          title="Follow us on Instagram">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
         </svg>
       </a>
-
+ 
       <!-- TikTok -->
       <a class="social-btn tiktok"
-         href="https://www.tiktok.com/@katrina_dubai"
+         href="https://www.tiktok.com/@YOUR_TIKTOK_HANDLE"
          target="_blank" rel="noopener noreferrer"
          title="Follow us on TikTok">
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.53V6.77a4.85 4.85 0 01-1.01-.08z"/>
         </svg>
       </a>
-
+ 
     </div>
-
-    <hr class="footer-divider">
+ 
+    <!-- Copyright — right aligned -->
     <div class="footer-copy">&copy; 2025 Karat Café. All rights reserved.</div>
+ 
   </footer>
 
 <script>
