@@ -669,7 +669,46 @@ input[type="date"]{font-size:13px;padding-top:16px}
   </div>
   <div class="ft-copy">© 2026 KS Coffee &amp; Cakes</div>
 </footer>
+<!-- Telegram Floating Button -->
+<a href="https://t.me/YOUR_TELEGRAM_USERNAME" target="_blank" rel="noopener" id="tgBtn" title="Chat with us on Telegram"
+   style="
+     position:fixed;bottom:28px;right:22px;z-index:9998;
+     width:56px;height:56px;border-radius:50%;
+     background:#229ED9;
+     display:flex;align-items:center;justify-content:center;
+     box-shadow:0 4px 20px rgba(34,158,217,0.45),0 2px 8px rgba(0,0,0,0.15);
+     text-decoration:none;
+     transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.22s ease;
+     animation:tgPop 0.5s 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+   "
+   onmouseover="this.style.transform='translateY(-3px) scale(1.08)';this.style.boxShadow='0 8px 28px rgba(34,158,217,0.55),0 3px 10px rgba(0,0,0,0.18)'"
+   onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(34,158,217,0.45),0 2px 8px rgba(0,0,0,0.15)'">
+  <!-- Telegram SVG icon -->
+  <svg viewBox="0 0 24 24" fill="white" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+  </svg>
+  <!-- Pulse ring -->
+  <span style="
+    position:absolute;inset:-4px;border-radius:50%;
+    border:2.5px solid rgba(34,158,217,0.5);
+    animation:tgRing 2s ease-out 1.5s infinite;
+    pointer-events:none;
+  "></span>
+</a>
+  <!-- Tooltip label -->
+<div style="
+  position:fixed;bottom:37px;right:86px;z-index:9997;
+  background:rgba(15,31,20,0.92);color:#fff;
+  font-family:'Sora',sans-serif;font-size:12px;font-weight:500;
+  padding:7px 14px;border-radius:20px;
+  white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity 0.2s ease;
+" id="tgTooltip">Chat with us 💬</div>
 
+<style>
+@keyframes tgPop{from{opacity:0;transform:scale(0.4)}to{opacity:1;transform:scale(1)}}
+@keyframes tgRing{0%{transform:scale(1);opacity:0.8}100%{transform:scale(1.55);opacity:0}}
+</style>
 <script>
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbx1Hksx6CnvQfASieOKyaUmae5LewOFsKjR4JqWVs4O9F5BxEIXbQ3aCkpOI27XcGHIrw/exec';
 const FALLBACK_PHOTOS=[
@@ -889,48 +928,6 @@ function resetForm(){
   document.getElementById('successScr').style.display='none';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-  <!-- Telegram Floating Button -->
-<a href="https://t.me/YOUR_TELEGRAM_USERNAME" target="_blank" rel="noopener" id="tgBtn" title="Chat with us on Telegram"
-   style="
-     position:fixed;bottom:28px;right:22px;z-index:9998;
-     width:56px;height:56px;border-radius:50%;
-     background:#229ED9;
-     display:flex;align-items:center;justify-content:center;
-     box-shadow:0 4px 20px rgba(34,158,217,0.45),0 2px 8px rgba(0,0,0,0.15);
-     text-decoration:none;
-     transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.22s ease;
-     animation:tgPop 0.5s 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
-   "
-   onmouseover="this.style.transform='translateY(-3px) scale(1.08)';this.style.boxShadow='0 8px 28px rgba(34,158,217,0.55),0 3px 10px rgba(0,0,0,0.18)'"
-   onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(34,158,217,0.45),0 2px 8px rgba(0,0,0,0.15)'">
-  <!-- Telegram SVG icon -->
-  <svg viewBox="0 0 24 24" fill="white" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
-    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-  </svg>
-  <!-- Pulse ring -->
-  <span style="
-    position:absolute;inset:-4px;border-radius:50%;
-    border:2.5px solid rgba(34,158,217,0.5);
-    animation:tgRing 2s ease-out 1.5s infinite;
-    pointer-events:none;
-  "></span>
-</a>
-
-<!-- Tooltip label -->
-<div style="
-  position:fixed;bottom:37px;right:86px;z-index:9997;
-  background:rgba(15,31,20,0.92);color:#fff;
-  font-family:'Sora',sans-serif;font-size:12px;font-weight:500;
-  padding:7px 14px;border-radius:20px;
-  white-space:nowrap;pointer-events:none;
-  opacity:0;transition:opacity 0.2s ease;
-" id="tgTooltip">Chat with us 💬</div>
-
-<style>
-@keyframes tgPop{from{opacity:0;transform:scale(0.4)}to{opacity:1;transform:scale(1)}}
-@keyframes tgRing{0%{transform:scale(1);opacity:0.8}100%{transform:scale(1.55);opacity:0}}
-</style>
-
 <script>
 (function(){
   var btn=document.getElementById('tgBtn');
