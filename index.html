@@ -10,7 +10,6 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-/* ── Design Tokens ── */
 :root{
   --hot:#e91e8c;
   --hot-deep:#b5006e;
@@ -49,7 +48,6 @@ body{
   overflow-x:hidden;
 }
 
-/* ── Animated BG ── */
 .bg-canvas{
   position:fixed;inset:0;z-index:0;
   background:
@@ -62,10 +60,8 @@ body{
   background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8914a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* ── Layout ── */
 .wrap{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:0 16px 80px}
 
-/* ── Header ── */
 .site-header{
   position:sticky;top:0;z-index:200;
   background:rgba(15,31,20,0.96);
@@ -77,9 +73,7 @@ body{
   display:flex;align-items:center;justify-content:space-between;
   gap:16px;
 }
-.header-brand{
-  display:flex;align-items:center;gap:10px;
-}
+.header-brand{display:flex;align-items:center;gap:10px;}
 .header-logo{
   width:36px;height:36px;border-radius:10px;
   background:linear-gradient(135deg,var(--hot) 0%,#ff69b4 100%);
@@ -101,7 +95,6 @@ body{
 .header-pill span{font-size:11px;color:rgba(255,255,255,0.6);letter-spacing:0.5px;font-weight:500}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.85)}}
 
-/* ── Holidays ticker ── */
 .ticker-wrap{
   background:var(--forest-mid);
   border-bottom:1px solid rgba(255,255,255,0.05);
@@ -133,7 +126,6 @@ body{
 }
 .ticker-gem{color:var(--hot);font-size:14px}
 
-/* ── Modal ── */
 .modal-veil{
   position:fixed;inset:0;z-index:9999;
   background:rgba(0,0,0,0.55);
@@ -177,7 +169,6 @@ body{
 .modal-ok:hover{background:var(--hot-deep);box-shadow:var(--shadow-hot);transform:translateY(-1px)}
 .modal-ok:active{transform:scale(0.98)}
 
-/* ── Page sections ── */
 .page-intro{padding:36px 0 8px;text-align:center}
 .page-intro h1{
   font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,40px);
@@ -192,7 +183,6 @@ body{
 }
 .req-star{color:var(--gold);font-size:13px}
 
-/* ── Cards ── */
 .card{
   background:var(--surface);
   border:1px solid var(--border);
@@ -210,12 +200,9 @@ body{
   display:flex;align-items:flex-end;gap:10px;border-bottom:1px dashed var(--border);padding-bottom:16px;margin-bottom:20px;
 }
 @media(max-width:480px){.card-header{padding:14px 18px 0;padding-bottom:12px;margin-bottom:16px}}
-.card-title{
-  font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--ink);
-}
+.card-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--ink);}
 .card-sub{font-size:12px;color:var(--ghost);margin-bottom:2px}
 
-/* ── Floating label inputs ── */
 .field{position:relative;margin-bottom:18px}
 .field:last-child{margin-bottom:0}
 .field-label{
@@ -240,7 +227,6 @@ body{
   border-color:var(--hot);background:var(--surface);
   box-shadow:0 0 0 4px var(--hot-glow);
 }
-/* Float label up when focused or has value */
 .field input:focus ~ .field-label,
 .field input:not(:placeholder-shown) ~ .field-label,
 .field textarea:focus ~ .field-label,
@@ -263,7 +249,6 @@ input[type="date"]{font-size:13px;padding-top:16px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:520px){.form-grid{grid-template-columns:1fr}}
 
-/* ── Slideshow ── */
 .show-wrap{
   background:var(--surface);border:1px solid var(--border);
   border-radius:var(--radius-lg);box-shadow:var(--shadow-card);
@@ -292,7 +277,6 @@ input[type="date"]{font-size:13px;padding-top:16px}
 .s-dot{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.22s;border:none;padding:0}
 .s-dot.on{background:#fff;width:18px}
 
-/* ── Products ── */
 .search-wrap{position:relative;margin-bottom:16px}
 .search-wrap svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--ghost);pointer-events:none}
 .search-inp{
@@ -355,7 +339,6 @@ input[type="date"]{font-size:13px;padding-top:16px}
 .p-price img{width:12px;height:12px;object-fit:contain;opacity:0.7}
 .p-price span{font-size:12px;font-weight:600;color:var(--ink)}
 
-/* skeleton */
 .skel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
 .skel-item{
   height:42px;border-radius:var(--radius-sm);
@@ -364,7 +347,6 @@ input[type="date"]{font-size:13px;padding-top:16px}
 }
 @keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
 
-/* ── Error ── */
 .alert{
   display:none;border-radius:var(--radius-sm);padding:12px 16px;
   font-size:13px;margin-bottom:18px;
@@ -373,7 +355,6 @@ input[type="date"]{font-size:13px;padding-top:16px}
 }
 @keyframes shakeX{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
 
-/* ── Submit ── */
 .submit-row{padding:20px 28px}
 @media(max-width:480px){.submit-row{padding:16px 18px}}
 .btn-submit{
@@ -399,7 +380,6 @@ input[type="date"]{font-size:13px;padding-top:16px}
 .btn-arrow{font-size:18px;margin-left:2px;transition:transform var(--transition)}
 .btn-submit:hover .btn-arrow{transform:translateX(4px)}
 
-/* ── Success ── */
 .success-scr{
   display:none;text-align:center;padding:64px 24px 48px;
   animation:slideUp 0.45s cubic-bezier(0.34,1.56,0.64,1);
@@ -426,7 +406,6 @@ input[type="date"]{font-size:13px;padding-top:16px}
 }
 .btn-reset:hover{background:var(--forest);transform:translateY(-1px)}
 
-/* ── Footer ── */
 .site-footer{
   background:linear-gradient(140deg,var(--forest) 0%,var(--sage) 100%);
   padding:0 28px;height:68px;
@@ -447,26 +426,59 @@ input[type="date"]{font-size:13px;padding-top:16px}
 .ft-copy{font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.3px}
 @media(max-width:400px){.ft-copy{display:none}}
 
-/* ── Notice chip ── */
-.info-chip{
-  display:flex;align-items:flex-start;gap:10px;
-  background:var(--gold-lt);border:1px solid rgba(200,145,74,0.3);
-  border-radius:var(--radius-md);padding:14px 16px;
-  margin:20px 0 16px;font-size:13px;color:#6b4200;line-height:1.65;
-}
-.info-chip-icon{font-size:18px;flex-shrink:0;margin-top:-1px}
-
-/* ── Divider ── */
 .divider{border:none;border-top:1px dashed var(--border);margin:20px 0}
 
-/* ── Scroll reveal ── */
 .reveal{opacity:0;transform:translateY(16px);transition:opacity 0.5s ease,transform 0.5s ease}
 .reveal.visible{opacity:1;transform:none}
+
+/* ── Telegram Floating Widget ── */
+@keyframes tgPop{from{opacity:0;transform:scale(0.4)}to{opacity:1;transform:scale(1)}}
+@keyframes tgRing{0%{transform:scale(1);opacity:0.8}100%{transform:scale(1.55);opacity:0}}
+@keyframes bubblePop{0%{opacity:0;transform:translateY(10px) scale(0.85)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes bubbleBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+#tgBubble{
+  position:fixed;bottom:96px;right:16px;z-index:9997;
+  background:#fff;color:#0f0f0f;
+  font-family:'Sora',sans-serif;font-size:13px;font-weight:500;
+  padding:10px 16px;border-radius:18px 18px 4px 18px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.18);
+  white-space:nowrap;pointer-events:none;
+  opacity:0;
+  transition:opacity 0.25s ease;
+}
+#tgBubble.show{
+  opacity:1;
+  animation:bubblePop 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards, bubbleBounce 2.5s ease-in-out 0.4s infinite;
+}
+#tgBubble::after{
+  content:'';position:absolute;bottom:-8px;right:14px;
+  width:0;height:0;
+  border-left:8px solid transparent;
+  border-right:0px solid transparent;
+  border-top:9px solid #fff;
+}
+#tgBtn{
+  position:fixed;bottom:28px;right:22px;z-index:9998;
+  width:56px;height:56px;border-radius:50%;
+  background:#229ED9;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(34,158,217,0.45),0 2px 8px rgba(0,0,0,0.15);
+  text-decoration:none;
+  transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.22s ease;
+  animation:tgPop 0.5s 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+#tgBtn:hover{transform:translateY(-3px) scale(1.08);box-shadow:0 8px 28px rgba(34,158,217,0.55),0 3px 10px rgba(0,0,0,0.18)}
+#tgBtn .tg-ring{
+  position:absolute;inset:-4px;border-radius:50%;
+  border:2.5px solid rgba(34,158,217,0.5);
+  animation:tgRing 2s ease-out 1.5s infinite;
+  pointer-events:none;
+}
 </style>
 </head>
 <body>
 
-<!-- BG -->
 <div class="bg-canvas"></div>
 
 <!-- Modal -->
@@ -519,25 +531,21 @@ input[type="date"]{font-size:13px;padding-top:16px}
 
   <div id="formWrap">
 
-    <!-- Basic Info Card -->
     <div class="card reveal">
       <div class="card-body">
         <span class="req-note"><span class="req-star">✦</span> Required fields</span>
         <div class="alert" id="errAlert"></div>
 
-        <!-- Email -->
         <div class="field" id="fEmail">
           <input type="email" id="emailInp" placeholder=" " autocomplete="email">
           <label class="field-label" for="emailInp">Email address <span class="req">✦</span></label>
         </div>
 
         <div class="form-grid">
-          <!-- Date -->
           <div class="field has-val" id="fDate">
             <input type="date" id="dateInp">
             <label class="field-label" for="dateInp">Date requested <span class="req">✦</span></label>
           </div>
-          <!-- Branch -->
           <div class="field has-val" id="fBranch">
             <select id="branchInp">
               <option value="">— Select branch —</option>
@@ -573,12 +581,10 @@ input[type="date"]{font-size:13px;padding-top:16px}
 
         <hr class="divider">
 
-        <!-- Notes -->
         <div class="field" id="fNotes">
           <textarea id="notesInp" placeholder=" "></textarea>
           <label class="field-label" for="notesInp" style="top:20px;transform:none">Notes / Special instructions</label>
         </div>
-
       </div>
     </div>
 
@@ -603,12 +609,10 @@ input[type="date"]{font-size:13px;padding-top:16px}
         </div>
       </div>
       <div class="card-body" style="padding-top:4px">
-
         <div class="search-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           <input class="search-inp" id="searchInp" type="text" placeholder="Search products…">
         </div>
-
         <div class="sel-bar">
           <div class="sel-count zero" id="selCount"><span class="cnt">0</span>&nbsp;selected</div>
           <div class="sel-acts">
@@ -616,7 +620,6 @@ input[type="date"]{font-size:13px;padding-top:16px}
             <button class="sel-act" onclick="deselectAll()">Clear</button>
           </div>
         </div>
-
         <div id="loadArea">
           <div class="skel-grid">
             <div class="skel-item"></div><div class="skel-item"></div>
@@ -628,7 +631,6 @@ input[type="date"]{font-size:13px;padding-top:16px}
           <div class="cat-tabs" id="catTabs"></div>
           <div class="prod-grid" id="prodGrid"></div>
         </div>
-
       </div>
     </div>
 
@@ -641,7 +643,7 @@ input[type="date"]{font-size:13px;padding-top:16px}
       </div>
     </div>
 
-  </div><!-- /formWrap -->
+  </div>
 
   <!-- Success -->
   <div class="card success-scr" id="successScr">
@@ -652,7 +654,7 @@ input[type="date"]{font-size:13px;padding-top:16px}
     <button class="btn-reset" onclick="resetForm()">Submit Another Request</button>
   </div>
 
-</div><!-- /wrap -->
+</div>
 
 <!-- Footer -->
 <footer class="site-footer">
@@ -669,46 +671,18 @@ input[type="date"]{font-size:13px;padding-top:16px}
   </div>
   <div class="ft-copy">© 2026 KS Coffee &amp; Cakes</div>
 </footer>
+
+<!-- Telegram Chat Bubble -->
+<div id="tgBubble">👋 Hi! How can we help?</div>
+
 <!-- Telegram Floating Button -->
-<a href="https://t.me/krpt_bot" target="_blank" rel="noopener" id="tgBtn" title="Chat with us on Telegram"
-   style="
-     position:fixed;bottom:28px;right:22px;z-index:9998;
-     width:56px;height:56px;border-radius:50%;
-     background:#229ED9;
-     display:flex;align-items:center;justify-content:center;
-     box-shadow:0 4px 20px rgba(34,158,217,0.45),0 2px 8px rgba(0,0,0,0.15);
-     text-decoration:none;
-     transition:transform 0.22s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.22s ease;
-     animation:tgPop 0.5s 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
-   "
-   onmouseover="this.style.transform='translateY(-3px) scale(1.08)';this.style.boxShadow='0 8px 28px rgba(34,158,217,0.55),0 3px 10px rgba(0,0,0,0.18)'"
-   onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(34,158,217,0.45),0 2px 8px rgba(0,0,0,0.15)'">
-  <!-- Telegram SVG icon -->
-  <svg viewBox="0 0 24 24" fill="white" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+<a href="https://t.me/krpt_bot" target="_blank" rel="noopener" id="tgBtn" title="Chat with us on Telegram">
+  <svg viewBox="0 0 24 24" fill="white" width="28" height="28">
     <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
   </svg>
-  <!-- Pulse ring -->
-  <span style="
-    position:absolute;inset:-4px;border-radius:50%;
-    border:2.5px solid rgba(34,158,217,0.5);
-    animation:tgRing 2s ease-out 1.5s infinite;
-    pointer-events:none;
-  "></span>
+  <span class="tg-ring"></span>
 </a>
-  <!-- Tooltip label -->
-<div style="
-  position:fixed;bottom:37px;right:86px;z-index:9997;
-  background:rgba(15,31,20,0.92);color:#fff;
-  font-family:'Sora',sans-serif;font-size:12px;font-weight:500;
-  padding:7px 14px;border-radius:20px;
-  white-space:nowrap;pointer-events:none;
-  opacity:0;transition:opacity 0.2s ease;
-" id="tgTooltip">Chat with us 💬</div>
 
-<style>
-@keyframes tgPop{from{opacity:0;transform:scale(0.4)}to{opacity:1;transform:scale(1)}}
-@keyframes tgRing{0%{transform:scale(1);opacity:0.8}100%{transform:scale(1.55);opacity:0}}
-</style>
 <script>
 const SCRIPT_URL='https://script.google.com/macros/s/AKfycbx1Hksx6CnvQfASieOKyaUmae5LewOFsKjR4JqWVs4O9F5BxEIXbQ3aCkpOI27XcGHIrw/exec';
 const FALLBACK_PHOTOS=[
@@ -720,30 +694,25 @@ const CATS=['CAKE','PASTRY','BAKERY','SSMM','DRINKS','SANDWICH','SIGNS','CHOCOLA
 
 let checked={},allProds=[],groups={},activeCat='',slides=[],curSlide=0,slideTimer=null;
 
-/* ── Init ── */
 document.getElementById('dateInp').valueAsDate=new Date();
 document.getElementById('searchInp').addEventListener('input',filterProds);
 
-/* Floating label for textarea */
 const notesTA=document.getElementById('notesInp');
 notesTA.addEventListener('input',()=>{
   document.getElementById('fNotes').classList.toggle('has-val',notesTA.value.length>0);
 });
 
-/* Scroll reveal */
 const obs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
 },{threshold:0.1});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-/* ── Modal ── */
 function closeModal(){
   const m=document.getElementById('modal');
   m.style.opacity='0';m.style.transition='opacity 0.2s';
   setTimeout(()=>m.style.display='none',200);
 }
 
-/* ── Holidays ── */
 function loadHolidays(){
   const cb='_hol_'+Date.now();
   window[cb]=res=>{
@@ -765,7 +734,6 @@ function renderTicker(items){
 }
 loadHolidays();
 
-/* ── Photos ── */
 function loadPhotos(){
   const cb='_ph_'+Date.now();
   window[cb]=res=>{
@@ -786,9 +754,7 @@ function buildShow(photos){
       <img src="${p.url}" alt="${p.caption||'Photo '+(i+1)}" onerror="this.parentElement.innerHTML='<div class=slide-ph><p>Image unavailable</p></div>'">
     </div>`).join('');
   if(photos.length>1){
-    html+=`
-    
-    <div class="show-dots">${photos.map((_,i)=>`<button class="s-dot${i===0?' on':''}" onclick="goSlide(${i})" aria-label="Slide ${i+1}"></button>`).join('')}</div>`;
+    html+=`<div class="show-dots">${photos.map((_,i)=>`<button class="s-dot${i===0?' on':''}" onclick="goSlide(${i})" aria-label="Slide ${i+1}"></button>`).join('')}</div>`;
   }
   panel.innerHTML=html;
   if(photos.length>1){clearInterval(slideTimer);slideTimer=setInterval(()=>movSlide(1),4800)}
@@ -813,7 +779,6 @@ function goSlide(idx){
 }
 loadPhotos();
 
-/* ── Products ── */
 function loadProds(){
   const cb='_prod_'+Date.now();
   window[cb]=res=>{
@@ -880,7 +845,6 @@ function updBadge(){
 }
 loadProds();
 
-/* ── Submit ── */
 function doSubmit(){
   const email=document.getElementById('emailInp').value.trim();
   const date=document.getElementById('dateInp').value;
@@ -929,13 +893,33 @@ function resetForm(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+/* ── Telegram bubble logic ── */
 (function(){
   var btn=document.getElementById('tgBtn');
-  var tip=document.getElementById('tgTooltip');
-  btn.addEventListener('mouseenter',function(){tip.style.opacity='1'});
-  btn.addEventListener('mouseleave',function(){tip.style.opacity='0'});
+  var bubble=document.getElementById('tgBubble');
+  var dismissed=false;
+
+  // Auto-show after 2s
+  setTimeout(function(){
+    if(!dismissed){
+      bubble.classList.add('show');
+      // Auto-hide after 5s
+      setTimeout(function(){
+        if(!btn.matches(':hover')){
+          bubble.classList.remove('show');
+          dismissed=true;
+        }
+      },5000);
+    }
+  },2000);
+
+  btn.addEventListener('mouseenter',function(){
+    bubble.classList.add('show');
+  });
+  btn.addEventListener('mouseleave',function(){
+    if(dismissed) bubble.classList.remove('show');
+  });
 })();
-</script>
 </script>
 </body>
 </html>
