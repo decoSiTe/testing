@@ -806,6 +806,68 @@ function loadHolidays(){
   document.head.appendChild(s);
 }
 
+<script>
+async function loadAnnouncements() {
+
+const sheetId = "YOUR_SHEET_ID";
+const sheetName = "Announcements";
+
+const url =
+`https://opensheet.elk.sh/${sheetId}/${sheetName}`;
+
+try {
+
+const response = await fetch(url);
+const data = await response.json();
+
+const container =
+document.getElementById("announcementContainer");
+
+container.innerHTML = "";
+
+data.forEach(item => {
+
+container.innerHTML += `
+
+<div class="announcement-card">
+
+<img src="${item.Image}" alt="">
+
+<div class="announcement-content">
+
+<span class="announcement-type">
+${item.Type}
+</span>
+
+<h3>${item.Title}</h3>
+
+<p>${item.Description}</p>
+
+<div class="announcement-date">
+📅 ${item.Date}
+</div>
+
+</div>
+</div>
+
+`;
+
+});
+
+} catch(error){
+
+document.getElementById("announcementContainer")
+.innerHTML =
+"Failed to load announcements.";
+
+console.log(error);
+
+}
+
+}
+
+loadAnnouncements();
+
   
 function renderTicker(items){
   const html=items.map(h=>`<div class="ticker-item"><span class="ticker-gem">◆</span>${h.emoji?h.emoji+' ':''}${h.name}</div>`).join('');
@@ -999,6 +1061,7 @@ function resetForm(){
     if(dismissed) bubble.classList.remove('show');
   });
 })();
+  </script>
 </script>
 </body>
 </html>
