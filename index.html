@@ -795,8 +795,23 @@ window.addEventListener('DOMContentLoaded', () => {
   loadPhotos();
   document.getElementById('productSearch').addEventListener('input', filterProducts);
   initTelegramBubble();
-});
 
+document.getElementById('emailField').addEventListener('input', function() {
+  const hint = document.getElementById('emailHint');
+  const val = this.value.trim();
+  if (!val) {
+    hint.style.color = 'var(--muted)';
+    hint.textContent = 'Must be a Gmail address (@gmail.com)';
+  } else if (/^[^\s@]+@gmail\.com$/i.test(val)) {
+    hint.style.color = '#2d7a3a';
+    hint.textContent = '✓ Valid Gmail address';
+  } else {
+    hint.style.color = 'var(--error)';
+    hint.textContent = val.includes('@') && !val.toLowerCase().endsWith('@gmail.com')
+      ? 'Only @gmail.com addresses are accepted'
+      : 'Must be a Gmail address (@gmail.com)';
+  }
+});
 /* ══════════════════════════════════════════════════
    ANNOUNCEMENTS  ← Google Sheet tab: "Announcements"
    Expected columns (row 1 = headers):
