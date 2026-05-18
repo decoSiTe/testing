@@ -1164,7 +1164,7 @@ function handleSubmit() {
   const branch = document.getElementById('branchField').value;
   const notes  = document.getElementById('notesField').value.trim();
   document.getElementById('errorAlert').style.display = 'none';
-  if (!email || !email.includes('@')) return showError('Please enter a valid email address.');
+  if (!email || !/^[^\s@]+@gmail\.com$/i.test(email)) return showError('Please enter a valid Gmail address (e.g. name@gmail.com).');
   if (!date)   return showError('Please select a date.');
   if (!branch) return showError('Please select your branch.');
   if (!Object.keys(checked).length) return showError('Please select at least one product.');
