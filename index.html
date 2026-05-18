@@ -825,7 +825,7 @@ document.getElementById('emailField').addEventListener('input', function() {
     hint.textContent = val.includes('@') && !val.toLowerCase().endsWith('@gmail.com')
       ? 'Only @gmail.com addresses are accepted'
       : 'Must be a Gmail address (@gmail.com)';
-  }
+  });
   
 function loadAnnouncements() {
   const cb = '_annCb_' + Date.now();
