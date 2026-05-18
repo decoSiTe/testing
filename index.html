@@ -795,7 +795,21 @@ window.addEventListener('DOMContentLoaded', () => {
   loadPhotos();
   document.getElementById('productSearch').addEventListener('input', filterProducts);
   initTelegramBubble();
-}
+});
+
+
+/* ══════════════════════════════════════════════════
+   ANNOUNCEMENTS  ← Google Sheet tab: "Announcements"
+   Expected columns (row 1 = headers):
+     A: Title
+     B: Description
+     C: Type         (new-product | promotion | price-tag | update | event)
+     D: Date         (e.g. 2026-05-10)
+     E: Branch       (ALL or branch name)
+     F: Image File ID (Google Drive file ID, optional)
+     G: IsNew        (TRUE / FALSE)
+═══════════════════════════════════════════════════ */
+
 document.getElementById('emailField').addEventListener('input', function() {
   const hint = document.getElementById('emailHint');
   const val = this.value.trim();
@@ -811,18 +825,7 @@ document.getElementById('emailField').addEventListener('input', function() {
       ? 'Only @gmail.com addresses are accepted'
       : 'Must be a Gmail address (@gmail.com)';
   }
-});
-/* ══════════════════════════════════════════════════
-   ANNOUNCEMENTS  ← Google Sheet tab: "Announcements"
-   Expected columns (row 1 = headers):
-     A: Title
-     B: Description
-     C: Type         (new-product | promotion | price-tag | update | event)
-     D: Date         (e.g. 2026-05-10)
-     E: Branch       (ALL or branch name)
-     F: Image File ID (Google Drive file ID, optional)
-     G: IsNew        (TRUE / FALSE)
-═══════════════════════════════════════════════════ */
+  
 function loadAnnouncements() {
   const cb = '_annCb_' + Date.now();
   window[cb] = function(res) {
