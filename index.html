@@ -169,6 +169,9 @@
       border-top: 6px solid var(--muted); pointer-events: none;
     }
     select { cursor: pointer; padding-right: 34px; }
+    .branch-load-status { margin-top: 7px; font-size: 11.5px; color: var(--muted); }
+    .branch-load-status.ok { color: #2d6a3f; }
+    .branch-load-status.error { color: var(--error); }
     textarea { resize: vertical; min-height: 76px; line-height: 1.6; font-size: 13.5px; }
     .section-div { border: none; border-top: 1px dashed var(--border); margin: 20px 0; }
     .required-note { font-size: 11px; color: var(--muted); margin-bottom: 18px; }
@@ -359,15 +362,15 @@
     .email-choice {
       border: 1.5px solid var(--border);
       border-radius: 12px;
-      padding: 14px;
+      padding: 18px 18px 16px;
       background: #fff;
       cursor: pointer;
       transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-      min-height: 92px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 7px;
+      min-height: 110px;
+      display: grid;
+      grid-template-rows: auto auto;
+      align-content: start;
+      gap: 8px;
     }
     .email-choice:hover,
     .email-choice.active {
@@ -382,6 +385,8 @@
       font-size: 13px;
       font-weight: 700;
       color: var(--ink);
+      line-height: 1.2;
+      min-height: 24px;
     }
     .email-radio-dot {
       width: 18px;
@@ -391,6 +396,7 @@
       background: #fff;
       flex-shrink: 0;
       position: relative;
+      margin-top: 0;
     }
     .email-choice.active .email-radio-dot {
       border-color: var(--pink);
@@ -408,6 +414,7 @@
       line-height: 1.4;
       font-size: 11.5px;
       margin-left: 27px;
+      min-height: 2.8em;
     }
     .email-auth-panel {
       display: none;
@@ -520,7 +527,7 @@ Before submitting your request, kindly ensure that you have carefully reviewed a
               </div>
               <div class="email-choice" id="flexwayChoice" onclick="selectEmailMethod('flexway')" role="button" tabindex="0">
                 <div class="email-choice-head"><span class="email-radio-dot"></span> Use Flexway Email</div>
-                <small>Type a valid company email ending with @flexway.com.</small>
+                <small>Type a valid company email, ending with "@flexway.com" </small>
               </div>
             </div>
 
@@ -562,34 +569,11 @@ Before submitting your request, kindly ensure that you have carefully reviewed a
           <div class="form-group">
             <label for="branchField">Branch <span class="req">*</span></label>
             <div class="select-wrap">
-              <select id="branchField">
-                <option value="">— Choose branch —</option>
-                <option>UPTOWN MIRDIF</option><option>AL BARSHA</option><option>BIN SOUGAT</option>
-                <option>SUSTAINABLE CITY</option><option>DIFC</option><option>MEGA MALL</option>
-                <option>ZAWAYA</option><option>VILLANOVA</option><option>LAMCY</option>
-                <option>DUBAI HILLS</option><option>JVC/KCC</option><option>BUSINESS BAY</option>
-                <option>MAMSHA</option><option>DISCOVERY GARDEN</option><option>MOTOR CITY</option>
-                <option>DHCC</option><option>SUNSET MALL</option><option>ENOC 1025</option>
-                <option>NASHMA</option><option>MARKET MALL</option><option>LOGGIA PLAZA</option>
-                <option>ARJAN KCC</option><option>NOOR 3</option><option>ENOC 1005</option>
-                <option>AL GHURAIR</option><option>MIRDIF</option><option>MUWAELIH</option>
-                <option>MEDIA CITY</option><option>AL GARHOUD S7</option><option>ELEGANZA</option>
-                <option>MAMZAR</option><option>J ONE</option><option>AL MUTTENA</option>
-                <option>NBQ</option><option>AL NAHDA</option><option>ANDALUSIA</option>
-                <option>SATWA</option><option>AL FURJAN</option><option>TULIP MAJAN</option>
-                <option>YAS MALL</option><option>KHALIDIYAH</option><option>BAWABAT</option>            
-                <option>ABU DHABI MALL</option><option>ARJAN -S7</option><option>JVC- S7</option>
-                <option>FESTIVAL CITY</option><option>AVENUE - S7</option><option>RAMANIA</option>
-                <option>EMERALD JADDAF</option><option>KCC LULU</option><option>KCC SPORTS SOCIETY</option>
-                <option>KARAMA - S7</option><option>RIMAL - S7</option><option>KCC INTERNATIONAL CITY</option>
-                <option>ARENCO</option><option>AJMAN</option><option>AL QASBA</option>
-                <option>SHAMS BOUTIK</option><option>RIGGAT AL BUTEEN</option><option>JAFZA</option>
-                <option>MANKHOOL</option><option>UM AL QUAIN</option><option>MANAR MALL</option>
-                <option>SAHARA MALL</option><option>RAK MALL</option><option>JLT</option>
-                <option>BURJUMAN</option><option>BUSINESS VILLAGE</option><option>ENOC 1096</option>
-                <option>KCC DAMAC HILLS 2</option><option>KCC UNA APARTMENT</option><option>DAMAC HILLS 1</option><option>FLY DUBAI</option>
+              <select id="branchField" disabled>
+                <option value="">Loading branches from Google Sheet…</option>
               </select>
             </div>
+            <div class="branch-load-status" id="branchLoadStatus">Branch list is loading from Google Sheet.</div>
           </div>
         </div>
 
@@ -736,6 +720,7 @@ s0.parentNode.insertBefore(s1,s0);
 
   window.addEventListener('DOMContentLoaded', () => {
     initEmailVerification();
+    loadBranches();
     loadProducts();
     loadHolidays();
     loadPhotos();
@@ -884,6 +869,87 @@ s0.parentNode.insertBefore(s1,s0);
     return '';
   }
 
+
+
+  /* ══ BRANCHES FROM GOOGLE SHEET ══════════════════════════════════════
+     Google Sheet tab name: Branches
+     Column A: Branch Name
+     Add/remove branches in the Sheet; this dropdown updates on page load.
+     Apps Script must handle: action=getBranches
+     Returns: { success: true, data: [ "UPTOWN MIRDIF", "AL BARSHA" ] }
+  ════════════════════════════════════════════════════════════════════════ */
+  function loadBranches() {
+    const select = document.getElementById('branchField');
+    const status = document.getElementById('branchLoadStatus');
+    if (!select) return;
+
+    select.disabled = true;
+    select.innerHTML = '<option value="">Loading branches from Google Sheet…</option>';
+    if (status) {
+      status.className = 'branch-load-status';
+      status.textContent = 'Branch list is loading from Google Sheet.';
+    }
+
+    const cbName = '_branchesCb_' + Date.now();
+    window[cbName] = function(res) {
+      delete window[cbName];
+      if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
+        const branches = res.data
+          .map(branch => typeof branch === 'string' ? branch : (branch.name || branch.branch || branch.Branch || ''))
+          .map(branch => String(branch).trim())
+          .filter(Boolean);
+
+        if (branches.length) {
+          populateBranchDropdown(branches);
+          if (status) {
+            status.className = 'branch-load-status ok';
+            status.textContent = branches.length + ' branches loaded from Google Sheet.';
+          }
+          return;
+        }
+      }
+      showBranchLoadError('No branches found. Add branch names in the Google Sheet tab named "Branches".');
+    };
+
+    const s = document.createElement('script');
+    s.onerror = function() {
+      delete window[cbName];
+      showBranchLoadError('Could not load branches from Google Sheet. Please check Apps Script action=getBranches.');
+    };
+    s.src = APPS_SCRIPT_URL + '?action=getBranches&callback=' + cbName;
+    document.head.appendChild(s);
+  }
+
+  function populateBranchDropdown(branches) {
+    const select = document.getElementById('branchField');
+    const uniqueBranches = [...new Set(branches)].sort((a, b) => a.localeCompare(b));
+
+    select.innerHTML = '<option value="">— Choose branch —</option>' +
+      uniqueBranches.map(branch => '<option value="' + escapeOptionValue(branch) + '">' + escapeHtml(branch) + '</option>').join('');
+    select.disabled = false;
+  }
+
+  function showBranchLoadError(message) {
+    const select = document.getElementById('branchField');
+    const status = document.getElementById('branchLoadStatus');
+    select.innerHTML = '<option value="">Branch list unavailable</option>';
+    select.disabled = true;
+    if (status) {
+      status.className = 'branch-load-status error';
+      status.textContent = message;
+    }
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"]/g, function(ch) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch];
+    });
+  }
+
+  function escapeOptionValue(value) {
+    return escapeHtml(value).replace(/'/g, '&#39;');
+  }
+
   /* ══ PRODUCTS ════════════════════════════════════════════════════════ */
   function loadProducts() {
     window._prodCb = function(res) {
@@ -1010,6 +1076,7 @@ s0.parentNode.insertBefore(s1,s0);
 
     if (!email || !email.includes('@')) return showError('Please enter a valid email address.');
     if (!date)   return showError('Please select a date.');
+    if (document.getElementById('branchField').disabled) return showError('Branch list is not loaded yet. Please refresh or check the Google Sheet connection.');
     if (!branch) return showError('Please select your branch.');
     if (!Object.keys(checked).length) return showError('Please select at least one product.');
 
