@@ -341,169 +341,123 @@
       .footer-copy { font-size: 10px; }
     }
 
-    /* ══ GOOGLE SIGN-IN GATE ══ */
-    .auth-gate {
-      position: fixed;
-      inset: 0;
-      z-index: 5000;
+
+    /* ══ EMAIL VERIFICATION SECTION ══ */
+    .email-auth-box {
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--cream);
+      padding: 14px;
+    }
+    .email-choice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 600px) { .email-choice-grid { grid-template-columns: 1fr; } }
+    .email-choice {
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      background: #fff;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      min-height: 92px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 7px;
+    }
+    .email-choice:hover,
+    .email-choice.active {
+      border-color: var(--pink);
+      background: rgba(233,30,140,0.035);
+      box-shadow: 0 0 0 3px rgba(233,30,140,0.07);
+    }
+    .email-choice-head {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background:
-        radial-gradient(circle at top left, rgba(233,30,140,0.22), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(45,90,61,0.24), transparent 32%),
-        linear-gradient(135deg, #141414 0%, #1a2a1f 65%, #2d5a3d 100%);
+      gap: 9px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink);
     }
-    .auth-box {
-      width: min(430px, 94vw);
+    .email-radio-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
       background: #fff;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.34);
-      text-align: center;
-      animation: slideUp 0.35s ease both;
+      flex-shrink: 0;
+      position: relative;
     }
-    .auth-box-header {
-      padding: 26px 28px 22px;
-      background: linear-gradient(135deg, var(--pink) 0%, var(--green) 70%);
-      color: #fff;
+    .email-choice.active .email-radio-dot {
+      border-color: var(--pink);
     }
-    .auth-box-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 6px;
+    .email-choice.active .email-radio-dot::after {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border-radius: 50%;
+      background: var(--pink);
     }
-    .auth-box-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      font-weight: 700;
-      line-height: 1.1;
-    }
-    .auth-box-body {
-      padding: 28px;
-    }
-    .auth-box-body p {
-      font-size: 13.5px;
+    .email-choice small {
+      display: block;
       color: var(--muted);
-      line-height: 1.7;
-      margin-bottom: 18px;
+      line-height: 1.4;
+      font-size: 11.5px;
+      margin-left: 27px;
     }
-    .auth-allowed {
-      display: inline-flex;
-      gap: 8px;
+    .email-auth-panel {
+      display: none;
+      border-top: 1px dashed var(--border);
+      padding-top: 12px;
+      margin-top: 4px;
+      animation: fadeUp 0.2s ease both;
+    }
+    .email-auth-panel.active { display: block; }
+    .google-auth-row {
+      display: flex;
       flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .auth-chip {
-      background: var(--pink-lt);
-      color: var(--pink-dark);
-      border: 1px solid rgba(233,30,140,0.22);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-    #googleSignInButton {
-      display: flex;
-      justify-content: center;
-      margin-top: 8px;
-    }
-    .auth-error {
-      display: none;
-      margin-top: 16px;
-      padding: 11px 12px;
-      border-radius: 8px;
-      background: #fdf0f0;
-      border: 1.5px solid #f0b8b8;
-      color: var(--error);
-      font-size: 12.5px;
-      line-height: 1.5;
-      text-align: left;
-    }
-    .site-content {
-      display: none;
-    }
-    .signedin-bar {
-      position: sticky;
-      top: 0;
-      z-index: 105;
-      width: 100%;
-      min-height: 38px;
-      padding: 8px 16px;
-      background: #102016;
-      color: rgba(255,255,255,0.88);
-      display: flex;
-      justify-content: center;
       align-items: center;
       gap: 12px;
-      font-size: 12px;
-      font-family: 'Outfit', sans-serif;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
     }
-    .signedin-bar strong {
-      color: #fff;
-      font-weight: 700;
-    }
-    .signout-btn {
-      border: 1px solid rgba(255,255,255,0.28);
-      background: rgba(255,255,255,0.10);
-      color: #fff;
+    .verified-pill {
+      display: none;
+      align-items: center;
+      gap: 7px;
       border-radius: 999px;
-      padding: 5px 11px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 11px;
-      cursor: pointer;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #eef9ee;
+      color: #2d6a31;
+      border: 1px solid #bfe5c2;
     }
-    .signout-btn:hover {
-      background: rgba(255,255,255,0.18);
+    .verified-pill.show { display: inline-flex; }
+    .email-help-text {
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-top: 8px;
     }
-    .site-content .banner {
-      top: 38px;
+    .email-status {
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+      min-height: 18px;
     }
-    .site-content .holidays-strip {
-      top: 158px;
-    }
-    input[readonly] {
-      background: #eef7ef;
-      border-color: #9bc49c;
-      cursor: not-allowed;
-    }
+    .email-status.ok { color: #2d6a31; }
+    .email-status.error { color: var(--error); }
+    .email-status.neutral { color: var(--muted); }
 
   </style>
 
   <link rel="icon" type="image/png" href="favicon.png">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-
-  <!-- Google Sign-In Gate -->
-  <div class="auth-gate" id="authGate">
-    <div class="auth-box">
-      <div class="auth-box-header">
-        <div class="auth-box-label">Secure Access</div>
-        <div class="auth-box-title">Price Tag Request Form</div>
-      </div>
-      <div class="auth-box-body">
-        <p>Please sign in with your Google account first to open this site.</p>
-        <div class="auth-allowed">
-          <span class="auth-chip">@gmail.com</span>
-          <span class="auth-chip">@flexway.com</span>
-        </div>
-        <div id="googleSignInButton"></div>
-        <div class="auth-error" id="authError"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="site-content" id="siteContent" aria-hidden="true">
-    <div class="signedin-bar">
-      Signed in as <strong id="signedInEmailText"></strong>
-      <button class="signout-btn" type="button" onclick="signOutGoogle()">Switch account</button>
-    </div>
 
   <!-- Modal -->
   <div class="modal-overlay" id="reminderModal">
@@ -557,8 +511,47 @@ Before submitting your request, kindly ensure that you have carefully reviewed a
         <div class="alert alert-error" id="errorAlert"></div>
 
         <div class="form-group">
-          <label for="emailField">Email <span class="req">*</span></label>
-          <input type="email" id="emailField" placeholder="your@email.com">
+          <label>Email Verification <span class="req">*</span></label>
+          <div class="email-auth-box">
+            <div class="email-choice-grid">
+              <div class="email-choice" id="googleChoice" onclick="selectEmailMethod('google')" role="button" tabindex="0">
+                <div class="email-choice-head"><span class="email-radio-dot"></span> Login with Google</div>
+                <small>Use this option for a verified Google account, such as @gmail.com.</small>
+              </div>
+              <div class="email-choice" id="flexwayChoice" onclick="selectEmailMethod('flexway')" role="button" tabindex="0">
+                <div class="email-choice-head"><span class="email-radio-dot"></span> Use Flexway Email</div>
+                <small>Type a valid company email ending with @flexway.com.</small>
+              </div>
+            </div>
+
+            <div class="email-auth-panel" id="googlePanel">
+              <div id="g_id_onload"
+                   data-client_id="PASTE_YOUR_GOOGLE_OAUTH_CLIENT_ID_HERE.apps.googleusercontent.com"
+                   data-callback="handleGoogleCredentialResponse"
+                   data-auto_prompt="false">
+              </div>
+              <div class="google-auth-row">
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-size="large"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-shape="pill"
+                     data-logo_alignment="left">
+                </div>
+                <span class="verified-pill" id="googleVerifiedPill">✓ Google account verified</span>
+              </div>
+              <div class="email-help-text">The signed-in Google email will be used for this request.</div>
+            </div>
+
+            <div class="email-auth-panel" id="flexwayPanel">
+              <input type="email" id="flexwayEmailField" placeholder="name@flexway.com" autocomplete="email">
+              <div class="email-help-text">Only emails ending with <strong>@flexway.com</strong> are accepted here.</div>
+            </div>
+
+            <input type="hidden" id="emailField">
+            <div class="email-status neutral" id="emailStatus">Choose Google login or enter a Flexway email before submitting.</div>
+          </div>
         </div>
 
         <div class="form-row">
@@ -712,153 +705,10 @@ s0.parentNode.insertBefore(s1,s0);
     <div class="footer-copy">&copy; 2026 KS Coffee & Cakes. All rights reserved.</div>
  
   </footer>
-  </div>
   
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
   /* ══ CONFIG ══════════════════════════════════════════════════════════ */
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1Hksx6CnvQfASieOKyaUmae5LewOFsKjR4JqWVs4O9F5BxEIXbQ3aCkpOI27XcGHIrw/exec';
-
-  const GOOGLE_CLIENT_ID = 'PASTE_YOUR_GOOGLE_OAUTH_CLIENT_ID_HERE.apps.googleusercontent.com';
-  const ALLOWED_EMAIL_DOMAINS = ['gmail.com', 'flexway.com'];
-
-  let signedInEmail = '';
-  let appStarted = false;
-
-  function isAllowedEmailDomain(email) {
-    const domain = String(email || '').toLowerCase().split('@').pop();
-    return ALLOWED_EMAIL_DOMAINS.includes(domain);
-  }
-
-  function showAuthError(message) {
-    const box = document.getElementById('authError');
-    if (!box) return;
-    box.textContent = message;
-    box.style.display = 'block';
-  }
-
-  function clearAuthError() {
-    const box = document.getElementById('authError');
-    if (!box) return;
-    box.textContent = '';
-    box.style.display = 'none';
-  }
-
-  function decodeGoogleJwt(token) {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  }
-
-  function initGoogleSignInGate() {
-    const site = document.getElementById('siteContent');
-    const gate = document.getElementById('authGate');
-    if (site) {
-      site.style.display = 'none';
-      site.setAttribute('aria-hidden', 'true');
-    }
-    if (gate) gate.style.display = 'flex';
-
-    if (GOOGLE_CLIENT_ID.includes('PASTE_YOUR_GOOGLE_OAUTH_CLIENT_ID_HERE')) {
-      showAuthError('Setup required: paste your Google OAuth Client ID inside the HTML file.');
-      return;
-    }
-
-    if (!window.google || !google.accounts || !google.accounts.id) {
-      setTimeout(initGoogleSignInGate, 250);
-      return;
-    }
-
-    clearAuthError();
-    google.accounts.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
-      callback: handleGoogleCredential,
-      auto_select: false
-    });
-
-    google.accounts.id.renderButton(
-      document.getElementById('googleSignInButton'),
-      {
-        theme: 'outline',
-        size: 'large',
-        width: 280,
-        text: 'signin_with',
-        shape: 'pill'
-      }
-    );
-  }
-
-  function handleGoogleCredential(response) {
-    try {
-      const profile = decodeGoogleJwt(response.credential);
-      const email = String(profile.email || '').toLowerCase();
-      const emailVerified = profile.email_verified === true || profile.email_verified === 'true';
-
-      if (!email || !emailVerified) {
-        showAuthError('This Google account email is not verified. Please use a verified account.');
-        return;
-      }
-
-      if (!isAllowedEmailDomain(email)) {
-        showAuthError('Access denied. Please sign in using @gmail.com or @flexway.com only.');
-        return;
-      }
-
-      signedInEmail = email;
-      unlockSite(email);
-    } catch (err) {
-      showAuthError('Unable to verify Google sign-in. Please try again.');
-    }
-  }
-
-  function unlockSite(email) {
-    const gate = document.getElementById('authGate');
-    const site = document.getElementById('siteContent');
-    if (gate) gate.style.display = 'none';
-    if (site) {
-      site.style.display = 'block';
-      site.setAttribute('aria-hidden', 'false');
-    }
-
-    const emailText = document.getElementById('signedInEmailText');
-    if (emailText) emailText.textContent = email;
-
-    const emailField = document.getElementById('emailField');
-    if (emailField) {
-      emailField.value = email;
-      emailField.readOnly = true;
-    }
-
-    startApp();
-  }
-
-  function signOutGoogle() {
-    signedInEmail = '';
-    if (window.google && google.accounts && google.accounts.id) {
-      google.accounts.id.disableAutoSelect();
-    }
-
-    const site = document.getElementById('siteContent');
-    const gate = document.getElementById('authGate');
-    if (site) {
-      site.style.display = 'none';
-      site.setAttribute('aria-hidden', 'true');
-    }
-    if (gate) gate.style.display = 'flex';
-
-    const emailField = document.getElementById('emailField');
-    if (emailField) {
-      emailField.value = '';
-      emailField.readOnly = false;
-    }
-  }
-
 
   /*
     Optional hardcoded fallback photos (Drive thumbnail URLs):
@@ -885,16 +735,153 @@ s0.parentNode.insertBefore(s1,s0);
   document.getElementById('dateField').valueAsDate = new Date();
 
   window.addEventListener('DOMContentLoaded', () => {
-    initGoogleSignInGate();
-  });
-
-  function startApp() {
-    if (appStarted) return;
-    appStarted = true;
+    initEmailVerification();
     loadProducts();
     loadHolidays();
     loadPhotos();
     document.getElementById('productSearch').addEventListener('input', filterProducts);
+  });
+
+  /* ══ EMAIL VERIFICATION ══════════════════════════════════════════════ */
+  let selectedEmailMethod = '';
+  let verifiedEmail = '';
+  let verifiedEmailMethod = '';
+
+  function initEmailVerification() {
+    const flexwayField = document.getElementById('flexwayEmailField');
+    if (flexwayField) {
+      flexwayField.addEventListener('input', validateFlexwayEmailLive);
+    }
+
+    ['googleChoice', 'flexwayChoice'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          selectEmailMethod(id === 'googleChoice' ? 'google' : 'flexway');
+        }
+      });
+    });
+  }
+
+  function selectEmailMethod(method) {
+    selectedEmailMethod = method;
+    document.getElementById('googleChoice').classList.toggle('active', method === 'google');
+    document.getElementById('flexwayChoice').classList.toggle('active', method === 'flexway');
+    document.getElementById('googlePanel').classList.toggle('active', method === 'google');
+    document.getElementById('flexwayPanel').classList.toggle('active', method === 'flexway');
+
+    verifiedEmail = '';
+    verifiedEmailMethod = '';
+    document.getElementById('emailField').value = '';
+    document.getElementById('googleVerifiedPill').classList.remove('show');
+
+    if (method === 'google') {
+      setEmailStatus('neutral', 'Please sign in with Google to verify your email.');
+    } else {
+      validateFlexwayEmailLive();
+      setTimeout(() => document.getElementById('flexwayEmailField').focus(), 50);
+    }
+  }
+
+  function handleGoogleCredentialResponse(response) {
+    try {
+      const payload = parseJwt(response.credential);
+      const email = String(payload.email || '').trim().toLowerCase();
+
+      if (!email || !payload.email_verified) {
+        clearVerifiedEmail('Google could not verify this email. Please try again.');
+        return;
+      }
+
+      if (!email.endsWith('@gmail.com') && !email.endsWith('@flexway.com')) {
+        clearVerifiedEmail('Only @gmail.com or @flexway.com Google accounts are allowed.');
+        return;
+      }
+
+      selectedEmailMethod = 'google';
+      verifiedEmail = email;
+      verifiedEmailMethod = 'google';
+      document.getElementById('emailField').value = email;
+      document.getElementById('googleVerifiedPill').textContent = '✓ ' + email;
+      document.getElementById('googleVerifiedPill').classList.add('show');
+      setEmailStatus('ok', 'Google account verified: ' + email);
+    } catch (err) {
+      clearVerifiedEmail('Google sign-in failed. Please try again.');
+    }
+  }
+
+  function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  }
+
+  function validateFlexwayEmailLive() {
+    if (selectedEmailMethod !== 'flexway') return false;
+    const field = document.getElementById('flexwayEmailField');
+    const email = String(field.value || '').trim().toLowerCase();
+    const isValid = /^[a-z0-9._%+-]+@flexway\.com$/i.test(email);
+
+    if (!email) {
+      clearVerifiedEmail('Enter your @flexway.com email address.');
+      return false;
+    }
+
+    if (!isValid) {
+      clearVerifiedEmail('Only a valid @flexway.com email is accepted for this option.');
+      return false;
+    }
+
+    verifiedEmail = email;
+    verifiedEmailMethod = 'flexway';
+    document.getElementById('emailField').value = email;
+    setEmailStatus('ok', 'Flexway email accepted: ' + email);
+    return true;
+  }
+
+  function clearVerifiedEmail(message) {
+    verifiedEmail = '';
+    verifiedEmailMethod = '';
+    document.getElementById('emailField').value = '';
+    setEmailStatus('error', message);
+  }
+
+  function setEmailStatus(type, message) {
+    const status = document.getElementById('emailStatus');
+    if (!status) return;
+    status.className = 'email-status ' + type;
+    status.textContent = message;
+  }
+
+  function getValidatedEmailForSubmit() {
+    if (!selectedEmailMethod) {
+      showError('Please choose one email option: Login with Google or use your @flexway.com email.');
+      return '';
+    }
+
+    if (selectedEmailMethod === 'google') {
+      if (!verifiedEmail || verifiedEmailMethod !== 'google') {
+        showError('Please complete Google sign-in before submitting.');
+        return '';
+      }
+      return verifiedEmail;
+    }
+
+    if (selectedEmailMethod === 'flexway') {
+      if (!validateFlexwayEmailLive()) {
+        showError('Please enter a valid @flexway.com email before submitting.');
+        return '';
+      }
+      return verifiedEmail;
+    }
+
+    showError('Please complete email verification before submitting.');
+    return '';
   }
 
   /* ══ PRODUCTS ════════════════════════════════════════════════════════ */
@@ -1021,10 +1008,7 @@ s0.parentNode.insertBefore(s1,s0);
     const notes  = document.getElementById('notesField').value.trim();
     document.getElementById('errorAlert').style.display = 'none';
 
-    if (!signedInEmail) return showError('Please sign in with Google first.');
     if (!email || !email.includes('@')) return showError('Please enter a valid email address.');
-    if (!isAllowedEmailDomain(email)) return showError('Only @gmail.com and @flexway.com emails are allowed.');
-    if (email.toLowerCase() !== signedInEmail) return showError('The email must match the signed-in Google account.');
     if (!date)   return showError('Please select a date.');
     if (!branch) return showError('Please select your branch.');
     if (!Object.keys(checked).length) return showError('Please select at least one product.');
@@ -1063,7 +1047,17 @@ s0.parentNode.insertBefore(s1,s0);
   }
 
   function resetForm() {
+    selectedEmailMethod = '';
+    verifiedEmail = '';
+    verifiedEmailMethod = '';
     document.getElementById('emailField').value = '';
+    document.getElementById('flexwayEmailField').value = '';
+    document.getElementById('googleChoice').classList.remove('active');
+    document.getElementById('flexwayChoice').classList.remove('active');
+    document.getElementById('googlePanel').classList.remove('active');
+    document.getElementById('flexwayPanel').classList.remove('active');
+    document.getElementById('googleVerifiedPill').classList.remove('show');
+    setEmailStatus('neutral', 'Choose Google login or enter a Flexway email before submitting.');
     document.getElementById('dateField').valueAsDate = new Date();
     document.getElementById('branchField').value = '';
     document.getElementById('notesField').value = '';
