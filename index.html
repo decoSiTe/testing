@@ -472,7 +472,7 @@
     }
     .email-choice-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 14px;
       margin-bottom: 14px;
     }
@@ -539,35 +539,7 @@
       animation: fadeUp 0.22s ease both;
     }
     .email-auth-panel.active { display: block; }
-    .google-auth-row,
-    .apple-auth-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
-    .apple-signin-btn {
-      min-height: 48px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border: 0;
-      border-radius: 999px;
-      background: #111;
-      color: #fff;
-      padding: 0 22px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 900;
-      letter-spacing: 0.01em;
-      cursor: pointer;
-      box-shadow:
-        12px 12px 24px rgba(17, 17, 17, 0.18),
-        -8px -8px 16px rgba(255,255,255,0.52),
-        inset 4px 4px 8px rgba(255,255,255,0.16),
-        inset -4px -4px 8px rgba(0,0,0,0.24);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-    }
-    .apple-signin-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-clay-button-hover); }
-    .apple-signin-btn:active { transform: scale(0.92); box-shadow: var(--shadow-clay-pressed); }
-    .apple-signin-btn svg { width: 19px; height: 19px; fill: currentColor; }
-    .apple-signin-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+    .google-auth-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
     .verified-pill {
       display: none;
       align-items: center;
@@ -1047,7 +1019,6 @@
 
   <link rel="icon" type="image/png" href="favicon.png">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async defer></script>
 </head>
 <body>
   <div class="clay-bg-blobs" aria-hidden="true">
@@ -1120,10 +1091,6 @@ Before submitting your request, kindly ensure that you have carefully reviewed a
                 <div class="email-choice-head"><span class="email-radio-dot"></span> Use Flexway Email</div>
                 <small>Type a valid company email, ending with "@flexway.com" </small>
               </div>
-              <div class="email-choice" id="appleChoice" onclick="selectEmailMethod('apple')" role="button" tabindex="0">
-                <div class="email-choice-head"><span class="email-radio-dot"></span> Continue with Apple</div>
-                <small>Use your Apple ID email or private relay email for this request.</small>
-              </div>
             </div>
 
             <div class="email-auth-panel" id="googlePanel">
@@ -1151,19 +1118,8 @@ Before submitting your request, kindly ensure that you have carefully reviewed a
               <div class="email-help-text">Only emails ending with <strong>@flexway.com</strong> are accepted here.</div>
             </div>
 
-            <div class="email-auth-panel" id="applePanel">
-              <div class="apple-auth-row">
-                <button type="button" class="apple-signin-btn" id="appleSignInBtn" onclick="handleAppleSignIn()">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.365 1.43c0 1.14-.45 2.175-1.18 2.94-.76.79-2.005 1.4-3.075 1.31-.14-1.095.405-2.255 1.11-2.97.78-.81 2.14-1.43 3.145-1.28zM20.86 17.23c-.54 1.245-.8 1.8-1.495 2.895-.97 1.5-2.34 3.365-4.04 3.38-1.515.015-1.905-.99-3.96-.98-2.055.01-2.485 1-4.005.985-1.7.015-3-1.7-3.97-3.2-2.705-4.18-2.99-9.085-1.32-11.695 1.185-1.85 3.06-2.935 4.825-2.935 1.79 0 2.915.985 4.395.985 1.435 0 2.31-.99 4.38-.99 1.565 0 3.225.855 4.405 2.33-3.87 2.12-3.24 7.65.785 9.225z"/></svg>
-                  Continue with Apple
-                </button>
-                <span class="verified-pill" id="appleVerifiedPill">✓ Apple account verified</span>
-              </div>
-              <div class="email-help-text">Requires your Apple Developer Service ID and registered redirect URI in the script config below.</div>
-            </div>
-
             <input type="hidden" id="emailField">
-            <div class="email-status neutral" id="emailStatus">Choose Google, Apple, or enter a Flexway email before submitting.</div>
+            <div class="email-status neutral" id="emailStatus">Choose Google login or enter a Flexway email before submitting.</div>
           </div>
         </div>
 
@@ -1338,36 +1294,21 @@ s0.parentNode.insertBefore(s1,s0);
   let verifiedEmail = '';
   let verifiedEmailMethod = '';
 
-  // Apple Sign-In setup:
-  // 1) Create an Apple Developer Service ID with Sign in with Apple enabled.
-  // 2) Add your deployed Apps Script web app URL as the registered redirect URI.
-  // 3) Replace APPLE_SIGNIN_CLIENT_ID and APPLE_SIGNIN_REDIRECT_URI below.
-  const APPLE_SIGNIN_CLIENT_ID = ''; // Example: 'com.yourcompany.pricetagrequest'
-  const APPLE_SIGNIN_REDIRECT_URI = ''; // Example: 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec'
-  const APPLE_SIGNIN_ENABLED = Boolean(APPLE_SIGNIN_CLIENT_ID && APPLE_SIGNIN_REDIRECT_URI);
-
   function initEmailVerification() {
     const flexwayField = document.getElementById('flexwayEmailField');
     if (flexwayField) {
       flexwayField.addEventListener('input', validateFlexwayEmailLive);
     }
 
-    ['googleChoice', 'flexwayChoice', 'appleChoice'].forEach(id => {
+    ['googleChoice', 'flexwayChoice'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('keydown', event => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          const method = id === 'googleChoice' ? 'google' : id === 'appleChoice' ? 'apple' : 'flexway';
-          selectEmailMethod(method);
+          selectEmailMethod(id === 'googleChoice' ? 'google' : 'flexway');
         }
       });
-    });
-
-    initAppleSignIn();
-    document.addEventListener('AppleIDSignInOnSuccess', handleAppleCredentialResponse);
-    document.addEventListener('AppleIDSignInOnFailure', () => {
-      if (selectedEmailMethod === 'apple') clearVerifiedEmail('Apple sign-in was cancelled or failed. Please try again.');
     });
   }
 
@@ -1375,101 +1316,19 @@ s0.parentNode.insertBefore(s1,s0);
     selectedEmailMethod = method;
     document.getElementById('googleChoice').classList.toggle('active', method === 'google');
     document.getElementById('flexwayChoice').classList.toggle('active', method === 'flexway');
-    document.getElementById('appleChoice').classList.toggle('active', method === 'apple');
     document.getElementById('googlePanel').classList.toggle('active', method === 'google');
     document.getElementById('flexwayPanel').classList.toggle('active', method === 'flexway');
-    document.getElementById('applePanel').classList.toggle('active', method === 'apple');
 
     verifiedEmail = '';
     verifiedEmailMethod = '';
     document.getElementById('emailField').value = '';
     document.getElementById('googleVerifiedPill').classList.remove('show');
-    document.getElementById('appleVerifiedPill').classList.remove('show');
 
     if (method === 'google') {
       setEmailStatus('neutral', 'Please sign in with Google to verify your email.');
-    } else if (method === 'apple') {
-      if (APPLE_SIGNIN_ENABLED) {
-        setEmailStatus('neutral', 'Click Continue with Apple to verify your email.');
-      } else {
-        setEmailStatus('neutral', 'Apple Sign-In UI is added. Add your Apple Service ID and redirect URI in the script config to enable verification.');
-      }
     } else {
       validateFlexwayEmailLive();
       setTimeout(() => document.getElementById('flexwayEmailField').focus(), 50);
-    }
-  }
-
-  function initAppleSignIn() {
-    const button = document.getElementById('appleSignInBtn');
-    if (button) button.disabled = !APPLE_SIGNIN_ENABLED;
-
-    if (!APPLE_SIGNIN_ENABLED) return;
-
-    const configureApple = () => {
-      if (!window.AppleID || !window.AppleID.auth) return false;
-      window.AppleID.auth.init({
-        clientId: APPLE_SIGNIN_CLIENT_ID,
-        scope: 'name email',
-        redirectURI: APPLE_SIGNIN_REDIRECT_URI,
-        state: 'price-tag-request-' + Date.now(),
-        usePopup: true
-      });
-      if (button) button.disabled = false;
-      return true;
-    };
-
-    if (configureApple()) return;
-
-    let tries = 0;
-    const timer = setInterval(() => {
-      tries += 1;
-      if (configureApple() || tries > 20) clearInterval(timer);
-    }, 250);
-  }
-
-  function handleAppleSignIn() {
-    selectedEmailMethod = 'apple';
-
-    if (!APPLE_SIGNIN_ENABLED) {
-      clearVerifiedEmail('Apple Sign-In is not enabled yet. Add APPLE_SIGNIN_CLIENT_ID and APPLE_SIGNIN_REDIRECT_URI in the script config.');
-      return;
-    }
-
-    if (!window.AppleID || !window.AppleID.auth) {
-      clearVerifiedEmail('Apple Sign-In script is still loading. Please try again.');
-      return;
-    }
-
-    try {
-      window.AppleID.auth.signIn();
-    } catch (err) {
-      clearVerifiedEmail('Apple sign-in failed to start. Please check the Apple Service ID and redirect URI.');
-    }
-  }
-
-  function handleAppleCredentialResponse(event) {
-    try {
-      const detail = event && event.detail ? event.detail : {};
-      const idToken = detail.authorization && detail.authorization.id_token;
-      const payload = idToken ? parseJwt(idToken) : {};
-      const email = String(payload.email || (detail.user && detail.user.email) || '').trim().toLowerCase();
-      const emailVerified = String(payload.email_verified || 'true') !== 'false';
-
-      if (!email || !email.includes('@') || !emailVerified) {
-        clearVerifiedEmail('Apple could not return a verified email. Please try again or use another option.');
-        return;
-      }
-
-      selectedEmailMethod = 'apple';
-      verifiedEmail = email;
-      verifiedEmailMethod = 'apple';
-      document.getElementById('emailField').value = email;
-      document.getElementById('appleVerifiedPill').textContent = '✓ ' + email;
-      document.getElementById('appleVerifiedPill').classList.add('show');
-      setEmailStatus('ok', 'Apple account verified: ' + email);
-    } catch (err) {
-      clearVerifiedEmail('Apple sign-in failed. Please try again.');
     }
   }
 
@@ -1548,25 +1407,13 @@ s0.parentNode.insertBefore(s1,s0);
 
   function getValidatedEmailForSubmit() {
     if (!selectedEmailMethod) {
-      showError('Please choose one email option: Login with Google, Continue with Apple, or use your @flexway.com email.');
+      showError('Please choose one email option: Login with Google or use your @flexway.com email.');
       return '';
     }
 
     if (selectedEmailMethod === 'google') {
       if (!verifiedEmail || verifiedEmailMethod !== 'google') {
         showError('Please complete Google sign-in before submitting.');
-        return '';
-      }
-      return verifiedEmail;
-    }
-
-    if (selectedEmailMethod === 'apple') {
-      if (!APPLE_SIGNIN_ENABLED) {
-        showError('Apple Sign-In is added but not enabled. Add your Apple Service ID and redirect URI first, or choose another email option.');
-        return '';
-      }
-      if (!verifiedEmail || verifiedEmailMethod !== 'apple') {
-        showError('Please complete Apple sign-in before submitting.');
         return '';
       }
       return verifiedEmail;
@@ -1783,13 +1630,13 @@ s0.parentNode.insertBefore(s1,s0);
 
   /* ══ SUBMIT ══════════════════════════════════════════════════════════ */
   function handleSubmit() {
-    const email  = getValidatedEmailForSubmit();
-    if (!email) return;
+    const email  = document.getElementById('emailField').value.trim();
     const date   = document.getElementById('dateField').value;
     const branch = document.getElementById('branchField').value;
     const notes  = document.getElementById('notesField').value.trim();
     document.getElementById('errorAlert').style.display = 'none';
 
+    if (!email || !email.includes('@')) return showError('Please enter a valid email address.');
     if (!date)   return showError('Please select a date.');
     if (document.getElementById('branchField').disabled) return showError('Branch list is not loaded yet. Please refresh or check the Google Sheet connection.');
     if (!branch) return showError('Please select your branch.');
@@ -1836,13 +1683,10 @@ s0.parentNode.insertBefore(s1,s0);
     document.getElementById('flexwayEmailField').value = '';
     document.getElementById('googleChoice').classList.remove('active');
     document.getElementById('flexwayChoice').classList.remove('active');
-    document.getElementById('appleChoice').classList.remove('active');
     document.getElementById('googlePanel').classList.remove('active');
     document.getElementById('flexwayPanel').classList.remove('active');
-    document.getElementById('applePanel').classList.remove('active');
     document.getElementById('googleVerifiedPill').classList.remove('show');
-    document.getElementById('appleVerifiedPill').classList.remove('show');
-    setEmailStatus('neutral', 'Choose Google, Apple, or enter a Flexway email before submitting.');
+    setEmailStatus('neutral', 'Choose Google login or enter a Flexway email before submitting.');
     document.getElementById('dateField').valueAsDate = new Date();
     document.getElementById('branchField').value = '';
     document.getElementById('notesField').value = '';
