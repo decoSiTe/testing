@@ -1613,7 +1613,7 @@ s0.parentNode.insertBefore(s1,s0);
         <span class="check-name">
           ${name}
           <small style="display:block;font-size:11px;color:var(--clay-muted);font-weight:700;margin-top:3px;">
-            ${weight ? weight + ' • ' : ''}${price ? price + ' AED' : ''}${rowNumber ? ' • Row ' + rowNumber : ''}
+            ${weight ? weight + ' • ' : ''}
           </small>
         </span>
         <span class="check-price">
@@ -1727,7 +1727,7 @@ s0.parentNode.insertBefore(s1,s0);
     const priceTagList = selectedProducts.map((p, i) => {
       const price = p.price ? ` - ${p.price} AED` : '';
       const weight = p.netWeightEN ? ` - ${p.netWeightEN}` : '';
-      const row = p.rowNumber ? ` - Row ${p.rowNumber}` : '';
+      const row = '';
       return `${i + 1}. ${p.name}${price}${weight}${row}`;
     }).join('\n');
 
