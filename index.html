@@ -4,7 +4,7 @@
   <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Price Tag Request Form — Claymorphism</title>
+  <title>Price Tag Request Form</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1530,10 +1530,26 @@ s0.parentNode.insertBefore(s1,s0);
   }
 
   function onProductsLoaded(products) {
-    allProducts = products;
+    allProducts = (products || []).map((p, i) => {
+      const rowNumber = p.rowNumber || p.sheetRow || (i + 2);
+      return {
+        ...p,
+        rowNumber: rowNumber,
+        productKey: String(p.productKey || ('ROW_' + rowNumber)),
+        name: String(p.name || '').trim(),
+        price: String(p.price || '').trim(),
+        netWeightEN: String(p.netWeightEN || p.netWeight || '').trim(),
+        category: String(p.category || '').trim().toUpperCase()
+      };
+    });
+
     document.getElementById('loadingState').style.display = 'none';
-    renderGroups(products);
+    renderGroups(allProducts);
     document.getElementById('productGroups').style.display = 'block';
+  }
+
+  function getProductByKey(key) {
+    return allProducts.find(p => String(p.productKey) === String(key));
   }
 
   function renderGroups(products) {
@@ -1541,10 +1557,12 @@ s0.parentNode.insertBefore(s1,s0);
     productGroups = {};
     CATEGORIES.forEach(c => productGroups[c] = []);
     productGroups['OTHER'] = [];
+
     products.forEach(p => {
       const cat = p.category && CATEGORIES.includes(p.category) ? p.category : 'OTHER';
       productGroups[cat].push(p);
     });
+
     const activeCats = CATEGORIES.filter(c => productGroups[c].length > 0)
       .concat(productGroups['OTHER'].length > 0 ? ['OTHER'] : []);
 
@@ -1569,62 +1587,124 @@ s0.parentNode.insertBefore(s1,s0);
 
   function filterByCategory(cat) {
     activeCategory = cat;
-    document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('active', t.textContent === cat));
+    document.querySelectorAll('.cat-tab').forEach(t => {
+      t.classList.toggle('active', t.textContent === cat);
+    });
     renderGrid(productGroups[cat] || []);
   }
 
   function renderGrid(products) {
     const grid = document.getElementById('productGrid');
     if (!grid) return;
+
     grid.innerHTML = products.map(p => {
-      const safe = p.name.replace(/"/g, '&quot;');
-      return `<div class="check-item" data-name="${safe}" onclick="toggleItem(this)">
+      const key = escapeOptionValue(p.productKey);
+      const name = escapeHtml(p.name);
+      const price = escapeHtml(p.price || '');
+      const weight = escapeHtml(p.netWeightEN || '');
+      const rowNumber = escapeHtml(p.rowNumber || '');
+
+      return `<div class="check-item" data-key="${key}" onclick="toggleItem(this)">
         <span class="check-box">
           <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
             <path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
-        <span class="check-name">${p.name}</span>
+        <span class="check-name">
+          ${name}
+          <small style="display:block;font-size:11px;color:var(--clay-muted);font-weight:700;margin-top:3px;">
+            ${weight ? weight + ' • ' : ''}${price ? price + ' AED' : ''}${rowNumber ? ' • Row ' + rowNumber : ''}
+          </small>
+        </span>
         <span class="check-price">
           <img src="https://cdn.iconscout.com/icon/free/png-256/free-uae-dirham-icon-svg-download-png-11698521.png" class="dirham-symbol" alt="AED">
-          <span class="price-num">${p.price || ''}</span>
+          <span class="price-num">${price}</span>
         </span>
       </div>`;
     }).join('');
+
     grid.querySelectorAll('.check-item').forEach(el => {
-      if (checked[el.getAttribute('data-name')]) el.classList.add('checked');
+      if (checked[el.getAttribute('data-key')]) {
+        el.classList.add('checked');
+      }
     });
   }
 
   function toggleItem(el) {
-    const name = el.getAttribute('data-name');
-    if (checked[name]) { delete checked[name]; el.classList.remove('checked'); }
-    else               { checked[name] = true;  el.classList.add('checked'); }
+    const key = el.getAttribute('data-key');
+    const product = getProductByKey(key);
+    if (!product) return;
+
+    if (checked[key]) {
+      delete checked[key];
+      el.classList.remove('checked');
+    } else {
+      checked[key] = product;
+      el.classList.add('checked');
+    }
+
     updateBadge();
   }
+
   function selectAllVisible() {
     document.querySelectorAll('#productGrid .check-item').forEach(el => {
-      const n = el.getAttribute('data-name'); if (n) { checked[n] = true; el.classList.add('checked'); }
-    }); updateBadge();
+      const key = el.getAttribute('data-key');
+      const product = getProductByKey(key);
+
+      if (key && product) {
+        checked[key] = product;
+        el.classList.add('checked');
+      }
+    });
+
+    updateBadge();
   }
+
   function deselectAllVisible() {
     document.querySelectorAll('#productGrid .check-item').forEach(el => {
-      const n = el.getAttribute('data-name'); if (n) { delete checked[n]; el.classList.remove('checked'); }
-    }); updateBadge();
+      const key = el.getAttribute('data-key');
+
+      if (key) {
+        delete checked[key];
+        el.classList.remove('checked');
+      }
+    });
+
+    updateBadge();
   }
+
   function filterProducts() {
     const q = document.getElementById('productSearch').value.trim().toLowerCase();
-    if (!q) { filterByCategory(activeCategory); return; }
-    const m = allProducts.filter(p => p.name.toLowerCase().includes(q));
-    if (!m.length) {
+
+    if (!q) {
+      filterByCategory(activeCategory);
+      return;
+    }
+
+    const matches = allProducts.filter(p => {
+      return [
+        p.name,
+        p.price,
+        p.netWeightEN,
+        p.category,
+        p.rowNumber
+      ].join(' ').toLowerCase().includes(q);
+    });
+
+    if (!matches.length) {
       document.getElementById('productGrid').innerHTML =
         '<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted);">No products found</div>';
-    } else renderGrid(m);
+    } else {
+      renderGrid(matches);
+    }
   }
+
   function updateBadge() {
-    const b = document.getElementById('selectedBadge'); if (!b) return;
+    const b = document.getElementById('selectedBadge');
+    if (!b) return;
+
     const n = Object.keys(checked).length;
-    b.textContent = n === 0 ? '0 items selected' : `${n} item${n!==1?'s':''} selected`;
+    b.textContent = n === 0 ? '0 items selected' : `${n} item${n !== 1 ? 's' : ''} selected`;
     b.classList.toggle('zero', n === 0);
   }
 
@@ -1642,8 +1722,23 @@ s0.parentNode.insertBefore(s1,s0);
     if (!branch) return showError('Please select your branch.');
     if (!Object.keys(checked).length) return showError('Please select at least one product.');
 
-    const priceTagList = Object.keys(checked).map((n, i) => `${i+1}. ${n}`).join('\n');
-    const payload = { email, dateRequested: date, branch, priceTagList, notes };
+    const selectedProducts = Object.values(checked);
+
+    const priceTagList = selectedProducts.map((p, i) => {
+      const price = p.price ? ` - ${p.price} AED` : '';
+      const weight = p.netWeightEN ? ` - ${p.netWeightEN}` : '';
+      const row = p.rowNumber ? ` - Row ${p.rowNumber}` : '';
+      return `${i + 1}. ${p.name}${price}${weight}${row}`;
+    }).join('\n');
+
+    const payload = {
+      email,
+      dateRequested: date,
+      branch,
+      priceTagList,       // backward compatible
+      selectedProducts,   // server will use this to avoid duplicate-name issues
+      notes
+    };
 
     const btn = document.getElementById('submitBtn');
     btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Submitting…';
