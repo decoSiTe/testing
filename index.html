@@ -1038,7 +1038,7 @@
       <div class="modal-body">
         <div class="modal-icon">⚠️</div>
         <strong>REMINDER</strong>
-        <p>Please be reminded that each branch is limited to submitting 2 requests per week.
+        <p>Please be reminded that each branch is limited to submitting 3 requests per week.
 Before submitting your request, kindly ensure that you have carefully reviewed and confirmed the required price tags.</p>
       </div>
       <div class="modal-footer">
@@ -1254,7 +1254,8 @@ s0.parentNode.insertBefore(s1,s0);
   
 <script>
   /* ══ CONFIG ══════════════════════════════════════════════════════════ */
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1Hksx6CnvQfASieOKyaUmae5LewOFsKjR4JqWVs4O9F5BxEIXbQ3aCkpOI27XcGHIrw/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOhGr-W0RPjzbjOeJirxrmbSsq67JSDajSNZRGJldHdQr_pfql0cjGuHwQppnoOM0tmQ/exec';
+  const ALLOWED_COMPANY_DOMAINS = ['@flexway.com', '@ferrary.com'];
 
   /*
     Optional hardcoded fallback photos (Drive thumbnail URLs):
@@ -1312,6 +1313,15 @@ s0.parentNode.insertBefore(s1,s0);
     });
   }
 
+  function isAllowedCompanyEmail(email) {
+    const value = String(email || '').trim().toLowerCase();
+    return ALLOWED_COMPANY_DOMAINS.some(domain => value.endsWith(domain));
+  }
+
+  function companyDomainsLabel() {
+    return ALLOWED_COMPANY_DOMAINS.join(' or ');
+  }
+
   function selectEmailMethod(method) {
     selectedEmailMethod = method;
     document.getElementById('googleChoice').classList.toggle('active', method === 'google');
@@ -1342,8 +1352,8 @@ s0.parentNode.insertBefore(s1,s0);
         return;
       }
 
-      if (!email.endsWith('@gmail.com') && !email.endsWith('@flexway.com')) {
-        clearVerifiedEmail('Only @gmail.com or @flexway.com Google accounts are allowed.');
+      if (!email.endsWith('@gmail.com') && !isAllowedCompanyEmail(email)) {
+        clearVerifiedEmail('Only @gmail.com or company Google accounts (' + companyDomainsLabel() + ') are allowed.');
         return;
       }
 
@@ -1372,22 +1382,23 @@ s0.parentNode.insertBefore(s1,s0);
     if (selectedEmailMethod !== 'flexway') return false;
     const field = document.getElementById('flexwayEmailField');
     const email = String(field.value || '').trim().toLowerCase();
-    const isValid = /^[a-z0-9._%+-]+@flexway\.com$/i.test(email);
+    const isValidFormat = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email);
+    const isValid = isValidFormat && isAllowedCompanyEmail(email);
 
     if (!email) {
-      clearVerifiedEmail('Enter your @flexway.com email address.');
+      clearVerifiedEmail('Enter your company email address: ' + companyDomainsLabel());
       return false;
     }
 
     if (!isValid) {
-      clearVerifiedEmail('Only a valid @flexway.com email is accepted for this option.');
+      clearVerifiedEmail('Only a valid company email is accepted: ' + companyDomainsLabel());
       return false;
     }
 
     verifiedEmail = email;
     verifiedEmailMethod = 'flexway';
     document.getElementById('emailField').value = email;
-    setEmailStatus('ok', 'Flexway email accepted: ' + email);
+    setEmailStatus('ok', 'Company email accepted: ' + email);
     return true;
   }
 
@@ -1407,7 +1418,7 @@ s0.parentNode.insertBefore(s1,s0);
 
   function getValidatedEmailForSubmit() {
     if (!selectedEmailMethod) {
-      showError('Please choose one email option: Login with Google or use your @flexway.com email.');
+      showError('Please choose one email option: Login with Google or use your company email.');
       return '';
     }
 
@@ -1421,7 +1432,7 @@ s0.parentNode.insertBefore(s1,s0);
 
     if (selectedEmailMethod === 'flexway') {
       if (!validateFlexwayEmailLive()) {
-        showError('Please enter a valid @flexway.com email before submitting.');
+        showError('Please enter a valid company email before submitting.');
         return '';
       }
       return verifiedEmail;
@@ -1710,33 +1721,27 @@ s0.parentNode.insertBefore(s1,s0);
 
   /* ══ SUBMIT ══════════════════════════════════════════════════════════ */
   function handleSubmit() {
-    const email  = document.getElementById('emailField').value.trim();
+    const email  = getValidatedEmailForSubmit();
     const date   = document.getElementById('dateField').value;
     const branch = document.getElementById('branchField').value;
     const notes  = document.getElementById('notesField').value.trim();
     document.getElementById('errorAlert').style.display = 'none';
 
-    if (!email || !email.includes('@')) return showError('Please enter a valid email address.');
+    if (!email) return;
     if (!date)   return showError('Please select a date.');
     if (document.getElementById('branchField').disabled) return showError('Branch list is not loaded yet. Please refresh or check the Google Sheet connection.');
     if (!branch) return showError('Please select your branch.');
     if (!Object.keys(checked).length) return showError('Please select at least one product.');
 
-    const selectedProducts = Object.values(checked);
-
-    const priceTagList = selectedProducts.map((p, i) => {
-      const price = p.price ? ` - ${p.price} AED` : '';
-      const weight = p.netWeightEN ? ` - ${p.netWeightEN}` : '';
-      const row = '';
-      return `${i + 1}. ${p.name}${price}${weight}${row}`;
-    }).join('\n');
+    // Send only product keys to Apps Script. This avoids "Network error" caused by a very long URL.
+    // The backend will reload the full product details from the Products sheet using these keys.
+    const selectedProductKeys = Object.keys(checked);
 
     const payload = {
       email,
       dateRequested: date,
       branch,
-      priceTagList,       // backward compatible
-      selectedProducts,   // server will use this to avoid duplicate-name issues
+      selectedProductKeys,
       notes
     };
 
@@ -1757,7 +1762,7 @@ s0.parentNode.insertBefore(s1,s0);
     s.onerror = () => {
       delete window[cbName];
       btn.disabled = false; btn.innerHTML = 'Submit Request';
-      showError('Network error. Please try again.');
+      showError('Network error. Please try again. Check Apps Script deployment URL/access, or reduce selected items if the request is too large.');
     };
     s.src = APPS_SCRIPT_URL + '?action=submitRequest&callback=' + cbName +
             '&payload=' + encodeURIComponent(JSON.stringify(payload));
@@ -1792,29 +1797,7 @@ s0.parentNode.insertBefore(s1,s0);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /* ══ HOLIDAYS ════════════════════════════════════════════════════════
-     Google Sheet columns: Name | Date (YYYY-MM-DD) | Emoji
-     Apps Script must handle: action=getHolidays
-     Returns: { success: true, data: [ { name, date, emoji } ] }
-
-     Sample Apps Script handler:
-     ─────────────────────────────────────────────────────────────
-     if (action === 'getHolidays') {
-       var sheet = SpreadsheetApp.openById('SHEET_ID').getSheetByName('Holidays');
-       var rows  = sheet.getDataRange().getValues().slice(1);
-       var data  = rows
-         .filter(function(r){ return r[0]; })
-         .map(function(r) {
-           return {
-             name:  r[0],
-             date:  r[1] ? Utilities.formatDate(new Date(r[1]), 'UTC', 'yyyy-MM-dd') : '',
-             emoji: r[2] || ''
-           };
-         });
-       return makeJsonpResponse(callback, { success: true, data: data });
-     }
-     ─────────────────────────────────────────────────────────────
-  ═════════════════════════════════════════════════════════════════ */
+ 
   function loadHolidays() {
     const cbName = '_holCb_' + Date.now();
     window[cbName] = function(res) {
@@ -1855,31 +1838,7 @@ s0.parentNode.insertBefore(s1,s0);
       `<div class="marquee-track">${items}${items}${items}</div>`;
   }
 
-  /* ══ PHOTOS ══════════════════════════════════════════════════════════
-     Google Drive photos stored in a Sheet tab: "Photos"
-     Sheet columns: Caption | Drive File ID
-     Apps Script must handle: action=getPhotos
-     Returns: { success: true, data: [ { url, caption } ] }
-
-     Sample Apps Script handler:
-     ─────────────────────────────────────────────────────────────
-     if (action === 'getPhotos') {
-       var sheet = SpreadsheetApp.openById('SHEET_ID').getSheetByName('Photos');
-       var rows  = sheet.getDataRange().getValues().slice(1);
-       var data  = rows
-         .filter(function(r){ return r[1]; })
-         .map(function(r) {
-           return {
-             caption: r[0] || '',
-             url: 'https://drive.google.com/thumbnail?id=' + r[1] + '&sz=w800'
-           };
-         });
-       return makeJsonpResponse(callback, { success: true, data: data });
-     }
-     ─────────────────────────────────────────────────────────────
-
-     OR: paste file IDs directly in FALLBACK_PHOTOS array at top of script.
-  ═════════════════════════════════════════════════════════════════ */
+ 
   function loadPhotos() {
     const cbName = '_photoCb_' + Date.now();
     window[cbName] = function(res) {
