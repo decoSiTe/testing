@@ -394,7 +394,6 @@
     }
 
     input[type="email"],
-    input[type="tel"],
     input[type="date"],
     select,
     textarea,
@@ -412,7 +411,6 @@
       transition: background 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
     }
     input[type="email"],
-    input[type="tel"],
     input[type="date"],
     select { min-height: 60px; padding: 16px 20px; }
     textarea { min-height: 96px; padding: 17px 20px; resize: vertical; line-height: 1.65; }
@@ -556,51 +554,6 @@
       box-shadow: var(--shadow-clay-card);
     }
     .verified-pill.show { display: inline-flex; }
-    .otp-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-    .otp-btn {
-      min-height: 46px;
-      border: 0;
-      border-radius: 18px;
-      background: linear-gradient(135deg, var(--clay-accent-light), var(--clay-accent));
-      color: #fff;
-      cursor: pointer;
-      padding: 10px 16px;
-      font-family: 'Nunito', 'DM Sans', sans-serif;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      box-shadow: var(--shadow-clay-button);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-      white-space: nowrap;
-    }
-    .otp-btn:hover:not(:disabled) {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-clay-button-hover);
-    }
-    .otp-btn:disabled {
-      opacity: 0.50;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: var(--shadow-clay-pressed);
-    }
-    .otp-input {
-      flex: 1 1 130px;
-      min-width: 130px;
-      max-width: 180px;
-      text-align: center;
-      letter-spacing: 0.28em;
-      font-weight: 900;
-    }
-    .otp-verified-pill {
-      margin-left: 0;
-    }
     .email-status { min-height: 20px; margin-top: 10px; font-size: 12px; font-weight: 800; }
 
     /* Product selector */
@@ -1127,16 +1080,16 @@ Before submitting your request, kindly ensure that you have carefully reviewed a
         <div class="alert alert-error" id="errorAlert"></div>
 
         <div class="form-group">
-          <label>Contact Verification <span class="req">*</span></label>
+          <label>Email Verification <span class="req">*</span></label>
           <div class="email-auth-box">
             <div class="email-choice-grid">
               <div class="email-choice" id="googleChoice" onclick="selectEmailMethod('google')" role="button" tabindex="0">
                 <div class="email-choice-head"><span class="email-radio-dot"></span> Login with Google</div>
                 <small>Use this option for a verified Google account, such as @gmail.com.</small>
               </div>
-              <div class="email-choice" id="dubaiNumberChoice" onclick="selectEmailMethod('dubaiNumber')" role="button" tabindex="0">
-                <div class="email-choice-head"><span class="email-radio-dot"></span> Use Dubai Number</div>
-                <small>Enter a Dubai/UAE number to receive request updates by SMS.</small>
+              <div class="email-choice" id="flexwayChoice" onclick="selectEmailMethod('flexway')" role="button" tabindex="0">
+                <div class="email-choice-head"><span class="email-radio-dot"></span> Use Flexway Email</div>
+                <small>Type a valid company email, ending with "@flexway.com" </small>
               </div>
             </div>
 
@@ -1160,21 +1113,13 @@ Before submitting your request, kindly ensure that you have carefully reviewed a
               <div class="email-help-text">The signed-in Google email will be used for this request.</div>
             </div>
 
-            <div class="email-auth-panel" id="dubaiNumberPanel">
-              <input type="tel" id="dubaiNumberField" placeholder="05XXXXXXXX or +9715XXXXXXXX" autocomplete="tel">
-              <div class="otp-row">
-                <button class="otp-btn" id="sendOtpBtn" type="button" onclick="sendDubaiOtp()" disabled>Send OTP</button>
-                <input type="text" class="otp-input" id="dubaiOtpField" placeholder="OTP" maxlength="6" inputmode="numeric" autocomplete="one-time-code" disabled>
-                <button class="otp-btn" id="verifyOtpBtn" type="button" onclick="verifyDubaiOtp()" disabled>Verify OTP</button>
-                <span class="verified-pill otp-verified-pill" id="phoneVerifiedPill">✓ Number verified</span>
-              </div>
-              <div class="email-help-text">Use UAE format. Example: <strong>05XXXXXXXX</strong> or <strong>+9715XXXXXXXX</strong>. You must verify the number by OTP before submitting.</div>
+            <div class="email-auth-panel" id="flexwayPanel">
+              <input type="email" id="flexwayEmailField" placeholder="name@flexway.com" autocomplete="email">
+              <div class="email-help-text">Only emails ending with <strong>@flexway.com</strong> are accepted here.</div>
             </div>
 
             <input type="hidden" id="emailField">
-            <input type="hidden" id="phoneField">
-            <input type="hidden" id="phoneOtpTokenField">
-            <div class="email-status neutral" id="emailStatus">Choose Google login or enter a Dubai number before submitting.</div>
+            <div class="email-status neutral" id="emailStatus">Choose Google login or enter a Flexway email before submitting.</div>
           </div>
         </div>
 
@@ -1246,7 +1191,7 @@ Before submitting your request, kindly ensure that you have carefully reviewed a
     <div class="card success-screen" id="successScreen">
       <div style="font-size:52px;margin-bottom:16px;">✅</div>
       <h2>Request Submitted!</h2>
-      <p>Your price tag request has been received and is now queued for processing.<br>A confirmation has been sent to your selected contact.</p>
+      <p>Your price tag request has been received and is now queued for processing.<br>A confirmation has been sent to your email.</p>
       <div class="status-pill">● Pending</div><br>
       <button class="btn-new" onclick="resetForm()">Submit Another Request</button>
     </div>
@@ -1309,42 +1254,7 @@ s0.parentNode.insertBefore(s1,s0);
   
 <script>
   /* ══ CONFIG ══════════════════════════════════════════════════════════ */
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1Hksx6CnvQfASieOKyaUmae5LewOFsKjR4JqWVs4O9F5BxEIXbQ3aCkpOI27XcGHIrw/exec';
-
-  function apiJsonp(action, params = {}) {
-    return new Promise((resolve, reject) => {
-      const cbName = '_apiCb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-      const query = new URLSearchParams({ action, callback: cbName, ...params });
-      const script = document.createElement('script');
-      const timer = setTimeout(() => {
-        cleanup();
-        reject(new Error('Request timed out: ' + action));
-      }, 30000);
-
-      function cleanup() {
-        clearTimeout(timer);
-        if (script.parentNode) script.parentNode.removeChild(script);
-        try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
-      }
-
-      window[cbName] = function(res) {
-        cleanup();
-        if (!res || res.success === false) {
-          reject(new Error((res && res.error) || 'API request failed: ' + action));
-          return;
-        }
-        resolve(res.data);
-      };
-
-      script.onerror = function() {
-        cleanup();
-        reject(new Error('Could not connect to Apps Script API: ' + action));
-      };
-
-      script.src = APPS_SCRIPT_URL + '?' + query.toString();
-      document.head.appendChild(script);
-    });
-  }
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz4CVwdYZXKYmL3au2WbDnNUNsGmMfY6vC-5JZD7KgErn-8DnSAAUuC-pXlsblRhIA0pw/exec';
 
   /*
     Optional hardcoded fallback photos (Drive thumbnail URLs):
@@ -1383,41 +1293,20 @@ s0.parentNode.insertBefore(s1,s0);
   let selectedEmailMethod = '';
   let verifiedEmail = '';
   let verifiedEmailMethod = '';
-  let verifiedPhone = '';
-  let verifiedPhoneMethod = '';
-  let pendingOtpPhone = '';
-  let phoneOtpToken = '';
 
   function initEmailVerification() {
-    const dubaiNumberField = document.getElementById('dubaiNumberField');
-    const otpField = document.getElementById('dubaiOtpField');
-
-    if (dubaiNumberField) {
-      dubaiNumberField.addEventListener('input', function() {
-        resetPhoneOtpState();
-        validateDubaiNumberLive();
-      });
+    const flexwayField = document.getElementById('flexwayEmailField');
+    if (flexwayField) {
+      flexwayField.addEventListener('input', validateFlexwayEmailLive);
     }
 
-    if (otpField) {
-      otpField.addEventListener('input', function() {
-        otpField.value = otpField.value.replace(/\D/g, '').slice(0, 6);
-      });
-      otpField.addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          verifyDubaiOtp();
-        }
-      });
-    }
-
-    ['googleChoice', 'dubaiNumberChoice'].forEach(id => {
+    ['googleChoice', 'flexwayChoice'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
       el.addEventListener('keydown', event => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          selectEmailMethod(id === 'googleChoice' ? 'google' : 'dubaiNumber');
+          selectEmailMethod(id === 'googleChoice' ? 'google' : 'flexway');
         }
       });
     });
@@ -1426,27 +1315,20 @@ s0.parentNode.insertBefore(s1,s0);
   function selectEmailMethod(method) {
     selectedEmailMethod = method;
     document.getElementById('googleChoice').classList.toggle('active', method === 'google');
-    document.getElementById('dubaiNumberChoice').classList.toggle('active', method === 'dubaiNumber');
+    document.getElementById('flexwayChoice').classList.toggle('active', method === 'flexway');
     document.getElementById('googlePanel').classList.toggle('active', method === 'google');
-    document.getElementById('dubaiNumberPanel').classList.toggle('active', method === 'dubaiNumber');
+    document.getElementById('flexwayPanel').classList.toggle('active', method === 'flexway');
 
     verifiedEmail = '';
     verifiedEmailMethod = '';
-    verifiedPhone = '';
-    verifiedPhoneMethod = '';
-    pendingOtpPhone = '';
-    phoneOtpToken = '';
     document.getElementById('emailField').value = '';
-    document.getElementById('phoneField').value = '';
-    document.getElementById('phoneOtpTokenField').value = '';
     document.getElementById('googleVerifiedPill').classList.remove('show');
-    resetPhoneOtpState(true);
 
     if (method === 'google') {
       setEmailStatus('neutral', 'Please sign in with Google to verify your email.');
     } else {
-      validateDubaiNumberLive();
-      setTimeout(() => document.getElementById('dubaiNumberField').focus(), 50);
+      validateFlexwayEmailLive();
+      setTimeout(() => document.getElementById('flexwayEmailField').focus(), 50);
     }
   }
 
@@ -1486,194 +1368,33 @@ s0.parentNode.insertBefore(s1,s0);
     return JSON.parse(jsonPayload);
   }
 
-  function normalizeDubaiNumberInput(value) {
-    let phone = String(value || '').trim().replace(/[\s\-().]/g, '');
-    if (!phone) return '';
+  function validateFlexwayEmailLive() {
+    if (selectedEmailMethod !== 'flexway') return false;
+    const field = document.getElementById('flexwayEmailField');
+    const email = String(field.value || '').trim().toLowerCase();
+    const isValid = /^[a-z0-9._%+-]+@flexway\.com$/i.test(email);
 
-    if (phone.indexOf('00') === 0) phone = '+' + phone.slice(2);
-    if (phone.indexOf('+') !== 0 && phone.indexOf('971') === 0) phone = '+' + phone;
-    if (phone.indexOf('0') === 0) phone = '+971' + phone.slice(1);
-
-    return phone;
-  }
-
-  function resetPhoneOtpState(keepInput) {
-    verifiedPhone = '';
-    verifiedPhoneMethod = '';
-    pendingOtpPhone = '';
-    phoneOtpToken = '';
-    document.getElementById('phoneField').value = '';
-    document.getElementById('phoneOtpTokenField').value = '';
-
-    const otpField = document.getElementById('dubaiOtpField');
-    const verifyBtn = document.getElementById('verifyOtpBtn');
-    const sendBtn = document.getElementById('sendOtpBtn');
-    const pill = document.getElementById('phoneVerifiedPill');
-
-    if (otpField) {
-      if (!keepInput) otpField.value = '';
-      otpField.disabled = true;
-    }
-    if (verifyBtn) verifyBtn.disabled = true;
-    if (sendBtn) {
-      sendBtn.disabled = selectedEmailMethod !== 'dubaiNumber';
-      sendBtn.textContent = 'Send OTP';
-    }
-    if (pill) pill.classList.remove('show');
-  }
-
-  function validateDubaiNumberLive() {
-    if (selectedEmailMethod !== 'dubaiNumber') return false;
-    const field = document.getElementById('dubaiNumberField');
-    const phone = normalizeDubaiNumberInput(field.value);
-    const isValid = /^\+971\d{8,9}$/.test(phone);
-    const sendBtn = document.getElementById('sendOtpBtn');
-
-    if (!phone) {
-      if (sendBtn) sendBtn.disabled = true;
-      clearVerifiedPhone('Enter your Dubai/UAE number.');
+    if (!email) {
+      clearVerifiedEmail('Enter your @flexway.com email address.');
       return false;
     }
 
     if (!isValid) {
-      if (sendBtn) sendBtn.disabled = true;
-      clearVerifiedPhone('Please enter a valid UAE number, like 05XXXXXXXX or +9715XXXXXXXX.');
+      clearVerifiedEmail('Only a valid @flexway.com email is accepted for this option.');
       return false;
     }
 
-    if (sendBtn) sendBtn.disabled = false;
-
-    if (verifiedPhone === phone && verifiedPhoneMethod === 'otp' && phoneOtpToken) {
-      setEmailStatus('ok', 'Dubai number verified: ' + phone);
-    } else {
-      setEmailStatus('neutral', 'Number format is valid. Click Send OTP to verify: ' + phone);
-    }
-
+    verifiedEmail = email;
+    verifiedEmailMethod = 'flexway';
+    document.getElementById('emailField').value = email;
+    setEmailStatus('ok', 'Flexway email accepted: ' + email);
     return true;
   }
-
-  function sendDubaiOtp() {
-    if (selectedEmailMethod !== 'dubaiNumber') return;
-    const field = document.getElementById('dubaiNumberField');
-    const phone = normalizeDubaiNumberInput(field.value);
-    const sendBtn = document.getElementById('sendOtpBtn');
-    const otpField = document.getElementById('dubaiOtpField');
-    const verifyBtn = document.getElementById('verifyOtpBtn');
-
-    if (!/^\+971\d{8,9}$/.test(phone)) {
-      clearVerifiedPhone('Please enter a valid UAE number before sending OTP.');
-      return;
-    }
-
-    resetPhoneOtpState(true);
-    pendingOtpPhone = phone;
-
-    if (sendBtn) {
-      sendBtn.disabled = true;
-      sendBtn.textContent = 'Sending...';
-    }
-    setEmailStatus('neutral', 'Sending OTP to ' + phone + '...');
-
-    apiJsonp('sendPhoneOtp', { phoneNumber: phone })
-      .then(data => {
-        if (!data || !data.otpSent) {
-          throw new Error((data && data.error) || 'OTP could not be sent.');
-        }
-
-        pendingOtpPhone = data.phoneNumber || phone;
-        if (otpField) {
-          otpField.disabled = false;
-          otpField.value = '';
-          otpField.focus();
-        }
-        if (verifyBtn) verifyBtn.disabled = false;
-        setEmailStatus('ok', 'OTP sent to ' + pendingOtpPhone + '. Enter the 6-digit code to verify.');
-      })
-      .catch(err => {
-        pendingOtpPhone = '';
-        clearVerifiedPhone(err.message || 'OTP send failed. Please try again.');
-      })
-      .finally(() => {
-        if (sendBtn) {
-          sendBtn.disabled = false;
-          sendBtn.textContent = 'Resend OTP';
-        }
-      });
-  }
-
-  function verifyDubaiOtp() {
-    if (selectedEmailMethod !== 'dubaiNumber') return;
-    const phone = normalizeDubaiNumberInput(document.getElementById('dubaiNumberField').value);
-    const otpField = document.getElementById('dubaiOtpField');
-    const verifyBtn = document.getElementById('verifyOtpBtn');
-    const otp = otpField ? otpField.value.replace(/\D/g, '') : '';
-
-    if (!/^\+971\d{8,9}$/.test(phone)) {
-      clearVerifiedPhone('Please enter a valid UAE number first.');
-      return;
-    }
-
-    if (!pendingOtpPhone || pendingOtpPhone !== phone) {
-      clearVerifiedPhone('Please send a new OTP for this number.');
-      return;
-    }
-
-    if (!/^\d{6}$/.test(otp)) {
-      setEmailStatus('error', 'Please enter the 6-digit OTP.');
-      return;
-    }
-
-    if (verifyBtn) {
-      verifyBtn.disabled = true;
-      verifyBtn.textContent = 'Checking...';
-    }
-    setEmailStatus('neutral', 'Verifying OTP...');
-
-    apiJsonp('verifyPhoneOtp', { phoneNumber: phone, otp: otp })
-      .then(data => {
-        if (!data || !data.verified) {
-          throw new Error((data && data.error) || 'Invalid OTP.');
-        }
-
-        verifiedPhone = data.phoneNumber || phone;
-        verifiedPhoneMethod = 'otp';
-        phoneOtpToken = data.token || '';
-        document.getElementById('phoneField').value = verifiedPhone;
-        document.getElementById('phoneOtpTokenField').value = phoneOtpToken;
-
-        const pill = document.getElementById('phoneVerifiedPill');
-        if (pill) {
-          pill.textContent = '✓ ' + verifiedPhone;
-          pill.classList.add('show');
-        }
-        if (otpField) otpField.disabled = true;
-        setEmailStatus('ok', 'Dubai number verified: ' + verifiedPhone);
-      })
-      .catch(err => {
-        if (verifyBtn) verifyBtn.disabled = false;
-        setEmailStatus('error', err.message || 'OTP verification failed.');
-      })
-      .finally(() => {
-        if (verifyBtn) verifyBtn.textContent = 'Verify OTP';
-      });
-  }
-
 
   function clearVerifiedEmail(message) {
     verifiedEmail = '';
     verifiedEmailMethod = '';
     document.getElementById('emailField').value = '';
-    setEmailStatus('error', message);
-  }
-
-  function clearVerifiedPhone(message) {
-    verifiedPhone = '';
-    verifiedPhoneMethod = '';
-    phoneOtpToken = '';
-    document.getElementById('phoneField').value = '';
-    document.getElementById('phoneOtpTokenField').value = '';
-    const pill = document.getElementById('phoneVerifiedPill');
-    if (pill) pill.classList.remove('show');
     setEmailStatus('error', message);
   }
 
@@ -1684,37 +1405,31 @@ s0.parentNode.insertBefore(s1,s0);
     status.textContent = message;
   }
 
-  function getValidatedContactForSubmit() {
+  function getValidatedEmailForSubmit() {
     if (!selectedEmailMethod) {
-      showError('Please choose one contact option: Login with Google or use a Dubai number.');
-      return null;
+      showError('Please choose one email option: Login with Google or use your @flexway.com email.');
+      return '';
     }
 
     if (selectedEmailMethod === 'google') {
       if (!verifiedEmail || verifiedEmailMethod !== 'google') {
         showError('Please complete Google sign-in before submitting.');
-        return null;
+        return '';
       }
-      return { email: verifiedEmail, phoneNumber: '', contactMethod: 'google' };
+      return verifiedEmail;
     }
 
-    if (selectedEmailMethod === 'dubaiNumber') {
-      const currentPhone = normalizeDubaiNumberInput(document.getElementById('dubaiNumberField').value);
-      if (!/^\+971\d{8,9}$/.test(currentPhone)) {
-        showError('Please enter a valid Dubai/UAE number before submitting.');
-        return null;
+    if (selectedEmailMethod === 'flexway') {
+      if (!validateFlexwayEmailLive()) {
+        showError('Please enter a valid @flexway.com email before submitting.');
+        return '';
       }
-      if (!verifiedPhone || verifiedPhone !== currentPhone || verifiedPhoneMethod !== 'otp' || !phoneOtpToken) {
-        showError('Please verify the Dubai number with OTP before submitting.');
-        return null;
-      }
-      return { email: '', phoneNumber: verifiedPhone, phoneOtpToken: phoneOtpToken, contactMethod: 'dubaiNumber' };
+      return verifiedEmail;
     }
 
-    showError('Please complete contact verification before submitting.');
-    return null;
+    showError('Please complete email verification before submitting.');
+    return '';
   }
-
 
 
 
@@ -1994,66 +1709,116 @@ s0.parentNode.insertBefore(s1,s0);
   }
 
   /* ══ SUBMIT ══════════════════════════════════════════════════════════ */
-  function handleSubmit() {
-    const contact = getValidatedContactForSubmit();
-    const email  = contact ? contact.email : '';
-    const phoneNumber = contact ? contact.phoneNumber : '';
-    const phoneOtpToken = contact ? (contact.phoneOtpToken || '') : '';
-    const contactMethod = contact ? contact.contactMethod : '';
+  function jsonpRequest(action, params = {}, timeoutMs = 45000) {
+    return new Promise((resolve, reject) => {
+      const cbName = '__jsonp_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+      const script = document.createElement('script');
+      let finished = false;
+
+      const cleanup = () => {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
+        try { delete window[cbName]; } catch (err) { window[cbName] = undefined; }
+        if (script.parentNode) script.parentNode.removeChild(script);
+      };
+
+      window[cbName] = function(response) {
+        cleanup();
+        resolve(response);
+      };
+
+      script.async = true;
+      script.onerror = function() {
+        cleanup();
+        reject(new Error('Could not contact the Apps Script web app. Check the deployment access and URL.'));
+      };
+
+      const query = new URLSearchParams({ action, callback: cbName });
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) query.set(key, String(value));
+      });
+      query.set('_ts', Date.now().toString());
+      script.src = APPS_SCRIPT_URL + '?' + query.toString();
+
+      const timer = setTimeout(() => {
+        cleanup();
+        reject(new Error('The request timed out. Please try again.'));
+      }, timeoutMs);
+
+      document.head.appendChild(script);
+    });
+  }
+
+  function submitRequestToServer(payload) {
+    // When the page is served directly by Apps Script, use google.script.run.
+    if (window.google && google.script && google.script.run) {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(error => reject(new Error(error && error.message ? error.message : String(error))))
+          .submitRequest(payload);
+      });
+    }
+
+    // GitHub Pages uses JSONP. Only compact row numbers are sent so the URL stays small.
+    return jsonpRequest('submitRequest', {
+      payload: JSON.stringify(payload)
+    });
+  }
+
+  async function handleSubmit() {
+    const errorAlert = document.getElementById('errorAlert');
+    errorAlert.style.display = 'none';
+
+    const email  = getValidatedEmailForSubmit();
     const date   = document.getElementById('dateField').value;
     const branch = document.getElementById('branchField').value;
     const notes  = document.getElementById('notesField').value.trim();
-    document.getElementById('errorAlert').style.display = 'none';
 
-    if (!contact) return;
-    if (!date)   return showError('Please select a date.');
+    if (!email) return;
+    if (!date) return showError('Please select a date.');
     if (document.getElementById('branchField').disabled) return showError('Branch list is not loaded yet. Please refresh or check the Google Sheet connection.');
     if (!branch) return showError('Please select your branch.');
     if (!Object.keys(checked).length) return showError('Please select at least one product.');
 
-    const selectedProducts = Object.values(checked);
+    const selectedRows = Object.values(checked)
+      .map(product => Number(product.rowNumber))
+      .filter(rowNumber => Number.isInteger(rowNumber) && rowNumber > 1);
 
-    const priceTagList = selectedProducts.map((p, i) => {
-      const price = p.price ? ` - ${p.price} AED` : '';
-      const weight = p.netWeightEN ? ` - ${p.netWeightEN}` : '';
-      const row = '';
-      return `${i + 1}. ${p.name}${price}${weight}${row}`;
-    }).join('\n');
+    if (!selectedRows.length) {
+      return showError('The selected products are missing their Google Sheet row numbers. Reload the page and try again.');
+    }
 
+    // Do not send every Arabic/English product field in the GET URL.
+    // Code.gs rebuilds the exact selected products from these unique row numbers.
     const payload = {
       email,
-      phoneNumber,
-      phoneOtpToken,
-      contactMethod,
       dateRequested: date,
       branch,
-      priceTagList,       // backward compatible
-      selectedProducts,   // server will use this to avoid duplicate-name issues
+      selectedRows,
       notes
     };
 
     const btn = document.getElementById('submitBtn');
-    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Submitting…';
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Submitting…';
 
-    const cbName = '_submitCb_' + Date.now();
-    window[cbName] = function(res) {
-      delete window[cbName];
-      btn.disabled = false; btn.innerHTML = 'Submit Request';
+    try {
+      const res = await submitRequestToServer(payload);
       if (res && res.success) {
         document.getElementById('formWrap').style.display = 'none';
         document.getElementById('successScreen').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else showError('Submission failed: ' + (res.error || 'Unknown error'));
-    };
-    const s = document.createElement('script');
-    s.onerror = () => {
-      delete window[cbName];
-      btn.disabled = false; btn.innerHTML = 'Submit Request';
-      showError('Network error. Please try again.');
-    };
-    s.src = APPS_SCRIPT_URL + '?action=submitRequest&callback=' + cbName +
-            '&payload=' + encodeURIComponent(JSON.stringify(payload));
-    document.head.appendChild(s);
+      } else {
+        showError('Submission failed: ' + ((res && res.error) || 'Unknown error'));
+      }
+    } catch (error) {
+      showError(error && error.message ? error.message : 'Could not submit the request. Please try again.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Submit Request';
+    }
   }
 
   function showError(msg) {
@@ -2066,25 +1831,14 @@ s0.parentNode.insertBefore(s1,s0);
     selectedEmailMethod = '';
     verifiedEmail = '';
     verifiedEmailMethod = '';
-    verifiedPhone = '';
-    verifiedPhoneMethod = '';
-    pendingOtpPhone = '';
-    phoneOtpToken = '';
     document.getElementById('emailField').value = '';
-    document.getElementById('phoneField').value = '';
-    document.getElementById('phoneOtpTokenField').value = '';
-    document.getElementById('dubaiNumberField').value = '';
-    document.getElementById('dubaiOtpField').value = '';
-    document.getElementById('dubaiOtpField').disabled = true;
-    document.getElementById('verifyOtpBtn').disabled = true;
-    document.getElementById('sendOtpBtn').disabled = true;
+    document.getElementById('flexwayEmailField').value = '';
     document.getElementById('googleChoice').classList.remove('active');
-    document.getElementById('dubaiNumberChoice').classList.remove('active');
+    document.getElementById('flexwayChoice').classList.remove('active');
     document.getElementById('googlePanel').classList.remove('active');
-    document.getElementById('dubaiNumberPanel').classList.remove('active');
+    document.getElementById('flexwayPanel').classList.remove('active');
     document.getElementById('googleVerifiedPill').classList.remove('show');
-    document.getElementById('phoneVerifiedPill').classList.remove('show');
-    setEmailStatus('neutral', 'Choose Google login or enter a Dubai number before submitting.');
+    setEmailStatus('neutral', 'Choose Google login or enter a Flexway email before submitting.');
     document.getElementById('dateField').valueAsDate = new Date();
     document.getElementById('branchField').value = '';
     document.getElementById('notesField').value = '';
