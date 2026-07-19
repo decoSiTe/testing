@@ -3937,6 +3937,8 @@
       }
     }
 
+    let autoLoadBannerTimer = null;
+
     function showAutoLoadBanner(message, type = 'info') {
       const banner = document.getElementById('autoLoadBanner');
       if (!banner) return;
@@ -3948,10 +3950,26 @@
         warn:    ['#fff3cd', '#f0d080', '#856404']
       }[type] || ['#fff3cd', '#f0d080', '#856404'];
 
+      if (autoLoadBannerTimer) {
+        clearTimeout(autoLoadBannerTimer);
+        autoLoadBannerTimer = null;
+      }
+
       banner.style.display = 'block';
+      banner.style.opacity = '1';
       banner.style.background = styles[0];
       banner.style.borderBottom = '2px solid ' + styles[1];
       banner.innerHTML = '<div style="color:' + styles[2] + ';font-size:13px;font-weight:600;">' + message + '</div>';
+
+      autoLoadBannerTimer = setTimeout(() => {
+        banner.style.opacity = '0';
+
+        setTimeout(() => {
+          banner.style.display = 'none';
+          banner.innerHTML = '';
+          banner.style.opacity = '1';
+        }, 300);
+      }, 2000);
     }
 
 
