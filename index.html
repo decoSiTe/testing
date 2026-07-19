@@ -5007,7 +5007,13 @@
         { key: 'netWeightAR', label: 'Net Weight AR', rtl: true },
         { key: 'allergensEN', label: 'Allergens EN', textarea: true, full: true },
         { key: 'allergensAR', label: 'Allergens AR', textarea: true, rtl: true, full: true },
-        { key: 'category', label: 'Category', required: true }
+        {
+          key: 'category',
+          label: 'Category',
+          select: ['CAKE', 'BAKERY', 'PASTRY', 'SSMM', 'CHOCOLATES'],
+          placeholder: '— Select category —',
+          required: true
+        }
       ],
       requests: [
         { key: 'email', label: 'Email', type: 'email', required: true },
@@ -5084,8 +5090,28 @@
         const direction = field.rtl ? ' dir="rtl" style="text-align:right;"' : '';
         let control = '';
         if (field.select) {
+          const currentValue = value.toUpperCase();
+          const selectOptions = field.select.slice();
+
+          // Preserve an existing Google Sheet category even if it is not yet
+          // included in the standard dropdown choices.
+          if (currentValue && !selectOptions.includes(currentValue)) {
+            selectOptions.unshift(currentValue);
+          }
+
+          const placeholderOption = field.placeholder
+            ? '<option value=""' + (!currentValue ? ' selected' : '') + ' disabled>' +
+                html(field.placeholder) +
+              '</option>'
+            : '';
+
           control = '<select class="admin-input" id="' + id + '"' + (field.required ? ' required' : '') + '>' +
-            field.select.map(option => '<option value="' + html(option) + '"' + (option === value.toUpperCase() ? ' selected' : '') + '>' + html(option) + '</option>').join('') +
+            placeholderOption +
+            selectOptions.map(option =>
+              '<option value="' + html(option) + '"' +
+              (option === currentValue ? ' selected' : '') +
+              '>' + html(option) + '</option>'
+            ).join('') +
             '</select>';
         } else if (field.textarea) {
           control = '<textarea class="admin-input" id="' + id + '"' + direction + (field.required ? ' required' : '') + '>' + html(value) + '</textarea>';
