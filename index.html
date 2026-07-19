@@ -3229,7 +3229,6 @@
       right: 0 !important;
       bottom: 0 !important;
       left: 0 !important;
-      inset: auto !important;
       grid-template-columns: minmax(0, 1fr) !important;
       z-index: 9000 !important;
     }
@@ -3548,6 +3547,81 @@
       #sheetManagementModal { display: none !important; }
     }
 
+  
+
+    /* ── ADD ICON + INDEPENDENT PAGE SCROLLBARS ───────────────────── */
+    .sheet-add-button {
+      width: 40px !important;
+      min-width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      padding: 5px !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .sheet-add-button img {
+      width: 28px;
+      height: 28px;
+      display: block;
+      object-fit: contain;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* Force the integrated manager to cover the complete generator work area. */
+    .request-records-page {
+      width: 100vw !important;
+      max-width: none !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+    }
+
+    .request-records-main,
+    .request-records-content {
+      width: 100% !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+    }
+
+    /* Products, Requests, Branches and Holidays each scroll inside their own page. */
+    .request-records-table-wrap {
+      width: 100% !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      overflow-x: scroll !important;
+      overflow-y: scroll !important;
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable both-edges;
+      scrollbar-width: thin;
+      scrollbar-color: #F7931A rgba(255,255,255,.06) !important;
+    }
+
+    .request-records-table-wrap::-webkit-scrollbar {
+      width: 10px !important;
+      height: 10px !important;
+    }
+
+    .request-records-table-wrap::-webkit-scrollbar-track {
+      background: rgba(255,255,255,.06) !important;
+      border-radius: 999px;
+    }
+
+    .request-records-table-wrap::-webkit-scrollbar-thumb {
+      min-height: 42px;
+      border: 2px solid rgba(3,3,4,.72);
+      border-radius: 999px;
+      background: linear-gradient(180deg, #FFD600, #F7931A, #EA580C) !important;
+      box-shadow: 0 0 12px rgba(247,147,26,.35);
+    }
+
+    .request-records-table-wrap::-webkit-scrollbar-corner {
+      background: rgba(15,17,21,.96);
+    }
+
   </style>
 </head>
 <body>
@@ -3649,7 +3723,9 @@
         </div>
         <div class="request-header-actions">
           <button type="button" class="request-toolbar-button" onclick="loadIntegratedSheetPage(currentIntegratedPage, true)">↻ Refresh</button>
-          <button type="button" class="sheet-add-button" id="sheetAddRecordButton" onclick="openAddIntegratedRecord()" title="Add record" aria-label="Add record" style="display:none;">+</button>
+          <button type="button" class="sheet-add-button" id="sheetAddRecordButton" onclick="openAddIntegratedRecord()" title="Add record" aria-label="Add record" style="display:none;">
+            <img src="icons/Add.gif" alt="" aria-hidden="true">
+          </button>
           <span class="request-record-count" id="sheetRecordCount">0 record(s)</span>
         </div>
       </header>
@@ -4611,8 +4687,9 @@
       if (statusFilter && type === 'requests') statusFilter.value = 'ALL';
       const addButton = document.getElementById('sheetAddRecordButton');
       if (addButton) {
-        addButton.style.display = (type === 'branches' || type === 'holidays') ? 'inline-flex' : 'none';
-        addButton.title = type === 'branches' ? 'Add branch' : (type === 'holidays' ? 'Add holiday' : 'Add record');
+        addButton.style.display = (type === 'products' || type === 'branches' || type === 'holidays') ? 'inline-flex' : 'none';
+        addButton.title = type === 'products' ? 'Add product' : (type === 'branches' ? 'Add branch' : (type === 'holidays' ? 'Add holiday' : 'Add record'));
+        addButton.setAttribute('aria-label', addButton.title);
       }
 
       try { history.replaceState(null, '', window.location.pathname + window.location.search + '#' + type); } catch (e) {}
@@ -4971,7 +5048,7 @@
 
     function openAddIntegratedRecord() {
       const type = currentIntegratedPage;
-      if (type !== 'branches' && type !== 'holidays') return;
+      if (type !== 'products' && type !== 'branches' && type !== 'holidays') return;
       requireAdminForManagement(() => openSheetManagementModal(type, 'add', 0));
     }
 
@@ -5052,7 +5129,7 @@
     }
 
     function mutationActionFor(type, mode) {
-      if (type === 'products') return mode === 'edit' ? 'updateProduct' : '';
+      if (type === 'products') return mode === 'add' ? 'addProduct' : 'updateProduct';
       if (type === 'requests') return mode === 'edit' ? 'updateRequestRecord' : '';
       if (type === 'branches') return mode === 'add' ? 'addBranch' : 'updateBranch';
       if (type === 'holidays') return mode === 'add' ? 'addHoliday' : 'updateHoliday';
