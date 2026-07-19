@@ -3157,6 +3157,136 @@
       .request-records-page { display: none !important; }
     }
 
+
+    /* ═══════════════════════════════════════════════════════════════
+       INTEGRATED SHEET NAVIGATION — Products / Request / Branches / Holidays
+       GIF files are loaded from the GitHub icons folder.
+       ═══════════════════════════════════════════════════════════════ */
+    .integrated-nav-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .integrated-nav-button {
+      min-height: 40px;
+      height: 40px;
+      padding: 5px 10px 5px 7px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.045);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      outline: none;
+      white-space: nowrap;
+      transition: transform .18s ease, color .18s ease, border-color .18s ease,
+                  background .18s ease, box-shadow .18s ease;
+    }
+
+    .integrated-nav-button img,
+    .print-icon-gif {
+      width: 27px;
+      height: 27px;
+      display: block;
+      object-fit: contain;
+      flex: 0 0 auto;
+      pointer-events: none;
+    }
+
+    .integrated-nav-button:hover,
+    .integrated-nav-button.active {
+      transform: translateY(-1px);
+      color: var(--gold);
+      border-color: rgba(255,214,0,.48);
+      background: rgba(255,214,0,.08);
+      box-shadow: 0 0 24px -10px rgba(255,214,0,.78);
+    }
+
+    .topbar-print-actions .btn-primary.print-gif-button {
+      min-width: 112px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 16px 6px 10px;
+    }
+
+    .topbar-logo { cursor: pointer; }
+
+    /* Keep the generator topbar visible while an integrated sheet page is open. */
+    .request-records-page {
+      top: 68px !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      inset: auto !important;
+      grid-template-columns: minmax(0, 1fr) !important;
+      z-index: 9000 !important;
+    }
+
+    .request-side-rail { display: none !important; }
+    body.integrated-sheet-open { overflow: hidden !important; }
+
+    .integrated-table-cell {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.42;
+    }
+
+    .integrated-table-cell.arabic {
+      direction: rtl;
+      text-align: right;
+      font-family: Arial, Tahoma, 'Noto Sans Arabic', sans-serif;
+    }
+
+    .integrated-table-cell.muted { color: #727a90; }
+    .integrated-table-cell.strong { color: #11162f; font-weight: 800; }
+    .integrated-table-cell.price { color: #a54d00; font-family: var(--font-mono); font-weight: 900; white-space: nowrap; }
+
+    .request-records-table.products-table { min-width: 1900px; }
+    .request-records-table.requests-table { min-width: 1500px; }
+    .request-records-table.branches-table { min-width: 620px; }
+    .request-records-table.holidays-table { min-width: 760px; }
+
+    .request-records-table.products-table th:nth-child(1) { min-width: 180px; }
+    .request-records-table.products-table th:nth-child(2) { min-width: 150px; }
+    .request-records-table.products-table th:nth-child(3),
+    .request-records-table.products-table th:nth-child(4) { min-width: 250px; }
+    .request-records-table.products-table th:nth-child(5) { min-width: 90px; }
+    .request-records-table.products-table th:nth-child(6) { min-width: 90px; }
+    .request-records-table.products-table th:nth-child(7),
+    .request-records-table.products-table th:nth-child(8) { min-width: 125px; }
+    .request-records-table.products-table th:nth-child(9),
+    .request-records-table.products-table th:nth-child(10) { min-width: 180px; }
+    .request-records-table.products-table th:nth-child(11) { min-width: 110px; }
+
+    @media (max-width: 1250px) {
+      .integrated-nav-button span { display: none; }
+      .integrated-nav-button { width: 40px; padding: 5px; }
+      .topbar-right { gap: 8px; }
+      .integrated-nav-actions { gap: 5px; }
+    }
+
+    @media (max-width: 900px) {
+      .request-records-page { top: 124px !important; }
+      .topbar-print-actions .btn-primary.print-gif-button { min-width: 44px; width: 44px; padding: 5px; }
+      .topbar-print-actions .btn-primary.print-gif-button span { display: none; }
+    }
+
+    @media print {
+      .integrated-nav-actions { display: none !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -3171,21 +3301,6 @@
     <div class="topbar-logo" id="generatorTitle"><img src="logo.png" alt="Logo" class="topbar-logo-img"><span>Price Tag Generator</span></div>
 
     <div class="topbar-right">
-      <div class="special-note-wrap" id="specialNoteWrap">
-        <button
-          type="button"
-          class="special-note-button"
-          id="specialNoteButton"
-          aria-label="Open price tag requests"
-          title="Open price tag requests">
-          <img
-            src="https://img.icons8.com/?size=100&id=EkVS0vhJIaAl&format=png"
-            alt="Requests"
-            referrerpolicy="no-referrer">
-          <span class="notification-count" id="specialNoteCount">0</span>
-        </button>
-      </div>
-
       <div class="notification-wrap" id="notificationWrap">
         <button
           type="button"
@@ -3223,16 +3338,32 @@
         </div>
       </div>
 
-      <div class="topbar-sub">Admin · Print Tool</div>
+      <nav class="integrated-nav-actions" aria-label="Google Sheet pages">
+        <button type="button" class="integrated-nav-button" data-sheet-page="products"
+                onclick="openIntegratedSheetPage('products')" title="Products">
+          <img src="icons/Products.gif" alt="Products"><span>Products</span>
+        </button>
+        <button type="button" class="integrated-nav-button" data-sheet-page="requests"
+                onclick="openIntegratedSheetPage('requests')" title="Request">
+          <img src="icons/Request.gif" alt="Request"><span>Request</span>
+        </button>
+        <button type="button" class="integrated-nav-button" data-sheet-page="branches"
+                onclick="openIntegratedSheetPage('branches')" title="Branches">
+          <img src="icons/Branches.gif" alt="Branches"><span>Branches</span>
+        </button>
+        <button type="button" class="integrated-nav-button" data-sheet-page="holidays"
+                onclick="openIntegratedSheetPage('holidays')" title="Holidays">
+          <img src="icons/Holidays.gif" alt="Holidays"><span>Holidays</span>
+        </button>
+      </nav>
 
       <div class="topbar-print-actions">
         <button class="btn btn-ghost" onclick="clearAll()">Clear All</button>
-        <button class="btn btn-primary" id="pdfBtn" onclick="window.print()" disabled>
-          🖨 Generate PDF
+        <button class="btn btn-primary print-gif-button" id="pdfBtn" onclick="handlePrintAction()" disabled title="Print price tags">
+          <img class="print-icon-gif" src="icons/Print.gif" alt="Print"><span>Print</span>
         </button>
       </div>
     </div>
-
     <div class="topbar-actions">
       <button class="reset-bg-btn" id="resetBgBtn" onclick="resetBackground()" style="display:none;">Reset Template</button>
       <label for="bgUploadInput" class="upload-bg-btn">📤 Upload Template</label>
@@ -3240,35 +3371,20 @@
     </div>
   </div>
 
-  <!-- Integrated request records page: stays inside generator.html -->
-  <section id="requestRecordsPage" class="request-records-page" aria-hidden="true">
-    <aside class="request-side-rail" aria-label="Request page navigation">
-      <button
-        type="button"
-        id="requestHomeButton"
-        class="request-home-button"
-        onclick="closeRequestRecordsPage()"
-        aria-label="Back to Price Tag Generator"
-        title="Back to Price Tag Generator">
-        <img
-          src="https://img.icons8.com/?size=100&id=EyU1vQTj659S&format=png"
-          alt="Home"
-          referrerpolicy="no-referrer">
-      </button>
-    </aside>
-
+  <!-- Integrated Google Sheet pages: Products / Request / Branches / Holidays -->
+  <section id="sheetRecordsPage" class="request-records-page" aria-hidden="true">
     <div class="request-records-main">
       <header class="request-records-header">
         <div class="request-records-title-wrap">
           <span class="request-records-title-dot"></span>
           <div>
-            <h1>Price Tag Requests</h1>
-            <p>Google Sheet request records</p>
+            <h1 id="sheetRecordsTitle">Google Sheet Data</h1>
+            <p id="sheetRecordsSubtitle">Integrated in Price Tag Generator</p>
           </div>
         </div>
         <div class="request-header-actions">
-          <button type="button" class="request-toolbar-button" onclick="loadRequestRecords(true)">↻ Refresh</button>
-          <span class="request-record-count" id="requestRecordCount">0 record(s)</span>
+          <button type="button" class="request-toolbar-button" onclick="loadIntegratedSheetPage(currentIntegratedPage, true)">↻ Refresh</button>
+          <span class="request-record-count" id="sheetRecordCount">0 record(s)</span>
         </div>
       </header>
 
@@ -3276,16 +3392,14 @@
         <div class="request-records-toolbar">
           <label class="request-search-box">
             <span>SEARCH</span>
-            <input
-              id="requestRecordsSearch"
-              type="search"
-              placeholder="Search timestamp, email, branch, item, note, or status"
-              oninput="renderRequestRecords()">
+            <input id="sheetRecordsSearch" type="search"
+                   placeholder="Search records"
+                   oninput="renderIntegratedSheetPage()">
           </label>
 
-          <label class="request-status-filter">
+          <label class="request-status-filter" id="requestStatusFilterWrap" style="display:none;">
             <span>STATUS</span>
-            <select id="requestStatusFilter" onchange="renderRequestRecords()">
+            <select id="requestStatusFilter" onchange="renderIntegratedSheetPage()">
               <option value="ALL">All statuses</option>
               <option value="PENDING">Pending</option>
               <option value="PRINTED">Printed</option>
@@ -3295,29 +3409,17 @@
         </div>
 
         <div class="request-records-table-wrap">
-          <table class="request-records-table">
-            <thead>
-              <tr>
-                <th>Timestamp</th>
-                <th>Email</th>
-                <th>Date Requested</th>
-                <th>Branch</th>
-                <th>List of Price Tags</th>
-                <th>Notes</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="requestRecordsBody">
-              <tr>
-                <td colspan="7" class="request-records-empty">Open the request page to load Google Sheet records.</td>
-              </tr>
+          <table class="request-records-table" id="sheetRecordsTable">
+            <thead id="sheetRecordsHead"></thead>
+            <tbody id="sheetRecordsBody">
+              <tr><td class="request-records-empty">Select Products, Request, Branches, or Holidays.</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
   </section>
-  
+
   <!-- Auto-load banner -->
   <div id="autoLoadBanner" style="display:none;"></div>
 
@@ -3813,7 +3915,6 @@
       const wrap = document.getElementById('notificationWrap');
       const bell = document.getElementById('notificationBell');
       const refresh = document.getElementById('notificationRefresh');
-      const requestButton = document.getElementById('specialNoteButton');
 
       if (!wrap || !bell) return;
 
@@ -3825,13 +3926,6 @@
         if (willOpen) loadPendingNotifications(false);
       });
 
-      if (requestButton) {
-        requestButton.addEventListener('click', event => {
-          event.stopPropagation();
-          setNotificationDropdownOpen(false);
-          openRequestRecordsPage();
-        });
-      }
 
       if (refresh) {
         refresh.addEventListener('click', event => {
@@ -3847,7 +3941,7 @@
       document.addEventListener('keydown', event => {
         if (event.key === 'Escape') {
           setNotificationDropdownOpen(false);
-          if (document.body.classList.contains('request-records-open')) closeRequestRecordsPage();
+          if (document.body.classList.contains('integrated-sheet-open')) closeIntegratedSheetPage();
         }
       });
 
@@ -3859,13 +3953,10 @@
       document.addEventListener('visibilitychange', () => {
         if (!document.hidden) {
           loadPendingNotifications(false);
-          if (document.body.classList.contains('request-records-open')) loadRequestRecords(false);
+          if (document.body.classList.contains('integrated-sheet-open') && currentIntegratedPage) loadIntegratedSheetPage(currentIntegratedPage, false);
         }
       });
 
-      if (window.location.hash === '#requests') {
-        setTimeout(openRequestRecordsPage, 0);
-      }
     }
 
 
@@ -4151,37 +4242,119 @@
     }
 
 
-    // ── Integrated request records page ──────────────────────
-    let requestRecords = [];
-    let requestRecordsLoading = false;
+    // ── Integrated Google Sheet pages ─────────────────────
+    const INTEGRATED_PAGE_CONFIG = {
+      products: {
+        title: 'Products',
+        subtitle: 'Google Sheet tab: Products',
+        action: 'getProducts',
+        tableClass: 'products-table',
+        searchPlaceholder: 'Search product name, Arabic name, description, price, weight, allergen, or category'
+      },
+      requests: {
+        title: 'Price Tag Requests',
+        subtitle: 'Google Sheet tab: Requests',
+        action: 'getRequests',
+        tableClass: 'requests-table',
+        searchPlaceholder: 'Search timestamp, email, branch, item, note, or status'
+      },
+      branches: {
+        title: 'Branches',
+        subtitle: 'Google Sheet tab: Branches',
+        action: 'getBranches',
+        tableClass: 'branches-table',
+        searchPlaceholder: 'Search branch name'
+      },
+      holidays: {
+        title: 'Holidays',
+        subtitle: 'Google Sheet tab: Holidays',
+        action: 'getHolidays',
+        tableClass: 'holidays-table',
+        searchPlaceholder: 'Search holiday, date, or emoji'
+      }
+    };
 
-    function openRequestRecordsPage() {
-      const page = document.getElementById('requestRecordsPage');
-      if (!page) return;
+    let currentIntegratedPage = '';
+    const integratedPageLoading = { products: false, requests: false, branches: false, holidays: false };
+    const integratedPageData = {
+      products: [],
+      requests: [],
+      branches: [],
+      holidays: []
+    };
 
-      setNotificationDropdownOpen(false);
-      page.classList.add('open');
-      page.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('request-records-open');
-
-      try {
-        history.replaceState(null, '', window.location.pathname + window.location.search + '#requests');
-      } catch (e) {}
-
-      loadRequestRecords(requestRecords.length === 0);
+    function syncIntegratedPageTop() {
+      const page = document.getElementById('sheetRecordsPage');
+      const topbar = document.querySelector('.topbar');
+      if (!page || !topbar) return;
+      page.style.top = Math.max(0, Math.round(topbar.getBoundingClientRect().bottom)) + 'px';
     }
 
-    function closeRequestRecordsPage() {
-      const page = document.getElementById('requestRecordsPage');
-      if (!page) return;
+    function setIntegratedNavActive(type) {
+      document.querySelectorAll('.integrated-nav-button[data-sheet-page]').forEach(button => {
+        button.classList.toggle('active', button.dataset.sheetPage === type);
+      });
+    }
 
+    function openIntegratedSheetPage(type) {
+      type = String(type || '').toLowerCase();
+      const config = INTEGRATED_PAGE_CONFIG[type];
+      const page = document.getElementById('sheetRecordsPage');
+      if (!config || !page) return;
+
+      currentIntegratedPage = type;
+      setNotificationDropdownOpen(false);
+      syncIntegratedPageTop();
+      page.classList.add('open');
+      page.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('integrated-sheet-open');
+      setIntegratedNavActive(type);
+
+      const title = document.getElementById('sheetRecordsTitle');
+      const subtitle = document.getElementById('sheetRecordsSubtitle');
+      const search = document.getElementById('sheetRecordsSearch');
+      const statusWrap = document.getElementById('requestStatusFilterWrap');
+      const statusFilter = document.getElementById('requestStatusFilter');
+
+      if (title) title.textContent = config.title;
+      if (subtitle) subtitle.textContent = config.subtitle;
+      if (search) {
+        search.placeholder = config.searchPlaceholder;
+        search.value = '';
+      }
+      if (statusWrap) statusWrap.style.display = type === 'requests' ? '' : 'none';
+      if (statusFilter && type === 'requests') statusFilter.value = 'ALL';
+
+      try { history.replaceState(null, '', window.location.pathname + window.location.search + '#' + type); } catch (e) {}
+      loadIntegratedSheetPage(type, integratedPageData[type].length === 0);
+    }
+
+    function closeIntegratedSheetPage() {
+      const page = document.getElementById('sheetRecordsPage');
+      if (!page) return;
       page.classList.remove('open');
       page.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('request-records-open');
+      document.body.classList.remove('integrated-sheet-open');
+      setIntegratedNavActive('');
+      currentIntegratedPage = '';
+      try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch (e) {}
+    }
 
-      try {
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-      } catch (e) {}
+    function initIntegratedNavigation() {
+      const title = document.getElementById('generatorTitle');
+      if (title) {
+        title.setAttribute('title', 'Back to Price Tag Generator');
+        title.addEventListener('click', closeIntegratedSheetPage);
+      }
+
+      window.addEventListener('resize', syncIntegratedPageTop);
+      const hashPage = String(window.location.hash || '').replace('#', '').toLowerCase();
+      if (INTEGRATED_PAGE_CONFIG[hashPage]) setTimeout(() => openIntegratedSheetPage(hashPage), 0);
+    }
+
+    function handlePrintAction() {
+      if (document.body.classList.contains('integrated-sheet-open')) closeIntegratedSheetPage();
+      setTimeout(() => window.print(), 30);
     }
 
     function formatRequestTimestamp(value) {
@@ -4195,56 +4368,83 @@
       });
     }
 
-    function loadRequestRecords(showLoading) {
-      if (requestRecordsLoading) return Promise.resolve();
-      requestRecordsLoading = true;
+    function loadIntegratedSheetPage(type, showLoading) {
+      type = String(type || currentIntegratedPage || '').toLowerCase();
+      const config = INTEGRATED_PAGE_CONFIG[type];
+      if (!config || integratedPageLoading[type]) return Promise.resolve();
 
-      const body = document.getElementById('requestRecordsBody');
+      integratedPageLoading[type] = true;
+      const body = document.getElementById('sheetRecordsBody');
       if (showLoading && body) {
-        body.innerHTML = '<tr><td colspan="7" class="request-records-empty">Loading request records from Google Sheet…</td></tr>';
+        body.innerHTML = '<tr><td class="request-records-empty">Loading ' + html(config.title) + ' from Google Sheet…</td></tr>';
       }
 
-      return apiCall('getRequests')
+      return apiCall(config.action)
         .then(data => {
-          requestRecords = Array.isArray(data) ? data : [];
-          renderRequestRecords();
+          integratedPageData[type] = Array.isArray(data) ? data : [];
+          if (currentIntegratedPage === type) renderIntegratedSheetPage();
         })
         .catch(err => {
-          console.error('[REQUEST RECORDS] Failed to load:', err);
-          if (body) {
-            body.innerHTML = '<tr><td colspan="7" class="request-records-empty">⚠ ' +
-              html(err && err.message ? err.message : 'Unable to load request records.') + '</td></tr>';
+          console.error('[INTEGRATED PAGE] Failed to load ' + type + ':', err);
+          if (body && currentIntegratedPage === type) {
+            body.innerHTML = '<tr><td class="request-records-empty">⚠ ' +
+              html(err && err.message ? err.message : 'Unable to load Google Sheet data.') + '</td></tr>';
           }
         })
-        .finally(() => {
-          requestRecordsLoading = false;
-        });
+        .finally(() => { integratedPageLoading[type] = false; });
     }
 
-    function getFilteredRequestRecords() {
-      const searchInput = document.getElementById('requestRecordsSearch');
-      const statusFilter = document.getElementById('requestStatusFilter');
-      const query = String(searchInput && searchInput.value || '').trim().toLowerCase();
-      const wantedStatus = String(statusFilter && statusFilter.value || 'ALL').trim().toUpperCase();
+    function getIntegratedSearchQuery() {
+      const input = document.getElementById('sheetRecordsSearch');
+      return String(input && input.value || '').trim().toLowerCase();
+    }
 
-      return requestRecords.filter(request => {
-        const status = String(request.status || '').trim().toUpperCase();
-        const statusMatch = wantedStatus === 'ALL' || status === wantedStatus;
-        if (!statusMatch) return false;
-        if (!query) return true;
+    function getFilteredIntegratedRecords() {
+      const type = currentIntegratedPage;
+      const query = getIntegratedSearchQuery();
+      const records = integratedPageData[type] || [];
 
-        const haystack = [
-          request.timestamp,
-          request.email,
-          request.dateRequested,
-          request.branch,
-          request.priceTagList,
-          request.notes,
-          request.status
-        ].join(' ').toLowerCase();
+      if (type === 'requests') {
+        const statusFilter = document.getElementById('requestStatusFilter');
+        const wantedStatus = String(statusFilter && statusFilter.value || 'ALL').trim().toUpperCase();
+        return records.filter(request => {
+          const status = String(request.status || '').trim().toUpperCase();
+          if (wantedStatus !== 'ALL' && status !== wantedStatus) return false;
+          if (!query) return true;
+          return [request.timestamp, request.email, request.dateRequested, request.branch,
+                  request.priceTagList, request.notes, request.status]
+            .join(' ').toLowerCase().includes(query);
+        });
+      }
 
-        return haystack.includes(query);
-      });
+      if (!query) return records;
+
+      if (type === 'products') {
+        return records.filter(product => [
+          product.name, product.arabicName, product.descriptionEN, product.descriptionAR,
+          product.price, product.symbol, product.netWeightEN, product.netWeightAR,
+          product.allergensEN, product.allergensAR, product.category
+        ].join(' ').toLowerCase().includes(query));
+      }
+
+      if (type === 'branches') {
+        return records.filter(branch => String(typeof branch === 'string' ? branch : (branch.name || branch.branch || ''))
+          .toLowerCase().includes(query));
+      }
+
+      if (type === 'holidays') {
+        return records.filter(holiday => [holiday.name, holiday.date, holiday.emoji]
+          .join(' ').toLowerCase().includes(query));
+      }
+
+      return records;
+    }
+
+    function setIntegratedTableHeader(columns, tableClass) {
+      const head = document.getElementById('sheetRecordsHead');
+      const table = document.getElementById('sheetRecordsTable');
+      if (table) table.className = 'request-records-table ' + (tableClass || '');
+      if (head) head.innerHTML = '<tr>' + columns.map(column => '<th>' + html(column) + '</th>').join('') + '</tr>';
     }
 
     function requestStatusBadge(status) {
@@ -4253,47 +4453,98 @@
       if (normalized === 'PRINTED') statusClass = 'printed';
       else if (normalized === 'PENDING') statusClass = 'pending';
       else if (normalized === 'IN PROGRESS') statusClass = 'progress';
-
       return '<span class="request-status-badge ' + statusClass + '">' + html(normalized || 'BLANK') + '</span>';
     }
 
-    function renderRequestRecords() {
-      const body = document.getElementById('requestRecordsBody');
-      const count = document.getElementById('requestRecordCount');
-      if (!body) return;
+    function renderIntegratedSheetPage() {
+      const type = currentIntegratedPage;
+      const config = INTEGRATED_PAGE_CONFIG[type];
+      const body = document.getElementById('sheetRecordsBody');
+      const count = document.getElementById('sheetRecordCount');
+      if (!config || !body) return;
 
-      const records = getFilteredRequestRecords();
+      const records = getFilteredIntegratedRecords();
       if (count) count.textContent = records.length + ' record(s)';
 
-      if (!records.length) {
-        body.innerHTML = '<tr><td colspan="7" class="request-records-empty">No request records match the selected filter.</td></tr>';
+      if (type === 'products') {
+        setIntegratedTableHeader([
+          'Product Name', 'Arabic Name', 'DescriptionEN', 'DescriptionAR', 'Price', 'Symbol',
+          'Net WeightEN', 'Net WeightAR', 'AllergensEN', 'AllergensAR', 'Category'
+        ], config.tableClass);
+        if (!records.length) {
+          body.innerHTML = '<tr><td colspan="11" class="request-records-empty">No products match the search.</td></tr>';
+          return;
+        }
+        body.innerHTML = records.map(product => '<tr>' +
+          '<td class="integrated-table-cell strong">' + html(product.name || '—') + '</td>' +
+          '<td class="integrated-table-cell arabic">' + html(product.arabicName || '—') + '</td>' +
+          '<td class="integrated-table-cell">' + html(product.descriptionEN || '—') + '</td>' +
+          '<td class="integrated-table-cell arabic">' + html(product.descriptionAR || '—') + '</td>' +
+          '<td class="integrated-table-cell price">' + html(product.price || '—') + '</td>' +
+          '<td class="integrated-table-cell">' + html(product.symbol || '—') + '</td>' +
+          '<td class="integrated-table-cell">' + html(product.netWeightEN || '—') + '</td>' +
+          '<td class="integrated-table-cell arabic">' + html(product.netWeightAR || '—') + '</td>' +
+          '<td class="integrated-table-cell">' + html(product.allergensEN || '—') + '</td>' +
+          '<td class="integrated-table-cell arabic">' + html(product.allergensAR || '—') + '</td>' +
+          '<td class="integrated-table-cell strong">' + html(product.category || '—') + '</td>' +
+        '</tr>').join('');
         return;
       }
 
-      body.innerHTML = records.map(request => {
-        const row = parseInt(request.row, 10) || 0;
-        const status = String(request.status || '').trim().toUpperCase();
-        const branch = String(request.branch || '').trim();
-        const statusControl = status === 'PENDING'
-          ? '<select class="request-table-status" data-row="' + row + '" data-branch="' + html(branch) +
-              '" onchange="changeRequestRecordStatus(event)" aria-label="Change request status">' +
-              '<option value="PENDING" selected>PENDING</option>' +
-              '<option value="PRINTED">PRINTED</option>' +
-            '</select>'
-          : requestStatusBadge(status);
+      if (type === 'requests') {
+        setIntegratedTableHeader(['Timestamp', 'Email', 'Date Requested', 'Branch', 'List of Price Tags', 'Notes', 'Status'], config.tableClass);
+        if (!records.length) {
+          body.innerHTML = '<tr><td colspan="7" class="request-records-empty">No request records match the selected filter.</td></tr>';
+          return;
+        }
+        body.innerHTML = records.map(request => {
+          const row = parseInt(request.row, 10) || 0;
+          const status = String(request.status || '').trim().toUpperCase();
+          const branch = String(request.branch || '').trim();
+          const notes = String(request.notes || '').trim();
+          const statusControl = status === 'PENDING'
+            ? '<select class="request-table-status" data-row="' + row + '" data-branch="' + html(branch) +
+                '" onchange="changeRequestRecordStatus(event)" aria-label="Change request status">' +
+                '<option value="PENDING" selected>PENDING</option><option value="PRINTED">PRINTED</option></select>'
+            : requestStatusBadge(status);
 
-        const notes = String(request.notes || '').trim();
+          return '<tr class="request-record-row" id="requestRecordRow-' + row + '">' +
+            '<td class="request-cell-mono">' + html(formatRequestTimestamp(request.timestamp)) + '</td>' +
+            '<td class="request-cell-email">' + html(request.email || '—') + '</td>' +
+            '<td class="request-cell-mono">' + html(formatDateOnly(request.dateRequested || '')) + '</td>' +
+            '<td class="request-cell-branch">' + html(branch || '—') + '</td>' +
+            '<td class="request-cell-list">' + html(request.priceTagList || '—') + '</td>' +
+            '<td class="request-cell-notes' + (notes ? '' : ' empty') + '">' + html(notes || 'No special request note') + '</td>' +
+            '<td>' + statusControl + '</td></tr>';
+        }).join('');
+        return;
+      }
 
-        return '<tr class="request-record-row" id="requestRecordRow-' + row + '">' +
-          '<td class="request-cell-mono">' + html(formatRequestTimestamp(request.timestamp)) + '</td>' +
-          '<td class="request-cell-email">' + html(request.email || '—') + '</td>' +
-          '<td class="request-cell-mono">' + html(formatDateOnly(request.dateRequested || '')) + '</td>' +
-          '<td class="request-cell-branch">' + html(branch || '—') + '</td>' +
-          '<td class="request-cell-list">' + html(request.priceTagList || '—') + '</td>' +
-          '<td class="request-cell-notes' + (notes ? '' : ' empty') + '">' + html(notes || 'No special request note') + '</td>' +
-          '<td>' + statusControl + '</td>' +
-        '</tr>';
-      }).join('');
+      if (type === 'branches') {
+        setIntegratedTableHeader(['Branch Name'], config.tableClass);
+        if (!records.length) {
+          body.innerHTML = '<tr><td class="request-records-empty">No branches match the search.</td></tr>';
+          return;
+        }
+        body.innerHTML = records.map(branch => {
+          const name = typeof branch === 'string' ? branch : (branch.name || branch.branch || '');
+          return '<tr><td class="integrated-table-cell strong">' + html(name || '—') + '</td></tr>';
+        }).join('');
+        return;
+      }
+
+      if (type === 'holidays') {
+        setIntegratedTableHeader(['Name', 'Date', 'Emoji'], config.tableClass);
+        if (!records.length) {
+          body.innerHTML = '<tr><td colspan="3" class="request-records-empty">No holidays match the search.</td></tr>';
+          return;
+        }
+        body.innerHTML = records.map(holiday => '<tr>' +
+          '<td class="integrated-table-cell strong">' + html(holiday.name || '—') + '</td>' +
+          '<td class="integrated-table-cell">' + html(formatDateOnly(holiday.date || '')) + '</td>' +
+          '<td class="integrated-table-cell" style="font-size:20px;">' + html(holiday.emoji || '—') + '</td>' +
+        '</tr>').join('');
+      }
     }
 
     function changeRequestRecordStatus(event) {
@@ -4313,7 +4564,6 @@
         'Mark the request from "' + branch + '" as PRINTED?\n\n' +
         'This updates Google Sheet and sends the printed-completion email.'
       );
-
       if (!confirmed) {
         select.value = 'PENDING';
         return;
@@ -4331,9 +4581,8 @@
               : '✓ ' + branch + ' changed to PRINTED',
             emailFailed ? 'warn' : 'success'
           );
-
           return Promise.all([
-            loadRequestRecords(false),
+            loadIntegratedSheetPage('requests', false),
             loadPendingNotifications(false)
           ]);
         })
@@ -4371,6 +4620,7 @@
       document.getElementById('searchInput').addEventListener('input', renderProductList);
       initManualBranchSelector();
       initPendingNotifications();
+      initIntegratedNavigation();
 
       apiCall('getProducts')
         .then(data => {
