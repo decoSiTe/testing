@@ -8,12 +8,11 @@
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="shortcut icon" type="image/png" href="favicon.png">
   <script>
-    // Row number passed by Apps Script doGet: ?page=generator&row=132
-    // This makes the generator auto-load the selected request when opened from the sidebar.
+    
     var PRELOAD_ROW = 0;
     (function () {
       try {
-        // Apps Script template value. Keep this file as generator.html and open with createTemplateFromFile().
+        
         var templateValue = '<?= typeof preloadRow !== "undefined" ? preloadRow : "" ?>';
         var templateRow = parseInt(templateValue, 10);
         if (!isNaN(templateRow) && templateRow > 0) PRELOAD_ROW = templateRow;
@@ -22,7 +21,7 @@
       }
 
       try {
-        // Fallback if the row is visible in the URL.
+        
         var params = new URLSearchParams(window.location.search);
         var urlRow = parseInt(params.get('row') || '0', 10);
         if (!isNaN(urlRow) && urlRow > 0) PRELOAD_ROW = urlRow;
@@ -74,6 +73,13 @@
     }
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (window.pdfjsLib) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
   <style>
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -105,10 +111,7 @@
     html { background: var(--bg); }
 
 
-    /* Price tag font setup
-       Works when Futura PT fonts are installed on the device.
-       For GitHub Pages on all devices, upload licensed font files and update the url() paths.
-    */
+    
     @font-face {
       font-family: 'Futura PT Extra Bold';
       src: local('Futura PT Extra Bold'),
@@ -936,10 +939,7 @@
       pointer-events: none;
     }
 
-    /* Move the item name fully inside the border line.
-       English item name stays 0.5cm and Arabic name stays below it. */
-
-    /* Title block: fully inside the border, no top cut, English fixed at 0.5cm */
+    
     .name-stack {
       position: absolute;
       top: 0.44cm;
@@ -1393,9 +1393,7 @@
       }
     }
 
-    /* ── FIX: Items Database scrolling ─────────────────────
-       Keeps the left product list scrollable on GitHub Pages and Apps Script.
-    */
+    
     html,
     body {
       height: 100%;
@@ -1517,7 +1515,7 @@
     }
 
   
-    /* Topbar print actions beside Admin · Print Tool */
+    
     .topbar-right {
       display: flex;
       align-items: center;
@@ -1636,7 +1634,7 @@
     }
 
   
-    /* UI ONLY REFINEMENT — no function changes, no price-tag design changes */
+    
     html, body { height: 100%; overflow: hidden; }
     .topbar { flex: 0 0 68px; }
 
@@ -3158,10 +3156,7 @@
     }
 
 
-    /* ═══════════════════════════════════════════════════════════════
-       INTEGRATED SHEET NAVIGATION — Products / Request / Branches / Holidays
-       GIF files are loaded from the GitHub icons folder.
-       ═══════════════════════════════════════════════════════════════ */
+    
     .integrated-nav-actions {
       display: inline-flex;
       align-items: center;
@@ -3223,7 +3218,7 @@
 
     .topbar-logo { cursor: pointer; }
 
-    /* Keep the generator topbar visible while an integrated sheet page is open. */
+   
     .request-records-page {
       top: 68px !important;
       right: 0 !important;
@@ -3288,9 +3283,7 @@
 
 
 
-    /* ═══════════════════════════════════════════════════════════════
-       GOOGLE SHEET MANAGER — generator theme + icon-only controls
-       ═══════════════════════════════════════════════════════════════ */
+   
     .integrated-nav-button,
     .topbar-icon-button,
     .topbar-print-actions .btn-primary.print-gif-button {
@@ -3549,7 +3542,7 @@
 
   
 
-    /* ── ADD ICON + INDEPENDENT PAGE SCROLLBARS ───────────────────── */
+    
     .sheet-add-button {
       width: 40px !important;
       min-width: 40px !important;
@@ -3571,7 +3564,7 @@
       pointer-events: none;
     }
 
-    /* Force the integrated manager to cover the complete generator work area. */
+    
     .request-records-page {
       width: 100vw !important;
       max-width: none !important;
@@ -3587,7 +3580,7 @@
       min-height: 0 !important;
     }
 
-    /* Products, Requests, Branches and Holidays each scroll inside their own page. */
+    
     .request-records-table-wrap {
       width: 100% !important;
       min-width: 0 !important;
@@ -3620,6 +3613,451 @@
 
     .request-records-table-wrap::-webkit-scrollbar-corner {
       background: rgba(15,17,21,.96);
+    }
+
+  
+
+    /* ═══════════════════════════════════════════════════════════════
+       CHOCOLATE SIZE CHOOSER + SPECIAL PRINT ITEMS
+       Chocolate: 5cm x 4cm or 8cm x 6cm.
+       Signage PDFs: NS.pdf, NPA.pdf and NOFD.pdf from Photo_Drive.
+       ═══════════════════════════════════════════════════════════════ */
+    .chocolate-size-modal-box {
+      width: min(590px, 96vw) !important;
+    }
+
+    .chocolate-size-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .chocolate-size-option {
+      position: relative;
+      min-height: 112px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+      cursor: pointer;
+      transition: transform .18s, border-color .18s, background .18s, box-shadow .18s;
+    }
+
+    .chocolate-size-option:hover,
+    .chocolate-size-option:has(input:checked) {
+      transform: translateY(-1px);
+      border-color: rgba(255,214,0,.55);
+      background: rgba(255,214,0,.075);
+      box-shadow: 0 0 28px -16px rgba(255,214,0,.9);
+    }
+
+    .chocolate-size-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .chocolate-size-swatch {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(135,72,18,.8);
+      background: #e9dab8;
+      color: #874812;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 900;
+      box-shadow: inset 0 -13px 0 #874812;
+    }
+
+    .chocolate-size-swatch.small { width: 75px; height: 60px; }
+    .chocolate-size-swatch.large { width: 88px; height: 66px; }
+
+    .chocolate-size-copy strong {
+      display: block;
+      color: var(--text);
+      font-family: var(--font-heading);
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .chocolate-size-copy span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .print-slot {
+      width: 8cm;
+      height: 6cm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex: 0 0 auto;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .chocolate-tag {
+      position: relative;
+      width: 8cm;
+      height: 6cm;
+      overflow: hidden;
+      box-sizing: border-box;
+      background: #e9dab8;
+      color: #5c352e;
+      font-family: 'Futura PT Extra Bold', 'Inter', Arial, sans-serif;
+      box-shadow: 0 2px 14px rgba(0,0,0,.28);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .chocolate-tag.small {
+      width: 5cm;
+      height: 4cm;
+    }
+
+    .choc-stripes {
+      position: absolute;
+      top: .12cm;
+      left: 0;
+      right: 0;
+      display: grid;
+      gap: .09cm;
+    }
+
+    .choc-stripes i {
+      display: block;
+      height: .09cm;
+      background: #874812;
+    }
+
+    .choc-title {
+      position: absolute;
+      top: .92cm;
+      left: .38cm;
+      right: .38cm;
+      height: 1.62cm;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow: hidden;
+      text-align: center;
+      color: #5c352e;
+      font-size: .69cm;
+      font-weight: 900;
+      line-height: .77cm;
+      letter-spacing: .055cm;
+      text-transform: uppercase;
+    }
+
+    .choc-info {
+      position: absolute;
+      left: .75cm;
+      right: .75cm;
+      top: 3.02cm;
+      height: 1.08cm;
+      display: grid;
+      grid-template-columns: minmax(1.3cm, auto) 1px minmax(0, 1fr);
+      align-items: center;
+      gap: .18cm;
+      color: #5c352e;
+    }
+
+    .choc-weight {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: .29cm;
+      font-weight: 800;
+      letter-spacing: .025cm;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .choc-divider {
+      width: 1px;
+      height: 1.02cm;
+      background: #874812;
+    }
+
+    .choc-description {
+      max-height: 1.02cm;
+      overflow: hidden;
+      color: #5c352e;
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: .17cm;
+      font-weight: 700;
+      line-height: .20cm;
+      text-align: left;
+    }
+
+    .choc-bottom {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1.72cm;
+      background: #874812;
+      color: #f5e8c9;
+    }
+
+    .choc-price {
+      position: absolute;
+      left: 2.02cm;
+      bottom: .07cm;
+      color: #f5e8c9;
+      font-family: 'Futura PT Bold', 'Arial Black', Arial, sans-serif;
+      font-size: 1.62cm;
+      font-weight: 900;
+      line-height: 1.62cm;
+      letter-spacing: -.05cm;
+      white-space: nowrap;
+    }
+
+    .choc-aed {
+      position: absolute;
+      left: 5.85cm;
+      bottom: .78cm;
+      color: #f5e8c9;
+      font-family: 'Futura PT Bold', Arial, sans-serif;
+      font-size: .46cm;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .chocolate-tag.small .choc-stripes {
+      top: .08cm;
+      gap: .055cm;
+    }
+
+    .chocolate-tag.small .choc-stripes i { height: .055cm; }
+
+    .chocolate-tag.small .choc-title {
+      top: .62cm;
+      left: .28cm;
+      right: .28cm;
+      height: 1.02cm;
+      font-size: .40cm;
+      line-height: .43cm;
+      letter-spacing: .025cm;
+    }
+
+    .chocolate-tag.small .choc-info {
+      left: .38cm;
+      right: .38cm;
+      top: 1.93cm;
+      height: .78cm;
+      grid-template-columns: minmax(1.05cm, auto) 1px minmax(0, 1fr);
+      gap: .11cm;
+    }
+
+    .chocolate-tag.small .choc-weight {
+      font-size: .23cm;
+      letter-spacing: .012cm;
+    }
+
+    .chocolate-tag.small .choc-divider { height: .75cm; }
+
+    .chocolate-tag.small .choc-description {
+      max-height: .76cm;
+      font-size: .12cm;
+      line-height: .145cm;
+    }
+
+    .chocolate-tag.small .choc-bottom { height: 1.16cm; }
+
+    .chocolate-tag.small .choc-price {
+      left: .62cm;
+      bottom: .01cm;
+      font-size: 1.08cm;
+      line-height: 1.08cm;
+      letter-spacing: -.035cm;
+    }
+
+    .chocolate-tag.small .choc-aed {
+      left: 3.77cm;
+      bottom: .55cm;
+      font-size: .29cm;
+    }
+
+    .discount-tag-40 {
+      position: relative;
+      width: 8cm;
+      height: 6cm;
+      overflow: hidden;
+      box-sizing: border-box;
+      background: linear-gradient(to bottom, #e9dab8 0 64%, #874812 64% 100%);
+      box-shadow: 0 2px 14px rgba(0,0,0,.28);
+      font-family: 'Futura PT Extra Bold', 'Arial Black', Arial, sans-serif;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .discount-tag-40::before {
+      content: '';
+      position: absolute;
+      inset: .38cm .34cm .38cm .34cm;
+      border: 1px solid rgba(90,64,39,.72);
+      pointer-events: none;
+    }
+
+    .discount-percent {
+      position: absolute;
+      top: .35cm;
+      left: 1.35cm;
+      display: flex;
+      align-items: flex-start;
+      color: #ec008c;
+      font-size: 2.45cm;
+      line-height: 2.45cm;
+      font-weight: 900;
+      letter-spacing: -.12cm;
+      white-space: nowrap;
+    }
+
+    .discount-percent sup {
+      margin-top: .20cm;
+      margin-left: -.08cm;
+      font-size: 1.12cm;
+      line-height: 1.12cm;
+      letter-spacing: -.04cm;
+    }
+
+    .discount-off {
+      position: absolute;
+      left: 1.18cm;
+      bottom: .35cm;
+      color: #874812;
+      font-size: 2.28cm;
+      line-height: 2.28cm;
+      font-weight: 900;
+      letter-spacing: -.12cm;
+      white-space: nowrap;
+      -webkit-text-stroke: .055cm #f5e8c9;
+      paint-order: stroke fill;
+    }
+
+    .special-pdf-tag {
+      width: 8cm;
+      height: 6cm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #fff;
+      color: #333;
+      box-shadow: 0 2px 14px rgba(0,0,0,.28);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .special-pdf-loading,
+    .special-pdf-error {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .special-pdf-loading { color: #666; background: #f6f6f6; }
+    .special-pdf-error { color: #b53200; background: #fff2ec; }
+
+    .special-pdf-canvas {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      background: #fff;
+    }
+
+    @media (max-width: 640px) {
+      .chocolate-size-options { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      #chocolateSizeModal { display: none !important; }
+
+      .preview-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 8cm) !important;
+        grid-auto-rows: 6cm !important;
+        gap: .25cm !important;
+        width: 16.25cm !important;
+        max-width: 16.25cm !important;
+        margin: 0 auto !important;
+        justify-content: center !important;
+        align-content: start !important;
+      }
+
+      .print-slot {
+        width: 8cm !important;
+        height: 6cm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      body:not(.print-small-chocolate-only) .print-slot:nth-child(8n) {
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      body.print-small-chocolate-only .request-banner {
+        width: 15.5cm !important;
+      }
+
+      body.print-small-chocolate-only .preview-grid {
+        grid-template-columns: repeat(3, 5cm) !important;
+        grid-auto-rows: 4cm !important;
+        gap: .25cm !important;
+        width: 15.5cm !important;
+        max-width: 15.5cm !important;
+      }
+
+      body.print-small-chocolate-only .print-slot {
+        width: 5cm !important;
+        height: 4cm !important;
+      }
+
+      body.print-small-chocolate-only .print-slot:nth-child(18n) {
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      .price-tag,
+      .chocolate-tag,
+      .discount-tag-40,
+      .special-pdf-tag {
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        filter: none !important;
+        transform: none !important;
+        page-break-after: auto !important;
+        break-after: auto !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .special-pdf-loading,
+      .special-pdf-error {
+        display: none !important;
+      }
     }
 
   </style>
@@ -3655,7 +4093,7 @@
           <div class="notification-head">
             <div>
               <div class="notification-title">Pending Requests</div>
-              <span class="notification-summary" id="notificationSummary">Checking Google Sheet…</span>
+              <span class="notification-summary" id="notificationSummary">Checking…</span>
             </div>
             <button type="button" class="notification-refresh" id="notificationRefresh" aria-label="Refresh pending requests" title="Refresh">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -3710,7 +4148,7 @@
     </div>
   </div>
 
-  <!-- Integrated Google Sheet pages: Products / Request / Branches / Holidays -->
+  
   <section id="sheetRecordsPage" class="request-records-page" aria-hidden="true">
     <div class="request-records-main">
       <header class="request-records-header">
@@ -3762,10 +4200,10 @@
     </div>
   </section>
 
-  <!-- Auto-load banner -->
+  
   <div id="autoLoadBanner" style="display:none;"></div>
 
-  <!-- Request details banner shown when opened from the Google Sheets sidebar -->
+ 
   <div id="requestBanner" class="request-banner">
     <div class="request-branch-wrap">
       <strong id="rbBranch">—</strong>
@@ -3779,7 +4217,7 @@
   </div>
 
 
-  <!-- Admin login modal for protected price editing -->
+  
   <div id="adminLoginModal" class="admin-modal-overlay" aria-hidden="true">
     <div class="admin-modal-box">
       <div class="admin-modal-title">Admin Login Required</div>
@@ -3823,12 +4261,48 @@
   <div id="sheetManagementModal" class="admin-modal-overlay" aria-hidden="true">
     <div class="admin-modal-box sheet-management-modal-box">
       <div class="admin-modal-title" id="sheetManagementTitle">Edit Record</div>
-      <div class="admin-modal-subtitle" id="sheetManagementSubtitle">Changes are saved directly to Google Sheets.</div>
+      <div class="admin-modal-subtitle" id="sheetManagementSubtitle">Changes are saved .</div>
       <div class="sheet-management-fields" id="sheetManagementFields"></div>
       <div class="admin-error" id="sheetManagementError"></div>
       <div class="admin-modal-actions">
         <button class="btn btn-ghost" type="button" onclick="closeSheetManagementModal()">Cancel</button>
         <button class="btn btn-primary" type="button" id="sheetManagementSaveButton" onclick="saveSheetManagementRecord()">Save</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Chocolate print-size chooser -->
+  <div id="chocolateSizeModal" class="admin-modal-overlay" aria-hidden="true">
+    <div class="admin-modal-box chocolate-size-modal-box">
+      <div class="admin-modal-title">Choose Chocolate Price Tag Size</div>
+      <div class="admin-modal-subtitle">
+        This request contains an item from the Chocolate category. Select the physical size before printing.
+      </div>
+
+      <div class="chocolate-size-options">
+        <label class="chocolate-size-option">
+          <input type="radio" name="chocolatePrintSize" value="5x4">
+          <span class="chocolate-size-swatch small">5 × 4 cm</span>
+          <span class="chocolate-size-copy">
+            <strong>5 cm × 4 cm</strong>
+            <span>Compact chocolate price tag.</span>
+          </span>
+        </label>
+
+        <label class="chocolate-size-option">
+          <input type="radio" name="chocolatePrintSize" value="8x6" checked>
+          <span class="chocolate-size-swatch large">8 × 6 cm</span>
+          <span class="chocolate-size-copy">
+            <strong>8 cm × 6 cm</strong>
+            <span>Standard chocolate price tag.</span>
+          </span>
+        </label>
+      </div>
+
+      <div class="admin-modal-actions">
+        <button class="btn btn-ghost" type="button" onclick="closeChocolateSizeModal()">Cancel</button>
+        <button class="btn btn-primary" type="button" onclick="confirmChocolateSizeAndPrint()">Continue to Print</button>
       </div>
     </div>
   </div>
@@ -3927,6 +4401,10 @@
     let pendingNotificationLoading = false;
     let pendingNotificationTimer = null;
     let latestPendingRequests = [];
+    let chocolatePrintSize = '8x6';
+    const specialPdfDocumentCache = {};
+    const specialPdfRequestCache = {};
+
 
     // ── Helpers ───────────────────────────────────────────
     function hideLoadingOverlay() {
@@ -3977,7 +4455,7 @@
       if (!value) return '';
       const text = String(value).trim();
 
-      // Handles values like: Mon Jun 08 2026 00:00:00 GMT+0400 (Gulf Standard Time)
+      
       const parsed = new Date(text);
       if (!isNaN(parsed.getTime())) {
         return parsed.toLocaleDateString('en-GB', {
@@ -3987,7 +4465,7 @@
         });
       }
 
-      // Handles values like: 2026-06-08 or 6/8/2026
+      
       return text
         .replace(/\s+00:00:00.*$/i, '')
         .replace(/\s+GMT.*$/i, '')
@@ -4117,7 +4595,9 @@
 
 
     function cloneProductForCart(product) {
-      return Object.assign({}, product || {});
+      const copy = Object.assign({}, product || {});
+      copy.specialType = getSpecialTagType(copy);
+      return copy;
     }
 
     function normalizePriceText(value) {
@@ -4143,6 +4623,78 @@
         .replace(/[^a-z0-9]+/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
+    }
+
+
+    function getSpecialTagType(value) {
+      if (value && typeof value === 'object' && value.specialType) {
+        return String(value.specialType).trim().toUpperCase();
+      }
+
+      const source = value && typeof value === 'object'
+        ? [value.name, value.descriptionEN, value.description].filter(Boolean).join(' ')
+        : String(value || '');
+      const normalized = cleanName(source);
+      const raw = source.toLowerCase();
+
+      if (normalized.includes('no smoking')) return 'NO_SMOKING';
+      if (normalized.includes('no pets') || normalized.includes('no pet allowed')) return 'NO_PETS';
+      if (normalized.includes('no outside food')) return 'NO_OUTSIDE_FOOD';
+      if (raw.includes('40%') || /\b40\s*(?:percent|discount|off)\b/.test(normalized)) return 'DISCOUNT_40';
+      return '';
+    }
+
+    function isDrivePdfSpecial(value) {
+      return ['NO_SMOKING', 'NO_PETS', 'NO_OUTSIDE_FOOD'].includes(getSpecialTagType(value));
+    }
+
+    function isChocolateProduct(product) {
+      if (!product || getSpecialTagType(product)) return false;
+      const category = String(product.category || '').trim().toUpperCase();
+      return category === 'CHOCOLATE' || category === 'CHOCOLATES' || category === 'CHOCO';
+    }
+
+    function createSyntheticSpecialProduct(item, specialType) {
+      const labels = {
+        NO_SMOKING: 'No Smoking',
+        NO_PETS: 'No Pets Allowed',
+        NO_OUTSIDE_FOOD: 'No Outside Food or Drink',
+        DISCOUNT_40: '40% Discount'
+      };
+      return {
+        productKey: 'SPECIAL_' + specialType,
+        rowNumber: '',
+        name: labels[specialType] || String(item && item.name || 'Special Print'),
+        arabicName: '',
+        description: '',
+        descriptionEN: '',
+        descriptionAR: '',
+        price: '',
+        symbol: '',
+        netWeight: '',
+        netWeightEN: '',
+        netWeightAR: '',
+        portions: '',
+        portionsEN: '',
+        portionsAR: '',
+        allergensEN: '',
+        allergensAR: '',
+        category: specialType === 'DISCOUNT_40' ? 'DISCOUNT' : 'SIGNAGE',
+        specialType: specialType
+      };
+    }
+
+    function cartContainsChocolate() {
+      return cart.some(item => isChocolateProduct(item.product));
+    }
+
+    function allPrintableItemsAreSmallChocolate() {
+      return chocolatePrintSize === '5x4' && cart.length > 0 &&
+        cart.every(item => isChocolateProduct(item.product));
+    }
+
+    function applyPrintLayoutClasses() {
+      document.body.classList.toggle('print-small-chocolate-only', allPrintableItemsAreSmallChocolate());
     }
 
     function parseSelectedProductsFromRequest(req) {
@@ -4226,7 +4778,19 @@
 
     function getRequestedItems(req) {
       const exactItems = parseSelectedProductsFromRequest(req);
-      return exactItems.length ? exactItems : parseRequestedItems(req && req.priceTagList);
+      const listedItems = parseRequestedItems(req && req.priceTagList);
+      if (!exactItems.length) return listedItems;
+
+      // Keep the exact Products JSON, but also preserve special signage/discount
+      // entries that may exist only in the visible List of Price Tags column.
+      const exactSpecialTypes = new Set(
+        exactItems.map(item => getSpecialTagType(item.name || item.raw || '')).filter(Boolean)
+      );
+      const additionalSpecialItems = listedItems.filter(item => {
+        const type = getSpecialTagType(item.name || item.raw || '');
+        return type && !exactSpecialTypes.has(type);
+      });
+      return exactItems.concat(additionalSpecialItems);
     }
 
     function findBestProductMatch(requestItem) {
@@ -4388,7 +4952,7 @@
         list.innerHTML = `
           <div class="notification-state">
             <div class="notification-state-icon">⏳</div>
-            <div>Checking Google Sheet…</div>
+            <div>Checking…</div>
           </div>`;
       }
 
@@ -4405,8 +4969,8 @@
           const summary = document.getElementById('notificationSummary');
           const noteSummary = document.getElementById('specialNoteSummary');
           const noteList = document.getElementById('specialNoteList');
-          if (summary) summary.textContent = 'Could not reach Google Sheet';
-          if (noteSummary) noteSummary.textContent = 'Could not reach Google Sheet';
+          if (summary) summary.textContent = 'Could not reach';
+          if (noteSummary) noteSummary.textContent = 'Could not reach';
           if (list) {
             list.innerHTML = `
               <div class="notification-state error">
@@ -4569,7 +5133,7 @@
 
       const confirmed = window.confirm(
         'Mark the request from "' + branch + '" as PRINTED?\n\n' +
-        'This will update the Google Sheet and send the printed-completion email.'
+        'This will update the Database and send the printed-completion email.'
       );
 
       if (!confirmed) {
@@ -4587,7 +5151,7 @@
         .then(result => {
           const emailFailed = result && result.emailError && !result.emailSent;
           const message = emailFailed
-            ? '✓ ' + branch + ' was changed to PRINTED in Google Sheet, but the completion email failed: ' + result.emailError
+            ? '✓ ' + branch + ' was changed to PRINTED , but the completion email failed: ' + result.emailError
             : '✓ ' + branch + ' was changed to PRINTED';
 
           showAutoLoadBanner(message, emailFailed ? 'warn' : 'success');
@@ -4625,28 +5189,28 @@
     const INTEGRATED_PAGE_CONFIG = {
       products: {
         title: 'Products',
-        subtitle: 'Google Sheet tab: Products',
+       // ── subtitle: 'Google Sheet tab: Products',─────────────────────
         action: 'getProducts',
         tableClass: 'products-table',
         searchPlaceholder: 'Search product name, Arabic name, description, price, weight, allergen, or category'
       },
       requests: {
         title: 'Price Tag Requests',
-        subtitle: 'Google Sheet tab: Requests',
+        // ── subtitle: 'Google Sheet tab: Requests', ─────────────────────
         action: 'getRequests',
         tableClass: 'requests-table',
         searchPlaceholder: 'Search timestamp, email, branch, item, note, or status'
       },
       branches: {
         title: 'Branches',
-        subtitle: 'Google Sheet tab: Branches',
+        // ── subtitle: 'Google Sheet tab: Branches',─────────────────────
         action: 'getBranchRecords',
         tableClass: 'branches-table',
         searchPlaceholder: 'Search branch name'
       },
       holidays: {
         title: 'Holidays',
-        subtitle: 'Google Sheet tab: Holidays',
+        // ── subtitle: 'Google Sheet tab: Holidays',─────────────────────
         action: 'getHolidayRecords',
         tableClass: 'holidays-table',
         searchPlaceholder: 'Search holiday, date, or emoji'
@@ -4739,7 +5303,56 @@
 
     function handlePrintAction() {
       if (document.body.classList.contains('integrated-sheet-open')) closeIntegratedSheetPage();
-      setTimeout(() => window.print(), 30);
+
+      if (cartContainsChocolate()) {
+        openChocolateSizeModal();
+        return;
+      }
+
+      executePreparedPrint();
+    }
+
+    function openChocolateSizeModal() {
+      const modal = document.getElementById('chocolateSizeModal');
+      const selected = document.querySelector('input[name="chocolatePrintSize"][value="' + chocolatePrintSize + '"]');
+      if (selected) selected.checked = true;
+      if (modal) {
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+      }
+    }
+
+    function closeChocolateSizeModal() {
+      const modal = document.getElementById('chocolateSizeModal');
+      if (modal) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    function confirmChocolateSizeAndPrint() {
+      const selected = document.querySelector('input[name="chocolatePrintSize"]:checked');
+      chocolatePrintSize = selected ? selected.value : '8x6';
+      closeChocolateSizeModal();
+      renderPreview();
+      setTimeout(executePreparedPrint, 80);
+    }
+
+    async function executePreparedPrint() {
+      const printButton = document.getElementById('pdfBtn');
+      if (printButton) printButton.disabled = true;
+
+      try {
+        applyPrintLayoutClasses();
+        const ready = await ensureSpecialPdfTagsRendered();
+        if (!ready) return;
+        setTimeout(() => window.print(), 60);
+      } catch (err) {
+        console.error('[PRINT] Could not prepare the print preview:', err);
+        window.alert('Could not prepare the special PDF file(s): ' + (err && err.message ? err.message : err));
+      } finally {
+        if (printButton) printButton.disabled = cart.length === 0;
+      }
     }
 
     function formatRequestTimestamp(value) {
@@ -4761,7 +5374,7 @@
       integratedPageLoading[type] = true;
       const body = document.getElementById('sheetRecordsBody');
       if (showLoading && body) {
-        body.innerHTML = '<tr><td class="request-records-empty">Loading ' + html(config.title) + ' from Google Sheet…</td></tr>';
+        body.innerHTML = '<tr><td class="request-records-empty">Loading ' + html(config.title) + ' from Database…</td></tr>';
       }
 
       return apiCall(config.action)
@@ -4773,7 +5386,7 @@
           console.error('[INTEGRATED PAGE] Failed to load ' + type + ':', err);
           if (body && currentIntegratedPage === type) {
             body.innerHTML = '<tr><td class="request-records-empty">⚠ ' +
-              html(err && err.message ? err.message : 'Unable to load Google Sheet data.') + '</td></tr>';
+              html(err && err.message ? err.message : 'Unable to load Database data.') + '</td></tr>';
           }
         })
         .finally(() => { integratedPageLoading[type] = false; });
@@ -5097,7 +5710,7 @@
       const error = document.getElementById('sheetManagementError');
       const labels = { products: 'Product', requests: 'Request', branches: 'Branch', holidays: 'Holiday' };
       if (title) title.textContent = (mode === 'add' ? 'Add ' : 'Edit ') + (labels[type] || 'Record');
-      if (subtitle) subtitle.textContent = 'Changes are saved directly to the Google Sheet tab.';
+      if (subtitle) subtitle.textContent = 'Changes are saved directly to the Database tab.';
       if (error) { error.style.display = 'none'; error.textContent = ''; }
 
       fieldWrap.innerHTML = fields.map(field => {
@@ -5218,7 +5831,7 @@
         .then(() => {
           const type = activeManagementType;
           closeSheetManagementModal();
-          showAutoLoadBanner('✓ Google Sheet updated successfully.', 'success');
+          showAutoLoadBanner('✓  Updated Successfully.', 'success');
           return refreshAfterManagementChange(type);
         })
         .catch(err => {
@@ -5241,10 +5854,10 @@
       if (!action) return;
 
       requireAdminForManagement(() => {
-        if (!window.confirm('Delete this ' + (labels[type] || 'record') + '?\n\nThis change will be reflected in Google Sheets.')) return;
+        if (!window.confirm('Delete this ' + (labels[type] || 'record') + '?\n\nThis change will be reflected in Database.')) return;
         apiCall(action, { row: row })
           .then(() => {
-            showAutoLoadBanner('✓ Record deleted from Google Sheet.', 'success');
+            showAutoLoadBanner('✓ Record deleted from Database.', 'success');
             return refreshAfterManagementChange(type);
           })
           .catch(err => window.alert('Could not delete the record: ' + (err && err.message ? err.message : err)));
@@ -5253,6 +5866,7 @@
 
 
     window.addEventListener('beforeprint', () => {
+      applyPrintLayoutClasses();
       const banner = document.getElementById('autoLoadBanner');
       if (banner) banner.style.display = 'none';
 
@@ -5350,6 +5964,28 @@
       let totalTags = 0;
 
       requestedItems.forEach(item => {
+        const specialType = getSpecialTagType(item.name || item.raw || '');
+
+        if (specialType) {
+          const matchedSpecial = allProducts.find(product => getSpecialTagType(product) === specialType) || null;
+          const specialProduct = matchedSpecial
+            ? cloneProductForCart(matchedSpecial)
+            : createSyntheticSpecialProduct(item, specialType);
+
+          specialProduct.specialType = specialType;
+          specialProduct.productKey = 'SPECIAL_' + specialType;
+
+          const specialKey = productKeyOf(specialProduct);
+          const existingSpecial = cart.find(c => productKeyOf(c.product) === specialKey);
+          if (existingSpecial) existingSpecial.qty += item.qty;
+          else cart.push({ product: specialProduct, qty: item.qty });
+
+          addedCount++;
+          totalTags += item.qty;
+          console.log('[PRELOAD] Added special print:', specialProduct.name, 'qty:', item.qty);
+          return;
+        }
+
         const match = findBestProductMatch(item);
         if (match) {
           const matchKey = productKeyOf(match);
@@ -5438,7 +6074,7 @@
             ${p.arabicName ? `<div class="pc-arabic">${p.arabicName}</div>` : ''}
             <div class="pc-desc">${p.description || '—'}</div>
             <div class="pc-footer">
-              <span class="pc-price">AED ${p.price}</span>
+              <span class="pc-price">${isDrivePdfSpecial(p) ? 'PDF FILE' : (getSpecialTagType(p) === 'DISCOUNT_40' ? '40% DESIGN' : 'AED ' + p.price)}</span>
               <span class="pc-cat">${p.category}</span>
             </div>
             <button class="add-btn" onclick="addToCart(${idx})" ${inCart ? 'disabled' : ''}>
@@ -5474,7 +6110,7 @@
       renderPreview(); updateCount();
     }
 
-    function clearAll() { cart = []; renderAll(); }
+    function clearAll() { cart = []; chocolatePrintSize = '8x6'; applyPrintLayoutClasses(); renderAll(); }
 
     function renderAll() {
       renderProductList();
@@ -5503,14 +6139,17 @@
 
       body.innerHTML = cart.map(({ product: p, qty }) => {
         const key = esc(productKeyOf(p));
+        const specialType = getSpecialTagType(p);
+        const priceLabel = isDrivePdfSpecial(p) ? 'PDF' : (specialType === 'DISCOUNT_40' ? 'DESIGN' : 'AED ' + p.price);
+        const weightLabel = specialType ? '—' : (p.netWeight || '—');
         return `
         <tr>
           <td>
             <div class="td-name">${p.name}</div>
             ${p.arabicName ? `<div class="td-arabic">${p.arabicName}</div>` : ''}
           </td>
-          <td class="td-price">AED ${p.price}</td>
-          <td class="td-weight">${p.netWeight || '—'}</td>
+          <td class="td-price">${priceLabel}</td>
+          <td class="td-weight">${weightLabel}</td>
           <td>
             <div class="qty-control">
               <button class="qty-btn" onclick="changeQty('${key}', -1)">−</button>
@@ -5521,7 +6160,7 @@
           </td>
           <td>
             <div class="action-cell">
-              <button class="edit-btn" onclick="openEditPrice('${key}')">Edit</button>
+              ${specialType ? '' : `<button class="edit-btn" onclick="openEditPrice('${key}')">Edit</button>`}
               <button class="remove-btn" onclick="removeFromCart('${key}')">Remove</button>
             </div>
           </td>
@@ -5532,15 +6171,178 @@
     // ── Preview ───────────────────────────────────────────
     function renderPreview() {
       const grid = document.getElementById('previewGrid');
-      if (!cart.length) { grid.innerHTML = ''; return; }
+      if (!cart.length) {
+        grid.innerHTML = '';
+        applyPrintLayoutClasses();
+        return;
+      }
 
       const tags = [];
       cart.forEach(({ product, qty }) => {
         for (let i = 0; i < qty; i++) tags.push(product);
       });
 
-      grid.innerHTML = tags.map((p, i) => buildTagHTML(p, i)).join('');
+      grid.innerHTML = tags.map((product, index) => {
+        const isSmallChocolate = isChocolateProduct(product) && chocolatePrintSize === '5x4';
+        return '<div class="print-slot' + (isSmallChocolate ? ' is-small' : '') + '">' +
+          buildPrintableItemHTML(product, index) +
+          '</div>';
+      }).join('');
+
+      applyPrintLayoutClasses();
       requestAnimationFrame(fitAllPriceTags);
+      loadSpecialPdfPreviews();
+    }
+
+    function buildPrintableItemHTML(product, index) {
+      const specialType = getSpecialTagType(product);
+      if (isDrivePdfSpecial(product)) return buildSpecialPdfHTML(specialType, index);
+      if (specialType === 'DISCOUNT_40') return buildDiscount40HTML(index);
+      if (isChocolateProduct(product)) return buildChocolateTagHTML(product, index, chocolatePrintSize);
+      return buildTagHTML(product, index);
+    }
+
+    function buildChocolateTagHTML(product, index, size) {
+      const small = size === '5x4';
+      const price = normalizePrice(product.price);
+      const netWeight = normalizeNetWeight(product.netWeightEN || product.netWeight || '');
+      const description = cleanDisplayValue(product.descriptionEN || product.description || '');
+
+      return `
+        <div class="chocolate-tag${small ? ' small' : ''}" style="animation-delay:${index * 0.04}s">
+          <div class="choc-stripes"><i></i><i></i><i></i></div>
+          <div class="choc-title">${html(product.name || '')}</div>
+          <div class="choc-info">
+            <div class="choc-weight">${html(netWeight)}</div>
+            <div class="choc-divider"></div>
+            <div class="choc-description">${html(description)}</div>
+          </div>
+          <div class="choc-bottom">
+            <div class="choc-price">${html(price)}</div>
+            <div class="choc-aed">${html(product.symbol || 'AED')}</div>
+          </div>
+        </div>`;
+    }
+
+    function buildDiscount40HTML(index) {
+      return `
+        <div class="discount-tag-40" style="animation-delay:${index * 0.04}s" aria-label="40 percent off">
+          <div class="discount-percent"><span>40</span><sup>%</sup></div>
+          <div class="discount-off">OFF</div>
+        </div>`;
+    }
+
+    function buildSpecialPdfHTML(specialType, index) {
+      const labels = {
+        NO_SMOKING: 'No Smoking',
+        NO_PETS: 'No Pets Allowed',
+        NO_OUTSIDE_FOOD: 'No Outside Food or Drink'
+      };
+      return `
+        <div class="special-pdf-tag" data-special-code="${html(specialType)}" data-render-index="${index}">
+          <div class="special-pdf-loading">
+            <div class="spinner" style="width:24px;height:24px;border-width:3px;"></div>
+            <div>Loading ${html(labels[specialType] || 'special PDF')}…</div>
+          </div>
+        </div>`;
+    }
+
+    function base64ToBytes(base64) {
+      const binary = window.atob(String(base64 || ''));
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+
+    function getSpecialPdfDocument(code) {
+      code = String(code || '').trim().toUpperCase();
+      if (specialPdfDocumentCache[code]) return Promise.resolve(specialPdfDocumentCache[code]);
+      if (specialPdfRequestCache[code]) return specialPdfRequestCache[code];
+
+      specialPdfRequestCache[code] = apiCall('getSpecialPdf', { code: code })
+        .then(fileInfo => {
+          if (!window.pdfjsLib) throw new Error('PDF renderer did not load. Refresh the page and try again.');
+          if (!fileInfo || !fileInfo.base64) throw new Error('The PDF file is empty or unavailable.');
+          return window.pdfjsLib.getDocument({ data: base64ToBytes(fileInfo.base64) }).promise;
+        })
+        .then(pdfDocument => {
+          specialPdfDocumentCache[code] = pdfDocument;
+          return pdfDocument;
+        })
+        .finally(() => {
+          delete specialPdfRequestCache[code];
+        });
+
+      return specialPdfRequestCache[code];
+    }
+
+    async function renderSpecialPdfElement(element) {
+      if (!element || element.dataset.pdfReady === '1') return true;
+      if (element._pdfRenderPromise) return element._pdfRenderPromise;
+      const code = String(element.dataset.specialCode || '').trim().toUpperCase();
+      if (!code) return false;
+
+      element._pdfRenderPromise = (async () => {
+      try {
+        const pdfDocument = await getSpecialPdfDocument(code);
+        const page = await pdfDocument.getPage(1);
+        const baseViewport = page.getViewport({ scale: 1 });
+
+        const naturalWidthCm = baseViewport.width * 2.54 / 72;
+        const naturalHeightCm = baseViewport.height * 2.54 / 72;
+        const physicalScale = Math.min(1, 8 / naturalWidthCm, 6 / naturalHeightCm);
+        const widthCm = naturalWidthCm * physicalScale;
+        const heightCm = naturalHeightCm * physicalScale;
+
+        const targetPixelWidth = Math.max(700, Math.round(widthCm / 2.54 * 96 * 2.2));
+        const renderScale = targetPixelWidth / baseViewport.width;
+        const viewport = page.getViewport({ scale: renderScale });
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d', { alpha: false });
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
+        canvas.className = 'special-pdf-canvas';
+        canvas.style.width = widthCm.toFixed(3) + 'cm';
+        canvas.style.height = heightCm.toFixed(3) + 'cm';
+
+        await page.render({ canvasContext: context, viewport: viewport, background: '#ffffff' }).promise;
+        element.innerHTML = '';
+        element.appendChild(canvas);
+        element.dataset.pdfReady = '1';
+        element.dataset.pdfPages = String(pdfDocument.numPages || 1);
+        return true;
+      } catch (err) {
+        console.error('[SPECIAL PDF] Failed to render ' + code + ':', err);
+        element.dataset.pdfReady = '0';
+        element.innerHTML = '<div class="special-pdf-error">⚠<br>' +
+          html(err && err.message ? err.message : 'Unable to load the PDF file.') +
+          '</div>';
+        return false;
+      } finally {
+        element._pdfRenderPromise = null;
+      }
+      })();
+
+      return element._pdfRenderPromise;
+    }
+
+    function loadSpecialPdfPreviews() {
+      const elements = Array.from(document.querySelectorAll('.special-pdf-tag[data-special-code]'));
+      elements.forEach(element => renderSpecialPdfElement(element));
+    }
+
+    async function ensureSpecialPdfTagsRendered() {
+      const elements = Array.from(document.querySelectorAll('.special-pdf-tag[data-special-code]'));
+      if (!elements.length) return true;
+      const results = await Promise.all(elements.map(renderSpecialPdfElement));
+      const ready = results.every(Boolean);
+      if (!ready) {
+        window.alert(
+          'One or more special PDF files could not be loaded.\n\n' +
+          'Check the Photo_Drive folder and confirm these exact filenames exist: NS.pdf, NPA.pdf and NOFD.pdf.'
+        );
+      }
+      return ready;
     }
 
     function html(value) {
@@ -5739,14 +6541,19 @@
 
     function fitAllPriceTags() {
       document.querySelectorAll('.price-tag').forEach(tag => {
-        /* Fixed sizes requested:
-           item name = 0.5cm, description = 0.3cm, price = 1cm */
+        
         fitTextToBox(tag.querySelector('.arabic-title'), 12);
         fitTextToBox(tag.querySelector('.desc-en'), 5);
         fitTextToBox(tag.querySelector('.desc-ar'), 5);
         fitTextToBox(tag.querySelector('.allergens'), 4.5);
         fitTextToBox(tag.querySelector('.net-wt'), 8);
         fitTextToBox(tag.querySelector('.portions'), 6.5);
+      });
+
+      document.querySelectorAll('.chocolate-tag').forEach(tag => {
+        fitTextToBox(tag.querySelector('.choc-title'), tag.classList.contains('small') ? 9 : 14);
+        fitTextToBox(tag.querySelector('.choc-description'), tag.classList.contains('small') ? 4.5 : 6);
+        fitTextToBox(tag.querySelector('.choc-weight'), tag.classList.contains('small') ? 6 : 8);
       });
 
       // Exact-template mode: CSS positions and size functions control the layout.
@@ -5910,6 +6717,7 @@
       if (event.key === 'Escape') {
         closeAdminLoginModal();
         closePriceEditModal();
+        closeChocolateSizeModal();
       }
       if (event.key === 'Enter') {
         const adminModal = document.getElementById('adminLoginModal');
@@ -5919,7 +6727,7 @@
       }
     });
 
-    // ── Background Template Upload (Google Drive) ──────────
+    
     let customBackground = null;
 
     function handleBackgroundUpload(event) {
@@ -5978,7 +6786,7 @@
       btn.textContent = 'Deleting...';
       btn.disabled = true;
       
-      // Delete from Google Drive. This works only inside Apps Script, not GitHub Pages.
+      
       if (!window.google || !google.script || !google.script.run) {
         console.warn('Background template delete is disabled on GitHub Pages.');
         btn.disabled = false;
@@ -6002,7 +6810,7 @@
             btn.disabled = false;
             btn.textContent = 'Reset Template';
             
-            // Re-render to apply default colors
+           
             renderPreview();
           }
         })
@@ -6014,13 +6822,12 @@
         .deleteBackgroundTemplate();
     }
 
-    // Load saved background on page load
+    
     function loadSavedBackground() {
-      // Exact-template mode: keep the generated CSS template as the master background.
+      
       return;
     }
 
-    // Call load function when page is ready
     window.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => loadSavedBackground(), 500);
     });
