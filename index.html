@@ -3805,30 +3805,39 @@
       height: 1.72cm;
       background: #874812;
       color: #f5e8c9;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: .10cm;
+    }
+
+    .choc-price-line {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: .16cm;
+      width: 100%;
     }
 
     .choc-price {
-      position: absolute;
-      left: 2.02cm;
-      bottom: .07cm;
+      position: static;
       color: #f5e8c9;
       font-family: 'Futura PT Bold', 'Arial Black', Arial, sans-serif;
       font-size: 1.62cm;
       font-weight: 900;
-      line-height: 1.62cm;
+      line-height: 1;
       letter-spacing: -.05cm;
       white-space: nowrap;
     }
 
     .choc-aed {
-      position: absolute;
-      left: 5.85cm;
-      bottom: .78cm;
+      position: static;
       color: #f5e8c9;
       font-family: 'Futura PT Bold', Arial, sans-serif;
       font-size: .46cm;
       font-weight: 900;
       white-space: nowrap;
+      padding-top: .30cm;
     }
 
     .chocolate-tag.small .choc-stripes {
@@ -3870,20 +3879,19 @@
       line-height: .145cm;
     }
 
-    .chocolate-tag.small .choc-bottom { height: 1.16cm; }
+    .chocolate-tag.small .choc-bottom { height: 1.16cm; padding-bottom: .07cm; }
+
+    .chocolate-tag.small .choc-price-line { gap: .10cm; }
 
     .chocolate-tag.small .choc-price {
-      left: .62cm;
-      bottom: .01cm;
       font-size: 1.08cm;
-      line-height: 1.08cm;
+      line-height: 1;
       letter-spacing: -.035cm;
     }
 
     .chocolate-tag.small .choc-aed {
-      left: 3.77cm;
-      bottom: .55cm;
       font-size: .29cm;
+      padding-top: .20cm;
     }
 
     .discount-tag-40 {
@@ -3973,6 +3981,29 @@
       line-height: 1.5;
     }
 
+
+    .special-asset-image {
+      width: 8cm;
+      height: 6cm;
+      object-fit: contain;
+      background: #fff;
+      display: block;
+      box-shadow: 0 2px 14px rgba(0,0,0,.28);
+    }
+
+    .print-slot.full-page-special {
+      width: 8cm;
+      height: 11.3cm;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .special-pdf-canvas.full-page,
+    .print-slot.full-page-special .special-pdf-canvas {
+      background: #fff;
+      box-shadow: 0 2px 14px rgba(0,0,0,.28);
+    }
+
     .special-pdf-loading { color: #666; background: #f6f6f6; }
     .special-pdf-error { color: #b53200; background: #fff2ec; }
 
@@ -4010,6 +4041,31 @@
         overflow: hidden !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
+      }
+
+      .print-slot.full-page-special {
+        width: 19cm !important;
+        height: 27.7cm !important;
+        grid-column: 1 / -1 !important;
+        grid-row: auto !important;
+        page-break-before: always !important;
+        break-before: page !important;
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+
+      .print-slot.full-page-special .special-pdf-tag,
+      .print-slot.full-page-special .special-pdf-canvas {
+        width: 19cm !important;
+        height: 27.7cm !important;
+        max-width: 19cm !important;
+        max-height: 27.7cm !important;
+      }
+
+      .print-slot.full-page-special .special-asset-image {
+        width: 19cm !important;
+        height: 27.7cm !important;
+        object-fit: contain !important;
       }
 
       body:not(.print-small-chocolate-only) .print-slot:nth-child(8n) {
@@ -4402,8 +4458,9 @@
     let pendingNotificationTimer = null;
     let latestPendingRequests = [];
     let chocolatePrintSize = '8x6';
+    const specialAssetDataCache = {};
+    const specialAssetRequestCache = {};
     const specialPdfDocumentCache = {};
-    const specialPdfRequestCache = {};
 
 
     // ── Helpers ───────────────────────────────────────────
@@ -4640,12 +4697,22 @@
       if (normalized.includes('no smoking')) return 'NO_SMOKING';
       if (normalized.includes('no pets') || normalized.includes('no pet allowed')) return 'NO_PETS';
       if (normalized.includes('no outside food')) return 'NO_OUTSIDE_FOOD';
+      if (normalized.includes('guest experience guideline')) return 'GUEST_EXPERIENCE';
       if (raw.includes('40%') || /\b40\s*(?:percent|discount|off)\b/.test(normalized)) return 'DISCOUNT_40';
       return '';
     }
 
+    function isDriveAssetSpecial(value) {
+      return ['NO_SMOKING', 'NO_PETS', 'NO_OUTSIDE_FOOD', 'GUEST_EXPERIENCE', 'DISCOUNT_40'].includes(getSpecialTagType(value));
+    }
+
+    function isFullPageSpecial(value) {
+      return ['NO_SMOKING', 'NO_PETS', 'NO_OUTSIDE_FOOD', 'GUEST_EXPERIENCE'].includes(getSpecialTagType(value));
+    }
+
+
     function isDrivePdfSpecial(value) {
-      return ['NO_SMOKING', 'NO_PETS', 'NO_OUTSIDE_FOOD'].includes(getSpecialTagType(value));
+      return isFullPageSpecial(value);
     }
 
     function isChocolateProduct(product) {
@@ -4659,6 +4726,7 @@
         NO_SMOKING: 'No Smoking',
         NO_PETS: 'No Pets Allowed',
         NO_OUTSIDE_FOOD: 'No Outside Food or Drink',
+        GUEST_EXPERIENCE: 'Guest Experience Guidelines',
         DISCOUNT_40: '40% Discount'
       };
       return {
@@ -6184,7 +6252,8 @@
 
       grid.innerHTML = tags.map((product, index) => {
         const isSmallChocolate = isChocolateProduct(product) && chocolatePrintSize === '5x4';
-        return '<div class="print-slot' + (isSmallChocolate ? ' is-small' : '') + '">' +
+        const isFullPage = isFullPageSpecial(product);
+        return '<div class="print-slot' + (isSmallChocolate ? ' is-small' : '') + (isFullPage ? ' full-page-special' : '') + '">' +
           buildPrintableItemHTML(product, index) +
           '</div>';
       }).join('');
@@ -6196,8 +6265,7 @@
 
     function buildPrintableItemHTML(product, index) {
       const specialType = getSpecialTagType(product);
-      if (isDrivePdfSpecial(product)) return buildSpecialPdfHTML(specialType, index);
-      if (specialType === 'DISCOUNT_40') return buildDiscount40HTML(index);
+      if (isDriveAssetSpecial(product)) return buildSpecialPdfHTML(specialType, index);
       if (isChocolateProduct(product)) return buildChocolateTagHTML(product, index, chocolatePrintSize);
       return buildTagHTML(product, index);
     }
@@ -6218,8 +6286,10 @@
             <div class="choc-description">${html(description)}</div>
           </div>
           <div class="choc-bottom">
-            <div class="choc-price">${html(price)}</div>
-            <div class="choc-aed">${html(product.symbol || 'AED')}</div>
+            <div class="choc-price-line">
+              <div class="choc-price">${html(price)}</div>
+              <div class="choc-aed">${html(product.symbol || 'AED')}</div>
+            </div>
           </div>
         </div>`;
     }
@@ -6236,7 +6306,9 @@
       const labels = {
         NO_SMOKING: 'No Smoking',
         NO_PETS: 'No Pets Allowed',
-        NO_OUTSIDE_FOOD: 'No Outside Food or Drink'
+        NO_OUTSIDE_FOOD: 'No Outside Food or Drink',
+        GUEST_EXPERIENCE: 'Guest Experience Guidelines',
+        DISCOUNT_40: '40%'
       };
       return `
         <div class="special-pdf-tag" data-special-code="${html(specialType)}" data-render-index="${index}">
@@ -6254,26 +6326,36 @@
       return bytes;
     }
 
-    function getSpecialPdfDocument(code) {
+    function getSpecialAssetFile(code) {
       code = String(code || '').trim().toUpperCase();
-      if (specialPdfDocumentCache[code]) return Promise.resolve(specialPdfDocumentCache[code]);
-      if (specialPdfRequestCache[code]) return specialPdfRequestCache[code];
+      if (specialAssetDataCache[code]) return Promise.resolve(specialAssetDataCache[code]);
+      if (specialAssetRequestCache[code]) return specialAssetRequestCache[code];
 
-      specialPdfRequestCache[code] = apiCall('getSpecialPdf', { code: code })
+      specialAssetRequestCache[code] = apiCall('getSpecialAsset', { code: code })
         .then(fileInfo => {
-          if (!window.pdfjsLib) throw new Error('PDF renderer did not load. Refresh the page and try again.');
-          if (!fileInfo || !fileInfo.base64) throw new Error('The PDF file is empty or unavailable.');
-          return window.pdfjsLib.getDocument({ data: base64ToBytes(fileInfo.base64) }).promise;
-        })
-        .then(pdfDocument => {
-          specialPdfDocumentCache[code] = pdfDocument;
-          return pdfDocument;
+          if (!fileInfo || !fileInfo.base64) throw new Error('The special file is empty or unavailable.');
+          specialAssetDataCache[code] = fileInfo;
+          return fileInfo;
         })
         .finally(() => {
-          delete specialPdfRequestCache[code];
+          delete specialAssetRequestCache[code];
         });
 
-      return specialPdfRequestCache[code];
+      return specialAssetRequestCache[code];
+    }
+
+    async function getSpecialPdfDocument(code) {
+      code = String(code || '').trim().toUpperCase();
+      if (specialPdfDocumentCache[code]) return specialPdfDocumentCache[code];
+      const fileInfo = await getSpecialAssetFile(code);
+      if (!window.pdfjsLib) throw new Error('PDF renderer did not load. Refresh the page and try again.');
+      if (!fileInfo || !fileInfo.base64) throw new Error('The PDF file is empty or unavailable.');
+      if (!String(fileInfo.mimeType || '').includes('pdf') && !/\.pdf$/i.test(String(fileInfo.fileName || ''))) {
+        throw new Error('The Drive file is not a PDF.');
+      }
+      const pdfDocument = await window.pdfjsLib.getDocument({ data: base64ToBytes(fileInfo.base64) }).promise;
+      specialPdfDocumentCache[code] = pdfDocument;
+      return pdfDocument;
     }
 
     async function renderSpecialPdfElement(element) {
@@ -6284,38 +6366,57 @@
 
       element._pdfRenderPromise = (async () => {
       try {
-        const pdfDocument = await getSpecialPdfDocument(code);
-        const page = await pdfDocument.getPage(1);
-        const baseViewport = page.getViewport({ scale: 1 });
+        const fileInfo = await getSpecialAssetFile(code);
+        const mimeType = String(fileInfo.mimeType || '').toLowerCase();
+        const isPdf = mimeType.includes('pdf') || /\.pdf$/i.test(String(fileInfo.fileName || ''));
+        const fullPage = isFullPageSpecial({ specialType: code });
 
-        const naturalWidthCm = baseViewport.width * 2.54 / 72;
-        const naturalHeightCm = baseViewport.height * 2.54 / 72;
-        const physicalScale = Math.min(1, 8 / naturalWidthCm, 6 / naturalHeightCm);
-        const widthCm = naturalWidthCm * physicalScale;
-        const heightCm = naturalHeightCm * physicalScale;
+        if (isPdf) {
+          const pdfDocument = await getSpecialPdfDocument(code);
+          const page = await pdfDocument.getPage(1);
+          const baseViewport = page.getViewport({ scale: 1 });
 
-        const targetPixelWidth = Math.max(700, Math.round(widthCm / 2.54 * 96 * 2.2));
-        const renderScale = targetPixelWidth / baseViewport.width;
-        const viewport = page.getViewport({ scale: renderScale });
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d', { alpha: false });
-        canvas.width = Math.ceil(viewport.width);
-        canvas.height = Math.ceil(viewport.height);
-        canvas.className = 'special-pdf-canvas';
-        canvas.style.width = widthCm.toFixed(3) + 'cm';
-        canvas.style.height = heightCm.toFixed(3) + 'cm';
+          const naturalWidthCm = baseViewport.width * 2.54 / 72;
+          const naturalHeightCm = baseViewport.height * 2.54 / 72;
+          const targetWidthCm = fullPage ? 19 : 8;
+          const targetHeightCm = fullPage ? 27.7 : 6;
+          const physicalScale = Math.min(targetWidthCm / naturalWidthCm, targetHeightCm / naturalHeightCm);
+          const widthCm = naturalWidthCm * physicalScale;
+          const heightCm = naturalHeightCm * physicalScale;
 
-        await page.render({ canvasContext: context, viewport: viewport, background: '#ffffff' }).promise;
+          const targetPixelWidth = Math.max(fullPage ? 1500 : 700, Math.round(widthCm / 2.54 * 96 * 2.2));
+          const renderScale = targetPixelWidth / baseViewport.width;
+          const viewport = page.getViewport({ scale: renderScale });
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d', { alpha: false });
+          canvas.width = Math.ceil(viewport.width);
+          canvas.height = Math.ceil(viewport.height);
+          canvas.className = 'special-pdf-canvas' + (fullPage ? ' full-page' : '');
+          canvas.style.width = widthCm.toFixed(3) + 'cm';
+          canvas.style.height = heightCm.toFixed(3) + 'cm';
+
+          await page.render({ canvasContext: context, viewport: viewport, background: '#ffffff' }).promise;
+          element.innerHTML = '';
+          element.appendChild(canvas);
+          element.dataset.pdfReady = '1';
+          element.dataset.pdfPages = String(pdfDocument.numPages || 1);
+          return true;
+        }
+
+        const img = document.createElement('img');
+        img.className = 'special-asset-image';
+        img.alt = code;
+        img.src = 'data:' + mimeType + ';base64,' + fileInfo.base64;
         element.innerHTML = '';
-        element.appendChild(canvas);
+        element.appendChild(img);
         element.dataset.pdfReady = '1';
-        element.dataset.pdfPages = String(pdfDocument.numPages || 1);
+        element.dataset.pdfPages = '1';
         return true;
       } catch (err) {
-        console.error('[SPECIAL PDF] Failed to render ' + code + ':', err);
+        console.error('[SPECIAL ASSET] Failed to render ' + code + ':', err);
         element.dataset.pdfReady = '0';
         element.innerHTML = '<div class="special-pdf-error">⚠<br>' +
-          html(err && err.message ? err.message : 'Unable to load the PDF file.') +
+          html(err && err.message ? err.message : 'Unable to load the file.') +
           '</div>';
         return false;
       } finally {
@@ -6339,7 +6440,7 @@
       if (!ready) {
         window.alert(
           'One or more special PDF files could not be loaded.\n\n' +
-          'Check the Photo_Drive folder and confirm these exact filenames exist: NS.pdf, NPA.pdf and NOFD.pdf.'
+          'Check the Photo_Drive folder and confirm these exact filenames exist: NS.pdf, NPA.pdf, NOFD.pdf, GEG.pdf and 40%.png.'
         );
       }
       return ready;
