@@ -4120,7 +4120,7 @@
         object-position: center center !important;
       }
 
-      body:not(.print-small-chocolate-only) .print-slot:nth-child(8n) {
+      body:not(.print-small-chocolate-only):not(.print-has-full-page-special) .print-slot:nth-child(8n) {
         page-break-after: always !important;
         break-after: page !important;
       }
@@ -4165,6 +4165,99 @@
       .special-pdf-loading,
       .special-pdf-error {
         display: none !important;
+      }
+    }
+
+  
+    /* ==========================================================
+       SPECIAL PNG A4 PRINT FIX
+       Each signage PNG is centered and fills one printable A4 page.
+       This final block intentionally overrides the normal tag grid.
+       ========================================================== */
+    @media print {
+      body.print-has-full-page-special .request-banner {
+        display: none !important;
+      }
+
+      body.print-has-full-page-special .preview-grid {
+        display: block !important;
+        width: 20cm !important;
+        max-width: 20cm !important;
+        min-width: 20cm !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        gap: 0 !important;
+        background: #ffffff !important;
+        text-align: center !important;
+      }
+
+      body.print-has-full-page-special .print-slot.full-page-special {
+        display: flex !important;
+        position: relative !important;
+        width: 20cm !important;
+        height: 28.7cm !important;
+        max-width: 20cm !important;
+        max-height: 28.7cm !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        align-items: center !important;
+        justify-content: center !important;
+        grid-column: auto !important;
+        grid-row: auto !important;
+        background: #ffffff !important;
+        page-break-before: always !important;
+        break-before: page !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      /* Do not create a blank page before the first signage. */
+      body.print-has-full-page-special .print-slot.full-page-special:first-child {
+        page-break-before: auto !important;
+        break-before: auto !important;
+      }
+
+      /* Do not create an extra blank sheet after the final signage. */
+      body.print-has-full-page-special .print-slot.full-page-special:last-child {
+        page-break-after: auto !important;
+        break-after: auto !important;
+      }
+
+      body.print-has-full-page-special .print-slot.full-page-special .special-pdf-tag {
+        display: flex !important;
+        position: relative !important;
+        width: 20cm !important;
+        height: 28.7cm !important;
+        max-width: 20cm !important;
+        max-height: 28.7cm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #ffffff !important;
+      }
+
+      body.print-has-full-page-special .print-slot.full-page-special .special-asset-image,
+      body.print-has-full-page-special .print-slot.full-page-special .special-asset-image.centered-a4-image,
+      body.print-has-full-page-special .print-slot.full-page-special .special-asset-image.full-a4-image {
+        display: block !important;
+        width: 20cm !important;
+        height: 28.7cm !important;
+        min-width: 20cm !important;
+        min-height: 28.7cm !important;
+        max-width: 20cm !important;
+        max-height: 28.7cm !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        object-fit: fill !important;
+        object-position: center center !important;
+        transform: none !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
       }
     }
 
@@ -4764,8 +4857,9 @@
     }
 
     function isFullA4Image(value) {
-      // These two PNG files use the full available A4 print area.
-      return ['NO_PETS', 'NO_OUTSIDE_FOOD'].includes(getSpecialTagType(value));
+      // All signage PNG files use the complete available A4 print area.
+      return ['NO_SMOKING', 'NO_PETS', 'NO_OUTSIDE_FOOD', 'GUEST_EXPERIENCE']
+        .includes(getSpecialTagType(value));
     }
 
     function isDrivePdfSpecial(value) {
@@ -4819,8 +4913,18 @@
         cart.every(item => isChocolateProduct(item.product));
     }
 
+    function cartContainsFullPageSpecial() {
+      return cart.some(item => isFullPageSpecial(item.product));
+    }
+
+    function allPrintableItemsAreFullPageSpecial() {
+      return cart.length > 0 && cart.every(item => isFullPageSpecial(item.product));
+    }
+
     function applyPrintLayoutClasses() {
       document.body.classList.toggle('print-small-chocolate-only', allPrintableItemsAreSmallChocolate());
+      document.body.classList.toggle('print-has-full-page-special', cartContainsFullPageSpecial());
+      document.body.classList.toggle('print-full-page-special-only', allPrintableItemsAreFullPageSpecial());
     }
 
     function parseSelectedProductsFromRequest(req) {
