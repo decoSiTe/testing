@@ -4170,32 +4170,67 @@
 
   
     /* ==========================================================
-       SPECIAL PNG A4 PRINT FIX
-       Each signage PNG is centered and fills one printable A4 page.
-       This final block intentionally overrides the normal tag grid.
+       MIXED PRICE LABELS + FULL-A4 SIGNAGE PRINT FIX
+
+       - Normal labels and 40% labels stay in two columns.
+       - The branch/date header remains on the normal-label page.
+       - NS, NPA, NOFD and GEG each start on their own full A4 page.
+       - When the print contains signage only, the header is hidden.
        ========================================================== */
     @media print {
-      body.print-has-full-page-special .request-banner {
+      /* Keep the header when normal labels are printed together with signage. */
+      body.print-has-full-page-special:not(.print-full-page-special-only) .request-banner {
+        display: block !important;
+      }
+
+      /* Signage-only printing keeps the complete A4 page available. */
+      body.print-full-page-special-only .request-banner {
         display: none !important;
       }
 
+      /*
+       Keep a real two-column grid. The previous display:block rule caused
+       8x6 and 40% labels to appear only down the left side.
+      */
       body.print-has-full-page-special .preview-grid {
-        display: block !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, 8cm) !important;
+        grid-auto-rows: auto !important;
+        column-gap: 0.25cm !important;
+        row-gap: 0.25cm !important;
+        justify-content: center !important;
+        align-content: start !important;
+        align-items: start !important;
         width: 20cm !important;
-        max-width: 20cm !important;
         min-width: 20cm !important;
+        max-width: 20cm !important;
         margin: 0 auto !important;
         padding: 0 !important;
-        gap: 0 !important;
         background: #ffffff !important;
-        text-align: center !important;
+        overflow: visible !important;
       }
 
+      /* Print all normal labels first so the shared header stays with them. */
+      body.print-has-full-page-special .print-slot:not(.full-page-special) {
+        order: 0 !important;
+        width: 8cm !important;
+        height: 6cm !important;
+        grid-column: auto !important;
+        margin: 0 !important;
+      }
+
+      /* Every signage item receives one complete printable A4 sheet. */
       body.print-has-full-page-special .print-slot.full-page-special {
+        order: 1 !important;
         display: flex !important;
         position: relative !important;
+        grid-column: 1 / -1 !important;
+        justify-self: center !important;
+        align-self: start !important;
         width: 20cm !important;
         height: 28.7cm !important;
+        min-width: 20cm !important;
+        min-height: 28.7cm !important;
         max-width: 20cm !important;
         max-height: 28.7cm !important;
         margin: 0 auto !important;
@@ -4203,8 +4238,6 @@
         overflow: hidden !important;
         align-items: center !important;
         justify-content: center !important;
-        grid-column: auto !important;
-        grid-row: auto !important;
         background: #ffffff !important;
         page-break-before: always !important;
         break-before: page !important;
@@ -4214,13 +4247,16 @@
         break-inside: avoid !important;
       }
 
-      /* Do not create a blank page before the first signage. */
-      body.print-has-full-page-special .print-slot.full-page-special:first-child {
+      /*
+       When signage is the only content, do not insert a blank first page.
+       In a mixed print, the first signage still starts after the label page.
+      */
+      body.print-full-page-special-only .print-slot.full-page-special:first-child {
         page-break-before: auto !important;
         break-before: auto !important;
       }
 
-      /* Do not create an extra blank sheet after the final signage. */
+      /* Do not generate a blank sheet after the final signage. */
       body.print-has-full-page-special .print-slot.full-page-special:last-child {
         page-break-after: auto !important;
         break-after: auto !important;
@@ -4231,6 +4267,8 @@
         position: relative !important;
         width: 20cm !important;
         height: 28.7cm !important;
+        min-width: 20cm !important;
+        min-height: 28.7cm !important;
         max-width: 20cm !important;
         max-height: 28.7cm !important;
         margin: 0 !important;
