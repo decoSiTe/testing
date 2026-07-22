@@ -3620,7 +3620,7 @@
     /* ═══════════════════════════════════════════════════════════════
        CHOCOLATE SIZE CHOOSER + SPECIAL PRINT ITEMS
        Chocolate: 5cm x 4cm or 8cm x 6cm.
-       Signage PDFs: NS.pdf, NPA.pdf and NOFD.pdf from Photo_Drive.
+       Signage PNG files: NS.png, NPA.png, NOFD.png and GEG.png from Photo_Drive.
        ═══════════════════════════════════════════════════════════════ */
     .chocolate-size-modal-box {
       width: min(590px, 96vw) !important;
@@ -3983,19 +3983,49 @@
 
 
     .special-asset-image {
-      width: 8cm;
-      height: 6cm;
-      object-fit: contain;
-      background: #fff;
       display: block;
+      object-fit: contain;
+      object-position: center center;
+      background: #fff;
       box-shadow: 0 2px 14px rgba(0,0,0,.28);
     }
 
+    /* 40%.png remains an 8cm × 6cm design. */
+    .special-asset-image.standard-special-image {
+      width: 8cm;
+      height: 6cm;
+    }
+
+    /* All signage images are automatically centered in their A4 preview slot. */
     .print-slot.full-page-special {
       width: 8cm;
       height: 11.3cm;
-      align-items: flex-start;
+      align-items: center;
       justify-content: center;
+    }
+
+    .print-slot.full-page-special .special-pdf-tag {
+      width: 8cm;
+      height: 11.3cm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .special-asset-image.centered-a4-image {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      margin: auto;
+    }
+
+    .special-asset-image.full-a4-image {
+      width: 100%;
+      height: 100%;
+      margin: auto;
+      object-fit: contain;
+      object-position: center center;
     }
 
     .special-pdf-canvas.full-page,
@@ -4062,10 +4092,32 @@
         max-height: 27.7cm !important;
       }
 
-      .print-slot.full-page-special .special-asset-image {
+      .print-slot.full-page-special .special-pdf-tag {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+
+      /* NS.png and GEG.png: preserve proportions and auto-center on A4. */
+      .print-slot.full-page-special .special-asset-image.centered-a4-image {
+        width: auto !important;
+        height: auto !important;
+        max-width: 19cm !important;
+        max-height: 27.7cm !important;
+        margin: auto !important;
+        object-fit: contain !important;
+        object-position: center center !important;
+      }
+
+      /* NPA.png and NOFD.png: fill the complete available A4 print area. */
+      .print-slot.full-page-special .special-asset-image.full-a4-image {
         width: 19cm !important;
         height: 27.7cm !important;
+        max-width: 19cm !important;
+        max-height: 27.7cm !important;
+        margin: auto !important;
         object-fit: contain !important;
+        object-position: center center !important;
       }
 
       body:not(.print-small-chocolate-only) .print-slot:nth-child(8n) {
@@ -4707,11 +4759,17 @@
     }
 
     function isFullPageSpecial(value) {
+      // Every signage image prints on its own A4 page.
       return ['NO_SMOKING', 'NO_PETS', 'NO_OUTSIDE_FOOD', 'GUEST_EXPERIENCE'].includes(getSpecialTagType(value));
     }
 
+    function isFullA4Image(value) {
+      // These two PNG files use the full available A4 print area.
+      return ['NO_PETS', 'NO_OUTSIDE_FOOD'].includes(getSpecialTagType(value));
+    }
 
     function isDrivePdfSpecial(value) {
+      // Kept for compatibility with the existing selected-items labels.
       return isFullPageSpecial(value);
     }
 
@@ -6404,9 +6462,27 @@
         }
 
         const img = document.createElement('img');
-        img.className = 'special-asset-image';
+        const isA4Signage = isFullPageSpecial({ specialType: code });
+        const fillsA4 = isFullA4Image({ specialType: code });
+
+        img.className = 'special-asset-image ' +
+          (isA4Signage
+            ? (fillsA4 ? 'full-a4-image' : 'centered-a4-image')
+            : 'standard-special-image');
         img.alt = code;
-        img.src = 'data:' + mimeType + ';base64,' + fileInfo.base64;
+
+        const imageReady = new Promise((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error('The PNG image could not be loaded: ' + (fileInfo.fileName || code)));
+        });
+
+        img.src = 'data:' + (mimeType || 'image/png') + ';base64,' + fileInfo.base64;
+        await imageReady;
+
+        if (typeof img.decode === 'function') {
+          try { await img.decode(); } catch (decodeErr) {}
+        }
+
         element.innerHTML = '';
         element.appendChild(img);
         element.dataset.pdfReady = '1';
@@ -6440,7 +6516,7 @@
       if (!ready) {
         window.alert(
           'One or more special PDF files could not be loaded.\n\n' +
-          'Check the Photo_Drive folder and confirm these exact filenames exist: NS.pdf, NPA.pdf, NOFD.pdf, GEG.pdf and 40%.png.'
+          'Check the Photo_Drive folder and confirm these exact filenames exist: NS.png, NPA.png, NOFD.png, GEG.png and 40%.png.'
         );
       }
       return ready;
