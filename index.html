@@ -4,6 +4,7 @@
   <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="a4-signage-center-fix" content="2026-07-22-v2">
   <title>Price Tag Generator</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="shortcut icon" type="image/png" href="favicon.png">
@@ -6613,37 +6614,38 @@
     }
 
 
-    function getImageBackgroundColor_(data, width, height) {
-      const sampleSize = Math.max(2, Math.min(12, Math.floor(Math.min(width, height) * 0.015)));
-      const samples = [];
+    function isVisibleSignagePixel_(red, green, blue, alpha) {
+      if (alpha < 20) return false;
 
-      function collect(startX, startY) {
-        for (let y = startY; y < Math.min(height, startY + sampleSize); y++) {
-          for (let x = startX; x < Math.min(width, startX + sampleSize); x++) {
-            const index = (y * width + x) * 4;
-            if (data[index + 3] < 20) continue;
-            samples.push([data[index], data[index + 1], data[index + 2]]);
-          }
-        }
-      }
+      /*
+       The signage files use a white or transparent outer background.
+       Detect the actual artwork directly instead of guessing the background
+       from the four corners. A colored border touching a corner previously
+       caused the complete blank margin to be included and shifted the design.
+      */
+      const darkestChannel = Math.min(red, green, blue);
+      const brightestChannel = Math.max(red, green, blue);
+      const colorRange = brightestChannel - darkestChannel;
 
-      collect(0, 0);
-      collect(Math.max(0, width - sampleSize), 0);
-      collect(0, Math.max(0, height - sampleSize));
-      collect(Math.max(0, width - sampleSize), Math.max(0, height - sampleSize));
+      const isAlmostWhite =
+        red >= 246 &&
+        green >= 246 &&
+        blue >= 246 &&
+        colorRange <= 10;
 
-      if (!samples.length) return { r: 255, g: 255, b: 255 };
-
-      samples.sort((a, b) => (a[0] + a[1] + a[2]) - (b[0] + b[1] + b[2]));
-      const middle = samples[Math.floor(samples.length / 2)];
-      return { r: middle[0], g: middle[1], b: middle[2] };
+      return !isAlmostWhite;
     }
 
     function getTrimmedImageBounds_(image) {
       const naturalWidth = Math.max(1, image.naturalWidth || image.width || 1);
       const naturalHeight = Math.max(1, image.naturalHeight || image.height || 1);
-      const maxScanDimension = 1400;
-      const scanScale = Math.min(1, maxScanDimension / Math.max(naturalWidth, naturalHeight));
+
+      const maxScanDimension = 1600;
+      const scanScale = Math.min(
+        1,
+        maxScanDimension / Math.max(naturalWidth, naturalHeight)
+      );
+
       const scanWidth = Math.max(1, Math.round(naturalWidth * scanScale));
       const scanHeight = Math.max(1, Math.round(naturalHeight * scanScale));
 
@@ -6655,52 +6657,107 @@
         alpha: true,
         willReadFrequently: true
       });
+
       scanContext.clearRect(0, 0, scanWidth, scanHeight);
       scanContext.drawImage(image, 0, 0, scanWidth, scanHeight);
 
-      const imageData = scanContext.getImageData(0, 0, scanWidth, scanHeight);
-      const pixels = imageData.data;
-      const background = getImageBackgroundColor_(pixels, scanWidth, scanHeight);
+      const pixels = scanContext.getImageData(
+        0,
+        0,
+        scanWidth,
+        scanHeight
+      ).data;
 
-      let minX = scanWidth;
-      let minY = scanHeight;
-      let maxX = -1;
-      let maxY = -1;
+      const columnCounts = new Uint32Array(scanWidth);
+      const rowCounts = new Uint32Array(scanHeight);
 
       for (let y = 0; y < scanHeight; y++) {
         for (let x = 0; x < scanWidth; x++) {
           const index = (y * scanWidth + x) * 4;
-          const alpha = pixels[index + 3];
 
-          if (alpha < 18) continue;
-
-          const redDifference = Math.abs(pixels[index] - background.r);
-          const greenDifference = Math.abs(pixels[index + 1] - background.g);
-          const blueDifference = Math.abs(pixels[index + 2] - background.b);
-          const colorDifference = redDifference + greenDifference + blueDifference;
-
-          /*
-           A pixel is treated as design content when it differs enough from
-           the corner background. This removes uneven white/transparent margins.
-          */
-          if (colorDifference > 42) {
-            if (x < minX) minX = x;
-            if (y < minY) minY = y;
-            if (x > maxX) maxX = x;
-            if (y > maxY) maxY = y;
+          if (isVisibleSignagePixel_(
+            pixels[index],
+            pixels[index + 1],
+            pixels[index + 2],
+            pixels[index + 3]
+          )) {
+            columnCounts[x]++;
+            rowCounts[y]++;
           }
         }
       }
 
-      if (maxX < minX || maxY < minY) {
-        return { x: 0, y: 0, width: naturalWidth, height: naturalHeight };
+      /*
+       Ignore isolated compression/noise pixels at the outside edges.
+       Real borders, text and icons contain many connected pixels.
+      */
+      const minimumColumnPixels = Math.max(
+        2,
+        Math.round(scanHeight * 0.0015)
+      );
+      const minimumRowPixels = Math.max(
+        2,
+        Math.round(scanWidth * 0.0015)
+      );
+
+      let minX = 0;
+      while (
+        minX < scanWidth &&
+        columnCounts[minX] < minimumColumnPixels
+      ) {
+        minX++;
       }
 
-      const safetyPadding = Math.max(2, Math.round(Math.min(scanWidth, scanHeight) * 0.008));
-      minX = Math.max(0, minX - safetyPadding);
-      minY = Math.max(0, minY - safetyPadding);
-      maxX = Math.min(scanWidth - 1, maxX + safetyPadding);
-      maxY = Math.min(scanHeight - 1, maxY + safetyPadding);
+      let maxX = scanWidth - 1;
+      while (
+        maxX >= 0 &&
+        columnCounts[maxX] < minimumColumnPixels
+      ) {
+        maxX--;
+      }
+
+      let minY = 0;
+      while (
+        minY < scanHeight &&
+        rowCounts[minY] < minimumRowPixels
+      ) {
+        minY++;
+      }
+
+      let maxY = scanHeight - 1;
+      while (
+        maxY >= 0 &&
+        rowCounts[maxY] < minimumRowPixels
+      ) {
+        maxY--;
+      }
+
+      if (maxX < minX || maxY < minY) {
+        return {
+          x: 0,
+          y: 0,
+          width: naturalWidth,
+          height: naturalHeight
+        };
+      }
+
+      /*
+       Keep a small equal safety margin around all four sides so no border is
+       clipped. The same amount is added left/right and top/bottom.
+      */
+      const horizontalPadding = Math.max(
+        3,
+        Math.round((maxX - minX + 1) * 0.008)
+      );
+      const verticalPadding = Math.max(
+        3,
+        Math.round((maxY - minY + 1) * 0.008)
+      );
+
+      minX = Math.max(0, minX - horizontalPadding);
+      maxX = Math.min(scanWidth - 1, maxX + horizontalPadding);
+      minY = Math.max(0, minY - verticalPadding);
+      maxY = Math.min(scanHeight - 1, maxY + verticalPadding);
 
       return {
         x: minX / scanScale,
@@ -6736,8 +6793,8 @@
        Fit the complete trimmed design inside A4, centered horizontally and
        vertically. A tiny safety margin prevents borders from being cut.
       */
-      const safeWidth = outputWidth * 0.992;
-      const safeHeight = outputHeight * 0.992;
+      const safeWidth = outputWidth * 0.970;
+      const safeHeight = outputHeight * 0.970;
       const scale = Math.min(safeWidth / crop.width, safeHeight / crop.height);
       const drawWidth = crop.width * scale;
       const drawHeight = crop.height * scale;
