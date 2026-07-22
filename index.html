@@ -4,7 +4,6 @@
   <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="a4-signage-center-fix" content="2026-07-22-v2">
   <title>Price Tag Generator</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="shortcut icon" type="image/png" href="favicon.png">
@@ -4171,67 +4170,32 @@
 
   
     /* ==========================================================
-       MIXED PRICE LABELS + FULL-A4 SIGNAGE PRINT FIX
-
-       - Normal labels and 40% labels stay in two columns.
-       - The branch/date header remains on the normal-label page.
-       - NS, NPA, NOFD and GEG each start on their own full A4 page.
-       - When the print contains signage only, the header is hidden.
+       SPECIAL PNG A4 PRINT FIX
+       Each signage PNG is centered and fills one printable A4 page.
+       This final block intentionally overrides the normal tag grid.
        ========================================================== */
     @media print {
-      /* Keep the header when normal labels are printed together with signage. */
-      body.print-has-full-page-special:not(.print-full-page-special-only) .request-banner {
-        display: block !important;
-      }
-
-      /* Signage-only printing keeps the complete A4 page available. */
-      body.print-full-page-special-only .request-banner {
+      body.print-has-full-page-special .request-banner {
         display: none !important;
       }
 
-      /*
-       Keep a real two-column grid. The previous display:block rule caused
-       8x6 and 40% labels to appear only down the left side.
-      */
       body.print-has-full-page-special .preview-grid {
-        display: grid !important;
-        grid-template-columns: repeat(2, 8cm) !important;
-        grid-auto-rows: auto !important;
-        column-gap: 0.25cm !important;
-        row-gap: 0.25cm !important;
-        justify-content: center !important;
-        align-content: start !important;
-        align-items: start !important;
+        display: block !important;
         width: 20cm !important;
-        min-width: 20cm !important;
         max-width: 20cm !important;
+        min-width: 20cm !important;
         margin: 0 auto !important;
         padding: 0 !important;
+        gap: 0 !important;
         background: #ffffff !important;
-        overflow: visible !important;
+        text-align: center !important;
       }
 
-      /* Print all normal labels first so the shared header stays with them. */
-      body.print-has-full-page-special .print-slot:not(.full-page-special) {
-        order: 0 !important;
-        width: 8cm !important;
-        height: 6cm !important;
-        grid-column: auto !important;
-        margin: 0 !important;
-      }
-
-      /* Every signage item receives one complete printable A4 sheet. */
       body.print-has-full-page-special .print-slot.full-page-special {
-        order: 1 !important;
         display: flex !important;
         position: relative !important;
-        grid-column: 1 / -1 !important;
-        justify-self: center !important;
-        align-self: start !important;
         width: 20cm !important;
         height: 28.7cm !important;
-        min-width: 20cm !important;
-        min-height: 28.7cm !important;
         max-width: 20cm !important;
         max-height: 28.7cm !important;
         margin: 0 auto !important;
@@ -4239,6 +4203,8 @@
         overflow: hidden !important;
         align-items: center !important;
         justify-content: center !important;
+        grid-column: auto !important;
+        grid-row: auto !important;
         background: #ffffff !important;
         page-break-before: always !important;
         break-before: page !important;
@@ -4248,16 +4214,13 @@
         break-inside: avoid !important;
       }
 
-      /*
-       When signage is the only content, do not insert a blank first page.
-       In a mixed print, the first signage still starts after the label page.
-      */
-      body.print-full-page-special-only .print-slot.full-page-special:first-child {
+      /* Do not create a blank page before the first signage. */
+      body.print-has-full-page-special .print-slot.full-page-special:first-child {
         page-break-before: auto !important;
         break-before: auto !important;
       }
 
-      /* Do not generate a blank sheet after the final signage. */
+      /* Do not create an extra blank sheet after the final signage. */
       body.print-has-full-page-special .print-slot.full-page-special:last-child {
         page-break-after: auto !important;
         break-after: auto !important;
@@ -4268,8 +4231,6 @@
         position: relative !important;
         width: 20cm !important;
         height: 28.7cm !important;
-        min-width: 20cm !important;
-        min-height: 28.7cm !important;
         max-width: 20cm !important;
         max-height: 28.7cm !important;
         margin: 0 !important;
@@ -4297,60 +4258,6 @@
         transform: none !important;
         background: #ffffff !important;
         box-shadow: none !important;
-      }
-    }
-
-  
-    /* ==========================================================
-       FINAL A4 SIGNAGE CANVAS FIX
-
-       The PNG is trimmed in JavaScript to remove uneven white space,
-       then redrawn into a centered A4 canvas. This keeps:
-       - normal/40% labels in two columns;
-       - the branch/date header on the label page;
-       - NS, NPA, NOFD and GEG on separate full A4 pages.
-       ========================================================== */
-    .special-a4-canvas {
-      display: block;
-      width: 8cm;
-      height: 11.3cm;
-      margin: auto;
-      padding: 0;
-      background: #ffffff;
-      box-shadow: 0 2px 14px rgba(0,0,0,.28);
-    }
-
-    @media print {
-      body.print-has-full-page-special .print-slot.full-page-special,
-      body.print-has-full-page-special .print-slot.full-page-special .special-pdf-tag {
-        width: 20cm !important;
-        height: 28.7cm !important;
-        min-width: 20cm !important;
-        min-height: 28.7cm !important;
-        max-width: 20cm !important;
-        max-height: 28.7cm !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        padding: 0 !important;
-        align-items: center !important;
-        justify-content: center !important;
-        overflow: hidden !important;
-        background: #ffffff !important;
-      }
-
-      body.print-has-full-page-special .special-a4-canvas {
-        display: block !important;
-        width: 20cm !important;
-        height: 28.7cm !important;
-        min-width: 20cm !important;
-        min-height: 28.7cm !important;
-        max-width: 20cm !important;
-        max-height: 28.7cm !important;
-        margin: 0 auto !important;
-        padding: 0 !important;
-        background: #ffffff !important;
-        box-shadow: none !important;
-        transform: none !important;
       }
     }
 
@@ -6613,203 +6520,6 @@
       return pdfDocument;
     }
 
-
-    function isVisibleSignagePixel_(red, green, blue, alpha) {
-      if (alpha < 20) return false;
-
-      /*
-       The signage files use a white or transparent outer background.
-       Detect the actual artwork directly instead of guessing the background
-       from the four corners. A colored border touching a corner previously
-       caused the complete blank margin to be included and shifted the design.
-      */
-      const darkestChannel = Math.min(red, green, blue);
-      const brightestChannel = Math.max(red, green, blue);
-      const colorRange = brightestChannel - darkestChannel;
-
-      const isAlmostWhite =
-        red >= 246 &&
-        green >= 246 &&
-        blue >= 246 &&
-        colorRange <= 10;
-
-      return !isAlmostWhite;
-    }
-
-    function getTrimmedImageBounds_(image) {
-      const naturalWidth = Math.max(1, image.naturalWidth || image.width || 1);
-      const naturalHeight = Math.max(1, image.naturalHeight || image.height || 1);
-
-      const maxScanDimension = 1600;
-      const scanScale = Math.min(
-        1,
-        maxScanDimension / Math.max(naturalWidth, naturalHeight)
-      );
-
-      const scanWidth = Math.max(1, Math.round(naturalWidth * scanScale));
-      const scanHeight = Math.max(1, Math.round(naturalHeight * scanScale));
-
-      const scanCanvas = document.createElement('canvas');
-      scanCanvas.width = scanWidth;
-      scanCanvas.height = scanHeight;
-
-      const scanContext = scanCanvas.getContext('2d', {
-        alpha: true,
-        willReadFrequently: true
-      });
-
-      scanContext.clearRect(0, 0, scanWidth, scanHeight);
-      scanContext.drawImage(image, 0, 0, scanWidth, scanHeight);
-
-      const pixels = scanContext.getImageData(
-        0,
-        0,
-        scanWidth,
-        scanHeight
-      ).data;
-
-      const columnCounts = new Uint32Array(scanWidth);
-      const rowCounts = new Uint32Array(scanHeight);
-
-      for (let y = 0; y < scanHeight; y++) {
-        for (let x = 0; x < scanWidth; x++) {
-          const index = (y * scanWidth + x) * 4;
-
-          if (isVisibleSignagePixel_(
-            pixels[index],
-            pixels[index + 1],
-            pixels[index + 2],
-            pixels[index + 3]
-          )) {
-            columnCounts[x]++;
-            rowCounts[y]++;
-          }
-        }
-      }
-
-      /*
-       Ignore isolated compression/noise pixels at the outside edges.
-       Real borders, text and icons contain many connected pixels.
-      */
-      const minimumColumnPixels = Math.max(
-        2,
-        Math.round(scanHeight * 0.0015)
-      );
-      const minimumRowPixels = Math.max(
-        2,
-        Math.round(scanWidth * 0.0015)
-      );
-
-      let minX = 0;
-      while (
-        minX < scanWidth &&
-        columnCounts[minX] < minimumColumnPixels
-      ) {
-        minX++;
-      }
-
-      let maxX = scanWidth - 1;
-      while (
-        maxX >= 0 &&
-        columnCounts[maxX] < minimumColumnPixels
-      ) {
-        maxX--;
-      }
-
-      let minY = 0;
-      while (
-        minY < scanHeight &&
-        rowCounts[minY] < minimumRowPixels
-      ) {
-        minY++;
-      }
-
-      let maxY = scanHeight - 1;
-      while (
-        maxY >= 0 &&
-        rowCounts[maxY] < minimumRowPixels
-      ) {
-        maxY--;
-      }
-
-      if (maxX < minX || maxY < minY) {
-        return {
-          x: 0,
-          y: 0,
-          width: naturalWidth,
-          height: naturalHeight
-        };
-      }
-
-      /*
-       Keep a small equal safety margin around all four sides so no border is
-       clipped. The same amount is added left/right and top/bottom.
-      */
-      const horizontalPadding = Math.max(
-        3,
-        Math.round((maxX - minX + 1) * 0.008)
-      );
-      const verticalPadding = Math.max(
-        3,
-        Math.round((maxY - minY + 1) * 0.008)
-      );
-
-      minX = Math.max(0, minX - horizontalPadding);
-      maxX = Math.min(scanWidth - 1, maxX + horizontalPadding);
-      minY = Math.max(0, minY - verticalPadding);
-      maxY = Math.min(scanHeight - 1, maxY + verticalPadding);
-
-      return {
-        x: minX / scanScale,
-        y: minY / scanScale,
-        width: Math.max(1, (maxX - minX + 1) / scanScale),
-        height: Math.max(1, (maxY - minY + 1) / scanScale)
-      };
-    }
-
-    function createCenteredA4SignageCanvas_(image, specialCode) {
-      /*
-       1240 × 1754 keeps the exact A4 portrait ratio and provides sufficient
-       resolution for the browser print preview without making the page heavy.
-      */
-      const outputWidth = 1240;
-      const outputHeight = 1754;
-      const canvas = document.createElement('canvas');
-      canvas.width = outputWidth;
-      canvas.height = outputHeight;
-      canvas.className = 'special-a4-canvas';
-      canvas.setAttribute('role', 'img');
-      canvas.setAttribute('aria-label', specialCode || 'A4 signage');
-
-      const context = canvas.getContext('2d', { alpha: false });
-      context.fillStyle = '#ffffff';
-      context.fillRect(0, 0, outputWidth, outputHeight);
-      context.imageSmoothingEnabled = true;
-      context.imageSmoothingQuality = 'high';
-
-      const crop = getTrimmedImageBounds_(image);
-
-      /*
-       Fit the complete trimmed design inside A4, centered horizontally and
-       vertically. A tiny safety margin prevents borders from being cut.
-      */
-      const safeWidth = outputWidth * 0.970;
-      const safeHeight = outputHeight * 0.970;
-      const scale = Math.min(safeWidth / crop.width, safeHeight / crop.height);
-      const drawWidth = crop.width * scale;
-      const drawHeight = crop.height * scale;
-      const drawX = (outputWidth - drawWidth) / 2;
-      const drawY = (outputHeight - drawHeight) / 2;
-
-      context.drawImage(
-        image,
-        crop.x, crop.y, crop.width, crop.height,
-        drawX, drawY, drawWidth, drawHeight
-      );
-
-      return canvas;
-    }
-
     async function renderSpecialPdfElement(element) {
       if (!element || element.dataset.pdfReady === '1') return true;
       if (element._pdfRenderPromise) return element._pdfRenderPromise;
@@ -6878,14 +6588,7 @@
         }
 
         element.innerHTML = '';
-
-        if (isA4Signage) {
-          const a4Canvas = createCenteredA4SignageCanvas_(img, code);
-          element.appendChild(a4Canvas);
-        } else {
-          element.appendChild(img);
-        }
-
+        element.appendChild(img);
         element.dataset.pdfReady = '1';
         element.dataset.pdfPages = '1';
         return true;
