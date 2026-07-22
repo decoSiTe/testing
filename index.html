@@ -4299,6 +4299,60 @@
       }
     }
 
+  
+    /* ==========================================================
+       FINAL A4 SIGNAGE CANVAS FIX
+
+       The PNG is trimmed in JavaScript to remove uneven white space,
+       then redrawn into a centered A4 canvas. This keeps:
+       - normal/40% labels in two columns;
+       - the branch/date header on the label page;
+       - NS, NPA, NOFD and GEG on separate full A4 pages.
+       ========================================================== */
+    .special-a4-canvas {
+      display: block;
+      width: 8cm;
+      height: 11.3cm;
+      margin: auto;
+      padding: 0;
+      background: #ffffff;
+      box-shadow: 0 2px 14px rgba(0,0,0,.28);
+    }
+
+    @media print {
+      body.print-has-full-page-special .print-slot.full-page-special,
+      body.print-has-full-page-special .print-slot.full-page-special .special-pdf-tag {
+        width: 20cm !important;
+        height: 28.7cm !important;
+        min-width: 20cm !important;
+        min-height: 28.7cm !important;
+        max-width: 20cm !important;
+        max-height: 28.7cm !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding: 0 !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+      }
+
+      body.print-has-full-page-special .special-a4-canvas {
+        display: block !important;
+        width: 20cm !important;
+        height: 28.7cm !important;
+        min-width: 20cm !important;
+        min-height: 28.7cm !important;
+        max-width: 20cm !important;
+        max-height: 28.7cm !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -6558,6 +6612,147 @@
       return pdfDocument;
     }
 
+
+    function getImageBackgroundColor_(data, width, height) {
+      const sampleSize = Math.max(2, Math.min(12, Math.floor(Math.min(width, height) * 0.015)));
+      const samples = [];
+
+      function collect(startX, startY) {
+        for (let y = startY; y < Math.min(height, startY + sampleSize); y++) {
+          for (let x = startX; x < Math.min(width, startX + sampleSize); x++) {
+            const index = (y * width + x) * 4;
+            if (data[index + 3] < 20) continue;
+            samples.push([data[index], data[index + 1], data[index + 2]]);
+          }
+        }
+      }
+
+      collect(0, 0);
+      collect(Math.max(0, width - sampleSize), 0);
+      collect(0, Math.max(0, height - sampleSize));
+      collect(Math.max(0, width - sampleSize), Math.max(0, height - sampleSize));
+
+      if (!samples.length) return { r: 255, g: 255, b: 255 };
+
+      samples.sort((a, b) => (a[0] + a[1] + a[2]) - (b[0] + b[1] + b[2]));
+      const middle = samples[Math.floor(samples.length / 2)];
+      return { r: middle[0], g: middle[1], b: middle[2] };
+    }
+
+    function getTrimmedImageBounds_(image) {
+      const naturalWidth = Math.max(1, image.naturalWidth || image.width || 1);
+      const naturalHeight = Math.max(1, image.naturalHeight || image.height || 1);
+      const maxScanDimension = 1400;
+      const scanScale = Math.min(1, maxScanDimension / Math.max(naturalWidth, naturalHeight));
+      const scanWidth = Math.max(1, Math.round(naturalWidth * scanScale));
+      const scanHeight = Math.max(1, Math.round(naturalHeight * scanScale));
+
+      const scanCanvas = document.createElement('canvas');
+      scanCanvas.width = scanWidth;
+      scanCanvas.height = scanHeight;
+
+      const scanContext = scanCanvas.getContext('2d', {
+        alpha: true,
+        willReadFrequently: true
+      });
+      scanContext.clearRect(0, 0, scanWidth, scanHeight);
+      scanContext.drawImage(image, 0, 0, scanWidth, scanHeight);
+
+      const imageData = scanContext.getImageData(0, 0, scanWidth, scanHeight);
+      const pixels = imageData.data;
+      const background = getImageBackgroundColor_(pixels, scanWidth, scanHeight);
+
+      let minX = scanWidth;
+      let minY = scanHeight;
+      let maxX = -1;
+      let maxY = -1;
+
+      for (let y = 0; y < scanHeight; y++) {
+        for (let x = 0; x < scanWidth; x++) {
+          const index = (y * scanWidth + x) * 4;
+          const alpha = pixels[index + 3];
+
+          if (alpha < 18) continue;
+
+          const redDifference = Math.abs(pixels[index] - background.r);
+          const greenDifference = Math.abs(pixels[index + 1] - background.g);
+          const blueDifference = Math.abs(pixels[index + 2] - background.b);
+          const colorDifference = redDifference + greenDifference + blueDifference;
+
+          /*
+           A pixel is treated as design content when it differs enough from
+           the corner background. This removes uneven white/transparent margins.
+          */
+          if (colorDifference > 42) {
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+          }
+        }
+      }
+
+      if (maxX < minX || maxY < minY) {
+        return { x: 0, y: 0, width: naturalWidth, height: naturalHeight };
+      }
+
+      const safetyPadding = Math.max(2, Math.round(Math.min(scanWidth, scanHeight) * 0.008));
+      minX = Math.max(0, minX - safetyPadding);
+      minY = Math.max(0, minY - safetyPadding);
+      maxX = Math.min(scanWidth - 1, maxX + safetyPadding);
+      maxY = Math.min(scanHeight - 1, maxY + safetyPadding);
+
+      return {
+        x: minX / scanScale,
+        y: minY / scanScale,
+        width: Math.max(1, (maxX - minX + 1) / scanScale),
+        height: Math.max(1, (maxY - minY + 1) / scanScale)
+      };
+    }
+
+    function createCenteredA4SignageCanvas_(image, specialCode) {
+      /*
+       1240 × 1754 keeps the exact A4 portrait ratio and provides sufficient
+       resolution for the browser print preview without making the page heavy.
+      */
+      const outputWidth = 1240;
+      const outputHeight = 1754;
+      const canvas = document.createElement('canvas');
+      canvas.width = outputWidth;
+      canvas.height = outputHeight;
+      canvas.className = 'special-a4-canvas';
+      canvas.setAttribute('role', 'img');
+      canvas.setAttribute('aria-label', specialCode || 'A4 signage');
+
+      const context = canvas.getContext('2d', { alpha: false });
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, outputWidth, outputHeight);
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = 'high';
+
+      const crop = getTrimmedImageBounds_(image);
+
+      /*
+       Fit the complete trimmed design inside A4, centered horizontally and
+       vertically. A tiny safety margin prevents borders from being cut.
+      */
+      const safeWidth = outputWidth * 0.992;
+      const safeHeight = outputHeight * 0.992;
+      const scale = Math.min(safeWidth / crop.width, safeHeight / crop.height);
+      const drawWidth = crop.width * scale;
+      const drawHeight = crop.height * scale;
+      const drawX = (outputWidth - drawWidth) / 2;
+      const drawY = (outputHeight - drawHeight) / 2;
+
+      context.drawImage(
+        image,
+        crop.x, crop.y, crop.width, crop.height,
+        drawX, drawY, drawWidth, drawHeight
+      );
+
+      return canvas;
+    }
+
     async function renderSpecialPdfElement(element) {
       if (!element || element.dataset.pdfReady === '1') return true;
       if (element._pdfRenderPromise) return element._pdfRenderPromise;
@@ -6626,7 +6821,14 @@
         }
 
         element.innerHTML = '';
-        element.appendChild(img);
+
+        if (isA4Signage) {
+          const a4Canvas = createCenteredA4SignageCanvas_(img, code);
+          element.appendChild(a4Canvas);
+        } else {
+          element.appendChild(img);
+        }
+
         element.dataset.pdfReady = '1';
         element.dataset.pdfPages = '1';
         return true;
