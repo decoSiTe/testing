@@ -4,6 +4,7 @@
   <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="products-price-column-fix" content="2026-07-23-v1">
   <title>Price Tag Generator</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="shortcut icon" type="image/png" href="favicon.png">
@@ -3245,7 +3246,7 @@
 
     .integrated-table-cell.muted { color: #727a90; }
     .integrated-table-cell.strong { color: #11162f; font-weight: 800; }
-    .integrated-table-cell.price { color: #a54d00; font-family: var(--font-mono); font-weight: 900; white-space: nowrap; }
+    .integrated-table-cell.product-price-cell { color: #a54d00; font-family: var(--font-mono); font-weight: 900; white-space: nowrap; }
 
     .request-records-table.products-table { min-width: 1900px; }
     .request-records-table.requests-table { min-width: 1500px; }
@@ -3456,7 +3457,7 @@
     .request-cell-branch { color: var(--text) !important; }
     .integrated-table-cell.muted,
     .request-cell-notes.empty { color: var(--muted) !important; }
-    .integrated-table-cell.price { color: var(--gold) !important; }
+    .integrated-table-cell.product-price-cell { color: var(--gold) !important; }
     .request-cell-email { color: #d6deea !important; }
 
     .request-table-status {
@@ -4261,7 +4262,21 @@
       }
     }
 
-  </style>
+  
+    /* Products table price column must remain a normal table cell. */
+    .request-records-table .product-price-cell {
+      position: static !important;
+      right: auto !important;
+      bottom: auto !important;
+      display: table-cell !important;
+      font-size: 10px !important;
+      line-height: 1.45 !important;
+      letter-spacing: normal !important;
+      white-space: nowrap !important;
+      vertical-align: top !important;
+    }
+
+</style>
 </head>
 <body>
   <div id="loadingOverlay">
@@ -5720,7 +5735,7 @@
           '<td class="integrated-table-cell arabic">' + html(product.arabicName || '—') + '</td>' +
           '<td class="integrated-table-cell">' + html(product.descriptionEN || '—') + '</td>' +
           '<td class="integrated-table-cell arabic">' + html(product.descriptionAR || '—') + '</td>' +
-          '<td class="integrated-table-cell price">' + html(product.price || '—') + '</td>' +
+          '<td class="integrated-table-cell product-price-cell">' + html(product.price || '—') + '</td>' +
           '<td class="integrated-table-cell">' + html(product.symbol || '—') + '</td>' +
           '<td class="integrated-table-cell">' + html(product.netWeightEN || '—') + '</td>' +
           '<td class="integrated-table-cell arabic">' + html(product.netWeightAR || '—') + '</td>' +
