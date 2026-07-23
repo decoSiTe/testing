@@ -4,6 +4,7 @@
   <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="products-compact-columns-fix" content="2026-07-23-v1">
   <meta name="products-price-column-fix" content="2026-07-23-v1">
   <title>Price Tag Generator</title>
   <link rel="icon" type="image/png" href="favicon.png">
@@ -4276,7 +4277,86 @@
       vertical-align: top !important;
     }
 
-</style>
+
+    /* Products table: compact Price and Symbol columns to fit their content. */
+    .request-records-table.products-table {
+      width: 1790px !important;
+      min-width: 1790px !important;
+      table-layout: fixed !important;
+    }
+
+    .request-records-table.products-table th:nth-child(1),
+    .request-records-table.products-table td:nth-child(1) {
+      width: 180px !important;
+      min-width: 180px !important;
+      max-width: 180px !important;
+    }
+
+    .request-records-table.products-table th:nth-child(2),
+    .request-records-table.products-table td:nth-child(2) {
+      width: 150px !important;
+      min-width: 150px !important;
+      max-width: 150px !important;
+    }
+
+    .request-records-table.products-table th:nth-child(3),
+    .request-records-table.products-table td:nth-child(3),
+    .request-records-table.products-table th:nth-child(4),
+    .request-records-table.products-table td:nth-child(4) {
+      width: 250px !important;
+      min-width: 250px !important;
+      max-width: 250px !important;
+    }
+
+    .request-records-table.products-table th:nth-child(5),
+    .request-records-table.products-table td:nth-child(5) {
+      width: 72px !important;
+      min-width: 72px !important;
+      max-width: 72px !important;
+      white-space: nowrap !important;
+    }
+
+    .request-records-table.products-table th:nth-child(6),
+    .request-records-table.products-table td:nth-child(6) {
+      width: 72px !important;
+      min-width: 72px !important;
+      max-width: 72px !important;
+      white-space: nowrap !important;
+    }
+
+    .request-records-table.products-table th:nth-child(7),
+    .request-records-table.products-table td:nth-child(7),
+    .request-records-table.products-table th:nth-child(8),
+    .request-records-table.products-table td:nth-child(8) {
+      width: 125px !important;
+      min-width: 125px !important;
+      max-width: 125px !important;
+    }
+
+    .request-records-table.products-table th:nth-child(9),
+    .request-records-table.products-table td:nth-child(9),
+    .request-records-table.products-table th:nth-child(10),
+    .request-records-table.products-table td:nth-child(10) {
+      width: 180px !important;
+      min-width: 180px !important;
+      max-width: 180px !important;
+    }
+
+    .request-records-table.products-table th:nth-child(11),
+    .request-records-table.products-table td:nth-child(11) {
+      width: 110px !important;
+      min-width: 110px !important;
+      max-width: 110px !important;
+    }
+
+    .request-records-table.products-table th:nth-child(12),
+    .request-records-table.products-table td:nth-child(12) {
+      width: 100px !important;
+      min-width: 100px !important;
+      max-width: 100px !important;
+    }
+
+  </style>
 </head>
 <body>
   <div id="loadingOverlay">
